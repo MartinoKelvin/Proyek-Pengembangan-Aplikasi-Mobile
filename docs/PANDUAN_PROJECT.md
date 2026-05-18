@@ -2,13 +2,13 @@
 
 ## Informasi Mata Kuliah
 
-| Item | Detail |
-|------|--------|
-| **Mata Kuliah** | Pengembangan Aplikasi Mobile |
-| **Kode** | IF25-22017 |
-| **Program Studi** | Teknik Informatika |
-| **Institusi** | Institut Teknologi Sumatera (ITERA) |
-| **Template** | NoteAI - KMP Project Template |
+| Item              | Detail                              |
+| ----------------- | ----------------------------------- |
+| **Mata Kuliah**   | Pengembangan Aplikasi Mobile        |
+| **Kode**          | IF25-22017                          |
+| **Program Studi** | Teknik Informatika                  |
+| **Institusi**     | Institut Teknologi Sumatera (ITERA) |
+| **Template**      | cakapAi - KMP Project Template      |
 
 ---
 
@@ -26,12 +26,12 @@ Project ini bertujuan untuk:
 
 ## 👥 Ketentuan Kelompok
 
-| Ketentuan | Detail |
-|-----------|--------|
-| **Jumlah Anggota** | 1 - 3 mahasiswa per kelompok |
-| **Pembentukan** | Mahasiswa bebas memilih anggota kelompok |
-| **Peran** | Setiap anggota harus berkontribusi (terlihat di Git commits) |
-| **Penilaian** | Nilai kelompok sama, kecuali ada bukti kontribusi tidak merata |
+| Ketentuan          | Detail                                                         |
+| ------------------ | -------------------------------------------------------------- |
+| **Jumlah Anggota** | 1 - 3 mahasiswa per kelompok                                   |
+| **Pembentukan**    | Mahasiswa bebas memilih anggota kelompok                       |
+| **Peran**          | Setiap anggota harus berkontribusi (terlihat di Git commits)   |
+| **Penilaian**      | Nilai kelompok sama, kecuali ada bukti kontribusi tidak merata |
 
 ### Pembagian Tugas yang Disarankan
 
@@ -49,6 +49,7 @@ Project ini bertujuan untuk:
 | Anggota 3 | Presentation layer, UI/UX, Navigation |
 
 ### ⚠️ Penting!
+
 - **SETIAP anggota WAJIB** memiliki commit di repository
 - Commit harus **meaningful** (bukan hanya edit spasi/komentar)
 - Jika ada anggota yang tidak berkontribusi, laporkan ke dosen
@@ -60,12 +61,12 @@ Project ini bertujuan untuk:
 
 ### Software yang Dibutuhkan
 
-| Software | Versi Minimum | Download |
-|----------|---------------|----------|
-| Android Studio | Ladybug 2024.2.1 | [Download](https://developer.android.com/studio) |
-| JDK | 17 | Termasuk di Android Studio |
-| Git | 2.30+ | [Download](https://git-scm.com/) |
-| Xcode (Mac only) | 15+ | App Store |
+| Software         | Versi Minimum    | Download                                         |
+| ---------------- | ---------------- | ------------------------------------------------ |
+| Android Studio   | Ladybug 2024.2.1 | [Download](https://developer.android.com/studio) |
+| JDK              | 17               | Termasuk di Android Studio                       |
+| Git              | 2.30+            | [Download](https://git-scm.com/)                 |
+| Xcode (Mac only) | 15+              | App Store                                        |
 
 ### Akun yang Dibutuhkan
 
@@ -87,6 +88,7 @@ Project ini bertujuan untuk:
 4. Tunggu proses fork selesai
 
 **Untuk Kelompok - Invite Anggota Lain:**
+
 1. Buka repository yang sudah di-fork
 2. Pergi ke **Settings > Collaborators > Add people**
 3. Masukkan username GitHub anggota kelompok
@@ -132,6 +134,7 @@ cp local.properties.example local.properties
 ```
 
 Isi `local.properties`:
+
 ```properties
 sdk.dir=/path/to/android/sdk
 GEMINI_API_KEY=your_api_key_here
@@ -148,14 +151,14 @@ GEMINI_API_KEY=your_api_key_here
 
 ## 📅 Timeline Project (Sprint-based)
 
-| Minggu | Sprint | Deliverables | Bobot |
-|--------|--------|--------------|-------|
-| 11 | Sprint 1: Foundation | Setup repo, Clean Architecture, DI, CI | 5% |
-| 12 | Sprint 2: Core Features | 3+ screens, navigation, CRUD, local storage | 5% |
-| 13 | Sprint 3: Advanced | Search, API/enhanced, offline, bonus feature | 5% |
-| 14 | Sprint 4: Polish | Bug fixes, UI polish, 10+ tests, coverage | 5% |
-| 15 | Sprint 5: Final | Demo ready, slides, APK, README | 5% |
-| 16 | UAS | Live demo, Q&A, presentation | 35% |
+| Minggu | Sprint                  | Deliverables                                 | Bobot |
+| ------ | ----------------------- | -------------------------------------------- | ----- |
+| 11     | Sprint 1: Foundation    | Setup repo, Clean Architecture, DI, CI       | 5%    |
+| 12     | Sprint 2: Core Features | 3+ screens, navigation, CRUD, local storage  | 5%    |
+| 13     | Sprint 3: Advanced      | Search, API/enhanced, offline, bonus feature | 5%    |
+| 14     | Sprint 4: Polish        | Bug fixes, UI polish, 10+ tests, coverage    | 5%    |
+| 15     | Sprint 5: Final         | Demo ready, slides, APK, README              | 5%    |
+| 16     | UAS                     | Live demo, Q&A, presentation                 | 35%   |
 
 **Total Bobot Project: 60%**
 
@@ -164,6 +167,7 @@ GEMINI_API_KEY=your_api_key_here
 ## 📝 Deliverables Setiap Sprint
 
 ### Sprint 1: Foundation (Minggu 11)
+
 - [ ] Repository GitHub sudah di-fork dan branch dibuat
 - [ ] Project bisa di-build tanpa error
 - [ ] Memahami struktur folder Clean Architecture
@@ -171,6 +175,7 @@ GEMINI_API_KEY=your_api_key_here
 - [ ] Minimal 1 commit meaningful
 
 ### Sprint 2: Core Features (Minggu 12)
+
 - [ ] Minimal 3 screens sudah diimplementasi
 - [ ] Navigation antar screen berfungsi
 - [ ] CRUD operation berjalan
@@ -178,6 +183,7 @@ GEMINI_API_KEY=your_api_key_here
 - [ ] Minimal 5 commits
 
 ### Sprint 3: Advanced Features (Minggu 13)
+
 - [ ] Search dengan debounce
 - [ ] Filter dan sort data
 - [ ] Integrasi API atau enhanced local features
@@ -185,6 +191,7 @@ GEMINI_API_KEY=your_api_key_here
 - [ ] 1+ bonus feature
 
 ### Sprint 4: Polish & Testing (Minggu 14)
+
 - [ ] Semua bugs fixed
 - [ ] UI konsisten dan polished
 - [ ] 10+ unit tests
@@ -192,6 +199,7 @@ GEMINI_API_KEY=your_api_key_here
 - [ ] 50%+ code coverage
 
 ### Sprint 5: Final Preparation (Minggu 15)
+
 - [ ] Aplikasi stabil tanpa crash
 - [ ] Slide presentasi siap
 - [ ] Demo script disiapkan
@@ -205,28 +213,29 @@ GEMINI_API_KEY=your_api_key_here
 
 ### Sprint 1-5 (masing-masing 5%)
 
-| Kriteria | Bobot | Deskripsi |
-|----------|-------|-----------|
-| Completeness | 40% | Semua deliverables terpenuhi |
-| Code Quality | 30% | Clean code, proper naming, comments |
-| Git Usage | 20% | Commit messages, branching |
-| Timeliness | 10% | Dikumpulkan tepat waktu |
+| Kriteria     | Bobot | Deskripsi                           |
+| ------------ | ----- | ----------------------------------- |
+| Completeness | 40%   | Semua deliverables terpenuhi        |
+| Code Quality | 30%   | Clean code, proper naming, comments |
+| Git Usage    | 20%   | Commit messages, branching          |
+| Timeliness   | 10%   | Dikumpulkan tepat waktu             |
 
 ### UAS Demo Day (35%)
 
-| Kriteria | Bobot | Deskripsi |
-|----------|-------|-----------|
-| App Functionality | 30% | Fitur berjalan dengan baik |
-| Code Quality | 20% | Arsitektur, best practices |
-| Demo & Presentation | 25% | Kemampuan presentasi |
-| Technical Depth | 15% | Pemahaman teknis |
-| Q&A | 10% | Menjawab pertanyaan |
+| Kriteria            | Bobot | Deskripsi                  |
+| ------------------- | ----- | -------------------------- |
+| App Functionality   | 30%   | Fitur berjalan dengan baik |
+| Code Quality        | 20%   | Arsitektur, best practices |
+| Demo & Presentation | 25%   | Kemampuan presentasi       |
+| Technical Depth     | 15%   | Pemahaman teknis           |
+| Q&A                 | 10%   | Menjawab pertanyaan        |
 
 ---
 
 ## 💡 Tips Sukses
 
 ### Do's ✅
+
 - Commit secara teratur (minimal 1x per hari saat aktif coding)
 - Tulis commit message yang deskriptif
 - Test aplikasi di berbagai ukuran layar
@@ -235,6 +244,7 @@ GEMINI_API_KEY=your_api_key_here
 - Mulai dari yang sederhana, tambahkan fitur bertahap
 
 ### Don'ts ❌
+
 - Jangan copy-paste tanpa memahami
 - Jangan tunggu deadline untuk mulai
 - Jangan abaikan error/warning
@@ -246,17 +256,20 @@ GEMINI_API_KEY=your_api_key_here
 ## 🆘 Bantuan & Resources
 
 ### Dokumentasi Resmi
+
 - [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html)
 - [Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/)
 - [Koin DI](https://insert-koin.io/docs/quickstart/kotlin)
 - [SQLDelight](https://cashapp.github.io/sqldelight/)
 
 ### Troubleshooting
+
 - Lihat file `docs/TROUBLESHOOTING.md`
 - Buka Issue di repository template
 - Tanya di grup kelas
 
 ### Kontak Dosen
+
 - Konsultasi: Sesuai jadwal yang ditentukan
 - Email: [sesuai kebijakan dosen]
 
@@ -264,13 +277,13 @@ GEMINI_API_KEY=your_api_key_here
 
 ## 📎 File Dokumentasi Lainnya
 
-| File | Deskripsi |
-|------|-----------|
-| [GIT_WORKFLOW.md](./GIT_WORKFLOW.md) | Panduan Git branching dan workflow |
-| [ATURAN_MODIFIKASI.md](./ATURAN_MODIFIKASI.md) | Aturan modifikasi template |
-| [STRUKTUR_KODE.md](./STRUKTUR_KODE.md) | Penjelasan struktur kode |
-| [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) | Solusi masalah umum |
+| File                                           | Deskripsi                          |
+| ---------------------------------------------- | ---------------------------------- |
+| [GIT_WORKFLOW.md](./GIT_WORKFLOW.md)           | Panduan Git branching dan workflow |
+| [ATURAN_MODIFIKASI.md](./ATURAN_MODIFIKASI.md) | Aturan modifikasi template         |
+| [STRUKTUR_KODE.md](./STRUKTUR_KODE.md)         | Penjelasan struktur kode           |
+| [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)     | Solusi masalah umum                |
 
 ---
 
-*Dokumen ini adalah bagian dari template project Pengembangan Aplikasi Mobile - ITERA*
+_Dokumen ini adalah bagian dari template project Pengembangan Aplikasi Mobile - ITERA_

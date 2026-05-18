@@ -103,7 +103,7 @@ private val DarkColorScheme = darkColorScheme(
 // ==================== THEME ====================
 
 @Composable
-fun NoteAITheme(
+fun cakapAiTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {

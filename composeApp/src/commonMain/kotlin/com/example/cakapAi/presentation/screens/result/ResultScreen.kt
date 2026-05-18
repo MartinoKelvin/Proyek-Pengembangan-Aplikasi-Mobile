@@ -1,0 +1,58 @@
+package com.example.cakapAi.presentation.screens.result
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun ResultScreen(
+    score: Int,
+    totalQuestion: Int,
+    accuracy: Int,
+    isPassed: Boolean,
+    onBackToMap: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = "Hasil Quiz",
+            style = MaterialTheme.typography.headlineMedium
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text("Skor: $score")
+                Text("Total Soal: $totalQuestion")
+                Text("Akurasi: $accuracy%")
+                Text(
+                    text = if (isPassed) "Status: Lulus" else "Status: Belum Lulus"
+                )
+            }
+        }
+
+        Button(
+            onClick = onBackToMap,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Kembali ke Map")
+        }
+    }
+}

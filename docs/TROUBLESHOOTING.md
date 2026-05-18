@@ -9,11 +9,13 @@ Panduan untuk mengatasi masalah umum yang mungkin ditemui saat mengerjakan proje
 ### 1. Gradle Sync Failed
 
 **Gejala:**
+
 ```
 Gradle sync failed: Could not resolve all dependencies
 ```
 
 **Solusi:**
+
 ```bash
 # 1. Invalidate caches
 # Android Studio > File > Invalidate Caches > Invalidate and Restart
@@ -34,6 +36,7 @@ rm -rf .gradle
 ### 2. API Key Not Found / Empty
 
 **Gejala:**
+
 ```
 GEMINI_API_KEY is empty
 API call failed: 401 Unauthorized
@@ -42,6 +45,7 @@ API call failed: 401 Unauthorized
 **Solusi:**
 
 1. Pastikan file `local.properties` ada di root project:
+
 ```properties
 sdk.dir=/path/to/android/sdk
 GEMINI_API_KEY=your_actual_api_key_here
@@ -53,6 +57,7 @@ GEMINI_API_KEY=your_actual_api_key_here
    - Generate key baru jika perlu
 
 3. Rebuild project:
+
 ```bash
 ./gradlew clean build
 ```
@@ -62,6 +67,7 @@ GEMINI_API_KEY=your_actual_api_key_here
 ### 3. Database Migration Error
 
 **Gejala:**
+
 ```
 android.database.sqlite.SQLiteException: no such table: NoteEntity
 Database version mismatch
@@ -70,16 +76,18 @@ Database version mismatch
 **Solusi:**
 
 **Opsi A: Clear App Data (Development)**
+
 - Uninstall app dari emulator/device
 - Install ulang
 
 **Opsi B: Implement Migration (Production)**
+
 ```kotlin
 // Di DatabaseDriverFactory
 val driver = AndroidSqliteDriver(
     schema = NoteDatabase.Schema,
     context = context,
-    name = "noteai.db",
+    name = "cakapAi.db",
     callback = object : AndroidSqliteDriver.Callback(NoteDatabase.Schema) {
         override fun onUpgrade(
             db: SupportSQLiteDatabase,
@@ -97,6 +105,7 @@ val driver = AndroidSqliteDriver(
 ### 4. Compose Preview Not Working
 
 **Gejala:**
+
 ```
 Preview tidak muncul
 "Render problem" di Android Studio
@@ -106,11 +115,12 @@ Preview tidak muncul
 
 1. Pastikan menggunakan Android Studio versi terbaru
 2. Tambahkan `@Preview` annotation:
+
 ```kotlin
 @Preview
 @Composable
 fun NoteCardPreview() {
-    NoteAITheme {
+    cakapAiTheme {
         NoteCard(
             note = Note(title = "Preview", content = "Test"),
             onClick = {},
@@ -122,6 +132,7 @@ fun NoteCardPreview() {
 ```
 
 3. Build project:
+
 ```bash
 ./gradlew :composeApp:assembleDebug
 ```
@@ -131,6 +142,7 @@ fun NoteCardPreview() {
 ### 5. Koin Dependency Not Found
 
 **Gejala:**
+
 ```
 org.koin.core.error.NoBeanDefFoundException
 No definition found for class 'NoteRepository'
@@ -139,6 +151,7 @@ No definition found for class 'NoteRepository'
 **Solusi:**
 
 1. Pastikan module terdaftar:
+
 ```kotlin
 // AppModule.kt
 val repositoryModule = module {
@@ -154,12 +167,13 @@ val sharedModules = listOf(
 ```
 
 2. Pastikan initKoin dipanggil:
+
 ```kotlin
 // Android: Application class
 override fun onCreate() {
     super.onCreate()
     initKoin(platformModules = listOf(androidModule)) {
-        androidContext(this@NoteAIApplication)
+        androidContext(this@cakapAiApplication)
     }
 }
 ```
@@ -169,6 +183,7 @@ override fun onCreate() {
 ### 6. iOS Build Failed
 
 **Gejala:**
+
 ```
 Xcode build failed
 Framework not found
@@ -177,6 +192,7 @@ Framework not found
 **Solusi:**
 
 1. Generate framework:
+
 ```bash
 ./gradlew :composeApp:linkDebugFrameworkIosSimulatorArm64
 ```
@@ -186,6 +202,7 @@ Framework not found
    - Build ulang (Cmd+B)
 
 3. Pastikan Cocoapods terinstall:
+
 ```bash
 sudo gem install cocoapods
 cd iosApp
@@ -197,6 +214,7 @@ pod install
 ### 7. Network Request Failed
 
 **Gejala:**
+
 ```
 java.net.UnknownHostException
 Connection timeout
@@ -205,18 +223,21 @@ Connection timeout
 **Solusi:**
 
 1. Cek internet permission (Android):
+
 ```xml
 <!-- AndroidManifest.xml -->
 <uses-permission android:name="android.permission.INTERNET" />
 ```
 
 2. Cek URL endpoint:
+
 ```kotlin
 // Pastikan URL benar
 private val baseUrl = "https://generativelanguage.googleapis.com/v1beta"
 ```
 
 3. Tambahkan logging:
+
 ```kotlin
 install(Logging) {
     level = LogLevel.ALL  // Untuk debugging
@@ -228,12 +249,14 @@ install(Logging) {
 ### 8. StateFlow Not Updating UI
 
 **Gejala:**
+
 - Data berubah tapi UI tidak update
 - `collectAsState` tidak reactive
 
 **Solusi:**
 
 1. Pastikan menggunakan `collectAsStateWithLifecycle`:
+
 ```kotlin
 // ✅ BENAR
 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -243,6 +266,7 @@ val uiState by viewModel.uiState.collectAsState()
 ```
 
 2. Pastikan Flow emit di main dispatcher:
+
 ```kotlin
 val uiState = repository.getAllNotes()
     .flowOn(Dispatchers.IO)
@@ -258,6 +282,7 @@ val uiState = repository.getAllNotes()
 ### 9. Git Push Rejected
 
 **Gejala:**
+
 ```
 ! [rejected] main -> main (non-fast-forward)
 error: failed to push some refs
@@ -282,6 +307,7 @@ git push origin project/121140001-TodoMaster
 ### 10. Test Failed
 
 **Gejala:**
+
 ```
 Test failed: Expected <2> but was <1>
 Coroutine test timeout
@@ -290,6 +316,7 @@ Coroutine test timeout
 **Solusi:**
 
 1. Untuk coroutine tests, gunakan `runTest`:
+
 ```kotlin
 @Test
 fun `test something`() = runTest {
@@ -298,6 +325,7 @@ fun `test something`() = runTest {
 ```
 
 2. Untuk Flow tests dengan Turbine:
+
 ```kotlin
 @Test
 fun `test flow`() = runTest {
@@ -310,6 +338,7 @@ fun `test flow`() = runTest {
 ```
 
 3. Setup test dispatcher:
+
 ```kotlin
 @BeforeTest
 fun setup() {
@@ -385,7 +414,9 @@ fun MyScreen() {
 
 **Error Message:**
 ```
+
 [Paste error message lengkap]
+
 ```
 
 **Yang Sudah Dicoba:**
@@ -409,6 +440,7 @@ fun MyScreen() {
 ## 📚 Resources
 
 ### Official Documentation
+
 - [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html)
 - [Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/)
 - [SQLDelight](https://cashapp.github.io/sqldelight/)
@@ -416,10 +448,11 @@ fun MyScreen() {
 - [Ktor](https://ktor.io/docs/welcome.html)
 
 ### Community
+
 - [Kotlin Slack](https://kotlinlang.slack.com/)
 - [Stack Overflow - Kotlin](https://stackoverflow.com/questions/tagged/kotlin)
 - [Reddit - Kotlin](https://www.reddit.com/r/Kotlin/)
 
 ---
 
-*Dokumen ini adalah bagian dari template project Pengembangan Aplikasi Mobile - ITERA*
+_Dokumen ini adalah bagian dari template project Pengembangan Aplikasi Mobile - ITERA_
