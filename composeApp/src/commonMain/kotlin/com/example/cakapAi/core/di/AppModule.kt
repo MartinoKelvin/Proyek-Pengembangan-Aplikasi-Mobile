@@ -8,24 +8,10 @@ import com.example.cakapAi.data.local.datastore.UserPreferences
 import com.example.cakapAi.data.local.datastore.create
 import com.example.cakapAi.data.remote.api.GeminiService
 import com.example.cakapAi.data.repository.AIRepositoryImpl
-import com.example.cakapAi.data.repository.NoteRepositoryImpl
 import com.example.cakapAi.domain.repository.AIRepository
-import com.example.cakapAi.domain.repository.NoteRepository
-import com.example.cakapAi.domain.usecase.DeleteNoteUseCase
-import com.example.cakapAi.domain.usecase.GenerateIdeasUseCase
-import com.example.cakapAi.domain.usecase.GetAllNotesUseCase
-import com.example.cakapAi.domain.usecase.ImproveWritingUseCase
-import com.example.cakapAi.domain.usecase.SaveNoteUseCase
-import com.example.cakapAi.domain.usecase.SearchNotesUseCase
-import com.example.cakapAi.domain.usecase.SummarizeNoteUseCase
-import com.example.cakapAi.presentation.screens.addnote.AddNoteViewModel
-import com.example.cakapAi.presentation.screens.ai.AIAssistantViewModel
-import com.example.cakapAi.presentation.screens.detail.NoteDetailViewModel
-import com.example.cakapAi.presentation.screens.home.HomeViewModel
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -56,29 +42,7 @@ val preferencesModule = module {
 // ==================== REPOSITORY MODULE ====================
 
 val repositoryModule = module {
-    singleOf(::NoteRepositoryImpl) bind NoteRepository::class
     singleOf(::AIRepositoryImpl) bind AIRepository::class
-}
-
-// ==================== USE CASE MODULE ====================
-
-val useCaseModule = module {
-    singleOf(::GetAllNotesUseCase)
-    singleOf(::SearchNotesUseCase)
-    singleOf(::SaveNoteUseCase)
-    singleOf(::DeleteNoteUseCase)
-    singleOf(::SummarizeNoteUseCase)
-    singleOf(::ImproveWritingUseCase)
-    singleOf(::GenerateIdeasUseCase)
-}
-
-// ==================== VIEWMODEL MODULE ====================
-
-val viewModelModule = module {
-    viewModelOf(::HomeViewModel)
-    viewModelOf(::AddNoteViewModel)
-    viewModelOf(::NoteDetailViewModel)
-    viewModelOf(::AIAssistantViewModel)
 }
 
 // ==================== SHARED MODULES ====================
@@ -87,9 +51,7 @@ val sharedModules = listOf(
     networkModule,
     databaseModule,
     preferencesModule,
-    repositoryModule,
-    useCaseModule,
-    viewModelModule
+    repositoryModule
 )
 
 // ==================== INIT FUNCTION ====================
