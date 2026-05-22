@@ -1,13 +1,25 @@
 package com.example.cakapAi.presentation.navigation
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
@@ -65,12 +77,13 @@ fun AppNavHost(
                     onNavigateBack = {
                         navigationActions.navigateToMap()
                     },
-                    onFinishQuiz = {
+                    onFinishQuiz = { score, totalQuestions, accuracy, isPassed ->
                         navigationActions.navigateToResult(
-                            score = 80,
-                            totalQuestion = 10,
-                            accuracy = 80,
-                            isPassed = true
+                            levelId = route.levelId,
+                            score = score,
+                            totalQuestion = totalQuestions,
+                            accuracy = accuracy,
+                            isPassed = isPassed
                         )
                     }
                 )
@@ -80,12 +93,16 @@ fun AppNavHost(
                 val route: Route.Result = backStackEntry.toRoute()
 
                 ResultScreen(
+                    levelId = route.levelId,
                     score = route.score,
                     totalQuestion = route.totalQuestion,
                     accuracy = route.accuracy,
                     isPassed = route.isPassed,
                     onBackToMap = {
                         navigationActions.navigateToMap()
+                    },
+                    onRetryQuiz = {
+                        navigationActions.navigateToQuiz(route.levelId)
                     }
                 )
             }
@@ -117,58 +134,172 @@ private fun BottomNavigationBar(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    NavigationBar {
-        NavigationBarItem(
-            selected = currentDestination.isMapSelected(),
-            onClick = {
-                navigationActions.navigateToMap()
-            },
-            icon = {
-                Text("🗺️")
-            },
-            label = {
-                Text("Map")
-            }
-        )
+    // Dynamic active accent glowing color based on the selected screen
+    val activeColor = when {
+        currentDestination.isMapSelected() -> Color(0xFF0EA5E9)       // Sky Blue Map
+        currentDestination.isQuizSelected() -> Color(0xFFFBBF24)      // Gold Quiz
+        currentDestination.isDictionarySelected() -> Color(0xFF10B981)  // Emerald Dictionary
+        currentDestination.isAITutorSelected() -> Color(0xFF8B5CF6)     // Purple AI Tutor
+        else -> Color.White
+    }
 
-        NavigationBarItem(
-            selected = currentDestination.isQuizSelected(),
-            onClick = {
-                navigationActions.navigateToQuiz(levelId = 1)
-            },
-            icon = {
-                Text("🎯")
-            },
-            label = {
-                Text("Quiz")
-            }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFF0F1A30))
+    ) {
+        HorizontalDivider(
+            color = Color.White.copy(alpha = 0.08f),
+            thickness = 1.dp
         )
+        NavigationBar(
+            containerColor = Color(0xFF0F1A30),
+            tonalElevation = 0.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding()
+                .height(72.dp)
+        ) {
+            // 1. MAP ITEM (Explore / Peta)
+            val isMapActive = currentDestination.isMapSelected()
+            val mapScale by animateFloatAsState(
+                targetValue = if (isMapActive) 1.2f else 1.0f,
+                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
+            )
+            NavigationBarItem(
+                selected = isMapActive,
+                onClick = { navigationActions.navigateToMap() },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Explore,
+                        contentDescription = "Map",
+                        modifier = Modifier
+                            .size(22.dp)
+                            .graphicsLayer {
+                                scaleX = mapScale
+                                scaleY = mapScale
+                            },
+                        tint = if (isMapActive) Color(0xFF0EA5E9) else Color(0xFF64748B)
+                    )
+                },
+                label = {
+                    Text(
+                        text = "Peta",
+                        fontWeight = if (isMapActive) FontWeight.ExtraBold else FontWeight.Medium,
+                        fontSize = 11.sp,
+                        color = if (isMapActive) Color(0xFF0EA5E9) else Color(0xFF64748B)
+                    )
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color(0xFF0EA5E9).copy(alpha = 0.12f)
+                )
+            )
 
-        NavigationBarItem(
-            selected = currentDestination.isDictionarySelected(),
-            onClick = {
-                navigationActions.navigateToDictionary()
-            },
-            icon = {
-                Text("📖")
-            },
-            label = {
-                Text("Dictionary")
-            }
-        )
+            // 2. QUIZ ITEM (EmojiEvents / Kuis)
+            val isQuizActive = currentDestination.isQuizSelected()
+            val quizScale by animateFloatAsState(
+                targetValue = if (isQuizActive) 1.2f else 1.0f,
+                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
+            )
+            NavigationBarItem(
+                selected = isQuizActive,
+                onClick = { navigationActions.navigateToQuiz(levelId = 1) },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.EmojiEvents,
+                        contentDescription = "Quiz",
+                        modifier = Modifier
+                            .size(22.dp)
+                            .graphicsLayer {
+                                scaleX = quizScale
+                                scaleY = quizScale
+                            },
+                        tint = if (isQuizActive) Color(0xFFFBBF24) else Color(0xFF64748B)
+                    )
+                },
+                label = {
+                    Text(
+                        text = "Kuis",
+                        fontWeight = if (isQuizActive) FontWeight.ExtraBold else FontWeight.Medium,
+                        fontSize = 11.sp,
+                        color = if (isQuizActive) Color(0xFFFBBF24) else Color(0xFF64748B)
+                    )
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color(0xFFFBBF24).copy(alpha = 0.12f)
+                )
+            )
 
-        NavigationBarItem(
-            selected = currentDestination.isAITutorSelected(),
-            onClick = {
-                navigationActions.navigateToAITutor()
-            },
-            icon = {
-                Text("🤖")
-            },
-            label = {
-                Text("AI Tutor")
-            }
-        )
+            // 3. DICTIONARY ITEM (Translate / Kamus)
+            val isDictActive = currentDestination.isDictionarySelected()
+            val dictScale by animateFloatAsState(
+                targetValue = if (isDictActive) 1.2f else 1.0f,
+                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
+            )
+            NavigationBarItem(
+                selected = isDictActive,
+                onClick = { navigationActions.navigateToDictionary() },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Translate,
+                        contentDescription = "Dictionary",
+                        modifier = Modifier
+                            .size(22.dp)
+                            .graphicsLayer {
+                                scaleX = dictScale
+                                scaleY = dictScale
+                            },
+                        tint = if (isDictActive) Color(0xFF10B981) else Color(0xFF64748B)
+                    )
+                },
+                label = {
+                    Text(
+                        text = "Kamus",
+                        fontWeight = if (isDictActive) FontWeight.ExtraBold else FontWeight.Medium,
+                        fontSize = 11.sp,
+                        color = if (isDictActive) Color(0xFF10B981) else Color(0xFF64748B)
+                    )
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color(0xFF10B981).copy(alpha = 0.12f)
+                )
+            )
+
+            // 4. AI TUTOR ITEM (Face / AI Tutor)
+            val isTutorActive = currentDestination.isAITutorSelected()
+            val tutorScale by animateFloatAsState(
+                targetValue = if (isTutorActive) 1.2f else 1.0f,
+                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
+            )
+            NavigationBarItem(
+                selected = isTutorActive,
+                onClick = { navigationActions.navigateToAITutor() },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Face,
+                        contentDescription = "AI Tutor",
+                        modifier = Modifier
+                            .size(22.dp)
+                            .graphicsLayer {
+                                scaleX = tutorScale
+                                scaleY = tutorScale
+                            },
+                        tint = if (isTutorActive) Color(0xFF8B5CF6) else Color(0xFF64748B)
+                    )
+                },
+                label = {
+                    Text(
+                        text = "AI Tutor",
+                        fontWeight = if (isTutorActive) FontWeight.ExtraBold else FontWeight.Medium,
+                        fontSize = 11.sp,
+                        color = if (isTutorActive) Color(0xFF8B5CF6) else Color(0xFF64748B)
+                    )
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color(0xFF8B5CF6).copy(alpha = 0.12f)
+                )
+            )
+        }
     }
 }
 
@@ -195,7 +326,20 @@ private fun createNavigationActions(
     return object : NavigationActions {
 
         override fun navigateToMap() {
-            navController.navigate(Route.Map) {
+            // Bulletproof popping back to Map screen if already in stack, else navigate cleanly
+            val popped = navController.popBackStack(Route.Map, inclusive = false)
+            if (!popped) {
+                navController.navigate(Route.Map) {
+                    popUpTo(Route.Map) {
+                        inclusive = true
+                    }
+                    launchSingleTop = true
+                }
+            }
+        }
+
+        override fun navigateToQuiz(levelId: Int) {
+            navController.navigate(Route.Quiz(levelId)) {
                 popUpTo(Route.Map) {
                     inclusive = false
                 }
@@ -203,13 +347,8 @@ private fun createNavigationActions(
             }
         }
 
-        override fun navigateToQuiz(levelId: Int) {
-            navController.navigate(Route.Quiz(levelId)) {
-                launchSingleTop = true
-            }
-        }
-
         override fun navigateToResult(
+            levelId: Int,
             score: Int,
             totalQuestion: Int,
             accuracy: Int,
@@ -217,6 +356,7 @@ private fun createNavigationActions(
         ) {
             navController.navigate(
                 Route.Result(
+                    levelId = levelId,
                     score = score,
                     totalQuestion = totalQuestion,
                     accuracy = accuracy,
@@ -227,13 +367,21 @@ private fun createNavigationActions(
 
         override fun navigateToDictionary() {
             navController.navigate(Route.Dictionary) {
+                popUpTo(Route.Map) {
+                    saveState = true
+                }
                 launchSingleTop = true
+                restoreState = true
             }
         }
 
         override fun navigateToAITutor() {
             navController.navigate(Route.AITutor) {
+                popUpTo(Route.Map) {
+                    saveState = true
+                }
                 launchSingleTop = true
+                restoreState = true
             }
         }
 

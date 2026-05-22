@@ -14,6 +14,7 @@ sealed interface Route {
 
     @Serializable
     data class Result(
+        val levelId: Int,
         val score: Int,
         val totalQuestion: Int,
         val accuracy: Int,
@@ -31,6 +32,7 @@ interface NavigationActions {
     fun navigateToMap()
     fun navigateToQuiz(levelId: Int)
     fun navigateToResult(
+        levelId: Int,
         score: Int,
         totalQuestion: Int,
         accuracy: Int,
