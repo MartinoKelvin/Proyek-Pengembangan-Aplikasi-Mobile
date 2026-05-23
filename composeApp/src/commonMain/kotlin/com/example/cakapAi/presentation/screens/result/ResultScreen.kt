@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * Premium, gamified Result Screen showing score achievements, accuracy rate,
@@ -44,8 +45,20 @@ fun ResultScreen(
     accuracy: Int,
     isPassed: Boolean,
     onBackToMap: () -> Unit,
-    onRetryQuiz: () -> Unit
+    onRetryQuiz: () -> Unit,
+    viewModel: ResultViewModel = koinViewModel()
 ) {
+    // Save quiz result to database exactly once when ResultScreen is first composed
+    LaunchedEffect(Unit) {
+        viewModel.saveQuizResult(
+            levelId = levelId.toLong(),
+            score = score,
+            totalQuestions = totalQuestion,
+            accuracy = accuracy.toDouble(),
+            isPassed = isPassed
+        )
+    }
+
     // Theme Colors matching MapScreen
     val backgroundColor = Color(0xFF071224)
     val cardColor = Color(0xFF0F1A30).copy(alpha = 0.9f)

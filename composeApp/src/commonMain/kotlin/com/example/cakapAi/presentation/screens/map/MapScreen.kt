@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlin.math.sin
+import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * Data class representing a Level Step in the Learning Path Map.
@@ -67,36 +68,16 @@ enum class LevelStatus {
 fun MapScreen(
     onNavigateToQuiz: (Int) -> Unit,
     onNavigateToDictionary: () -> Unit,
-    onNavigateToAITutor: () -> Unit
+    onNavigateToAITutor: () -> Unit,
+    viewModel: MapViewModel = koinViewModel()
 ) {
-    // Generate mock levels data matching the interactive map
-    val levels = remember {
-        listOf(
-            PathLevel(1, 0, LevelType.LISTENING, "Level 1 - Basic Greeting", "Sapaan dasar dan perkenalan diri", LevelStatus.COMPLETED, 0.0f),
-            PathLevel(2, 1, LevelType.READING, "Level 2 - Daily Vocabulary", "Kosakata sehari-hari yang sering digunakan", LevelStatus.UNLOCKED, 0.25f),
-            PathLevel(3, 2, LevelType.GAMING, "Level 3 - Simple Grammar", "Struktur kalimat dan tata bahasa dasar", LevelStatus.LOCKED, 0.38f),
-            PathLevel(4, 3, LevelType.SPEAKING, "Level 4 - Conversation", "Latihan percakapan interaktif pendek", LevelStatus.LOCKED, 0.15f),
-            PathLevel(5, 4, LevelType.VIDEO, "Level 5 - Speaking Practice", "Latihan pengucapan kata dan kalimat", LevelStatus.LOCKED, -0.2f)
-        )
-    }
+    val uiState by viewModel.uiState.collectAsState()
 
-    var selectedLevel by remember { mutableStateOf<PathLevel?>(null) }
-
-    // Curated rich color palette representing a deep ocean voyage map
     val backgroundColor = Color(0xFF071224) // Deep navy ocean
     val cardColor = Color(0xFF0F1A30).copy(alpha = 0.95f)
     val emeraldAccent = Color(0xFF10B981)
     val skyAccent = Color(0xFF0EA5E9)
     val goldAccent = Color(0xFFF59E0B)
-
-    val completedLevels = remember(levels) { levels.count { it.status == LevelStatus.COMPLETED } }
-    val totalLevels = remember(levels) { levels.size }
-
-    // Unified scrollable measurements
-    val stepHeight = 156.dp
-    val topPadding = 60.dp
-    val bottomPadding = 140.dp
-    val totalHeight = topPadding + bottomPadding + (stepHeight * levels.size)
 
     Box(
         modifier = Modifier
@@ -107,88 +88,213 @@ fun MapScreen(
                 )
             )
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            
-            // Premium Header Section showing actual level progress and shortcuts
-            HeaderPanel(
-                completedCount = completedLevels,
-                totalCount = totalLevels,
-                onNavigateToDictionary = onNavigateToDictionary,
-                onNavigateToAITutor = onNavigateToAITutor
-            )
-
-            // Scrollable Map Area where path lines, islands, and buttons scroll in perfect sync
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize()
-            ) {
-                val scrollState = rememberScrollState()
-                
+        when (val state = uiState) {
+            is MapUiState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = emeraldAccent,
+                        strokeWidth = 4.dp
+                    )
+                }
+            }
+            is MapUiState.Error -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .verticalScroll(scrollState)
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    // Unified Sea Map Backdrop (archipelago landmasses, waves, and paths scrolling together)
-                    ConnectionLinesBackdrop(
-                        levels = levels,
-                        stepHeight = stepHeight,
-                        topPadding = topPadding,
-                        pathColor = emeraldAccent,
-                        dashedColor = Color.White.copy(alpha = 0.35f),
+                    Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(totalHeight)
-                    )
-
-                    // Interactive Level Nodes placed at the exact same scrollable coordinates
-                    levels.forEach { item ->
-                        val yOffset = topPadding + (stepHeight * item.index)
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .offset(y = yOffset)
+                            .padding(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = cardColor),
+                        shape = RoundedCornerShape(20.dp),
+                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.1f))
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            LevelNodeItem(
-                                level = item,
-                                emeraldAccent = emeraldAccent,
-                                skyAccent = skyAccent,
-                                goldAccent = goldAccent,
-                                isCurrentlyActive = (selectedLevel?.id == item.id),
-                                onClick = {
-                                    if (item.status != LevelStatus.LOCKED) {
-                                        selectedLevel = if (selectedLevel?.id == item.id) null else item
-                                    }
-                                }
+                            Icon(
+                                imageVector = Icons.Default.Warning,
+                                contentDescription = "Error",
+                                tint = Color(0xFFEF4444),
+                                modifier = Modifier.size(48.dp)
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = "Gagal Memuat Peta",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = state.message,
+                                color = Color.White.copy(alpha = 0.7f),
+                                fontSize = 14.sp,
+                                textAlign = TextAlign.Center
                             )
                         }
                     }
                 }
             }
-        }
+            is MapUiState.Empty -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "Empty",
+                            tint = Color.White.copy(alpha = 0.4f),
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Belum ada materi belajar",
+                            color = Color.White.copy(alpha = 0.8f),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 16.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+            is MapUiState.Success -> {
+                // Map db LevelProgress to path visual model to retain S-curve rendering
+                val levels = remember(state.levels) {
+                    state.levels.map { progress ->
+                        PathLevel(
+                            id = progress.id,
+                            index = progress.id - 1,
+                            type = try {
+                                LevelType.valueOf(progress.levelType.uppercase())
+                            } catch (e: Exception) {
+                                LevelType.LISTENING
+                            },
+                            title = progress.title,
+                            subtitle = progress.subtitle,
+                            status = when {
+                                progress.isCompleted -> LevelStatus.COMPLETED
+                                progress.isUnlocked -> LevelStatus.UNLOCKED
+                                else -> LevelStatus.LOCKED
+                            },
+                            xOffsetFactor = when (progress.id) {
+                                1 -> 0.0f
+                                2 -> 0.25f
+                                3 -> 0.38f
+                                4 -> 0.15f
+                                5 -> -0.2f
+                                else -> 0.0f
+                            }
+                        )
+                    }
+                }
 
-        // Popup Details Overlay when clicking an unlocked Node
-        AnimatedVisibility(
-            visible = selectedLevel != null,
-            enter = slideInVertically(initialOffsetY = { it / 2 }) + fadeIn(),
-            exit = slideOutVertically(targetOffsetY = { it / 2 }) + fadeOut(),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 24.dp)
-        ) {
-            selectedLevel?.let { level ->
-                LevelPopupDetails(
-                    level = level,
-                    cardColor = cardColor,
-                    emeraldAccent = emeraldAccent,
-                    onStart = {
-                        onNavigateToQuiz(level.id)
-                        selectedLevel = null
-                    },
-                    onClose = { selectedLevel = null }
-                )
+                var selectedLevel by remember { mutableStateOf<PathLevel?>(null) }
+
+                val completedLevels = remember(levels) { levels.count { it.status == LevelStatus.COMPLETED } }
+                val totalLevels = remember(levels) { levels.size }
+
+                // Unified scrollable measurements
+                val stepHeight = 156.dp
+                val topPadding = 60.dp
+                val bottomPadding = 140.dp
+                val totalHeight = topPadding + bottomPadding + (stepHeight * levels.size)
+
+                Column(modifier = Modifier.fillMaxSize()) {
+                    // Premium Header Section showing actual level progress and shortcuts
+                    HeaderPanel(
+                        completedCount = completedLevels,
+                        totalCount = totalLevels,
+                        onNavigateToDictionary = onNavigateToDictionary,
+                        onNavigateToAITutor = onNavigateToAITutor
+                    )
+
+                    // Scrollable Map Area where path lines, islands, and buttons scroll in perfect sync
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize()
+                    ) {
+                        val scrollState = rememberScrollState()
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(scrollState)
+                        ) {
+                            // Unified Sea Map Backdrop (archipelago landmasses, waves, and paths scrolling together)
+                            ConnectionLinesBackdrop(
+                                levels = levels,
+                                stepHeight = stepHeight,
+                                topPadding = topPadding,
+                                pathColor = emeraldAccent,
+                                dashedColor = Color.White.copy(alpha = 0.35f),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(totalHeight)
+                            )
+
+                            // Interactive Level Nodes placed at the exact same scrollable coordinates
+                            levels.forEach { item ->
+                                val yOffset = topPadding + (stepHeight * item.index)
+
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .offset(y = yOffset)
+                                ) {
+                                    LevelNodeItem(
+                                        level = item,
+                                        emeraldAccent = emeraldAccent,
+                                        skyAccent = skyAccent,
+                                        goldAccent = goldAccent,
+                                        isCurrentlyActive = (selectedLevel?.id == item.id),
+                                        onClick = {
+                                            if (item.status != LevelStatus.LOCKED) {
+                                                selectedLevel = if (selectedLevel?.id == item.id) null else item
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Popup Details Overlay when clicking an unlocked Node
+                AnimatedVisibility(
+                    visible = selectedLevel != null,
+                    enter = slideInVertically(initialOffsetY = { it / 2 }) + fadeIn(),
+                    exit = slideOutVertically(targetOffsetY = { it / 2 }) + fadeOut(),
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 24.dp)
+                ) {
+                    selectedLevel?.let { level ->
+                        LevelPopupDetails(
+                            level = level,
+                            cardColor = cardColor,
+                            emeraldAccent = emeraldAccent,
+                            onStart = {
+                                onNavigateToQuiz(level.id)
+                                selectedLevel = null
+                            },
+                            onClose = { selectedLevel = null }
+                        )
+                    }
+                }
             }
         }
     }

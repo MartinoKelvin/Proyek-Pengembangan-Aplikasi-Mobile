@@ -8,10 +8,17 @@ import com.example.cakapAi.data.local.datastore.UserPreferences
 import com.example.cakapAi.data.local.datastore.create
 import com.example.cakapAi.data.remote.api.GeminiService
 import com.example.cakapAi.data.repository.AIRepositoryImpl
+import com.example.cakapAi.data.repository.LearningRepositoryImpl
 import com.example.cakapAi.domain.repository.AIRepository
+import com.example.cakapAi.domain.repository.LearningRepository
+import com.example.cakapAi.presentation.screens.map.MapViewModel
+import com.example.cakapAi.presentation.screens.quiz.QuizViewModel
+import com.example.cakapAi.presentation.screens.result.ResultViewModel
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -43,6 +50,15 @@ val preferencesModule = module {
 
 val repositoryModule = module {
     singleOf(::AIRepositoryImpl) bind AIRepository::class
+    single<LearningRepository> { LearningRepositoryImpl(get()) }
+}
+
+// ==================== VIEWMODEL MODULE ====================
+
+val viewModelModule = module {
+    viewModelOf(::MapViewModel)
+    viewModel { (levelId: Int) -> QuizViewModel(levelId = levelId, repository = get()) }
+    viewModelOf(::ResultViewModel)
 }
 
 // ==================== SHARED MODULES ====================
@@ -51,7 +67,8 @@ val sharedModules = listOf(
     networkModule,
     databaseModule,
     preferencesModule,
-    repositoryModule
+    repositoryModule,
+    viewModelModule
 )
 
 // ==================== INIT FUNCTION ====================
