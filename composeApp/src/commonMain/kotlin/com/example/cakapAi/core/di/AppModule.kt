@@ -14,6 +14,9 @@ import com.example.cakapAi.domain.repository.LearningRepository
 import com.example.cakapAi.presentation.screens.map.MapViewModel
 import com.example.cakapAi.presentation.screens.quiz.QuizViewModel
 import com.example.cakapAi.presentation.screens.result.ResultViewModel
+import com.example.cakapAi.presentation.screens.dictionary.DictionaryViewModel
+import com.example.cakapAi.domain.repository.DictionaryRepository
+import com.example.cakapAi.data.repository.DictionaryRepositoryImpl
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -51,6 +54,7 @@ val preferencesModule = module {
 val repositoryModule = module {
     singleOf(::AIRepositoryImpl) bind AIRepository::class
     single<LearningRepository> { LearningRepositoryImpl(get()) }
+    single<DictionaryRepository> { DictionaryRepositoryImpl(get()) }
 }
 
 // ==================== VIEWMODEL MODULE ====================
@@ -59,6 +63,7 @@ val viewModelModule = module {
     viewModelOf(::MapViewModel)
     viewModel { (levelId: Int) -> QuizViewModel(levelId = levelId, repository = get()) }
     viewModelOf(::ResultViewModel)
+    viewModelOf(::DictionaryViewModel)
 }
 
 // ==================== SHARED MODULES ====================

@@ -46,3 +46,17 @@ fun OfflineVocabularyEntity.toDomain(): Vocabulary {
         example = example
     )
 }
+
+/**
+ * Extension function to map SavedVocabularyEntity (SQLDelight) to SavedVocab (Domain Model).
+ */
+fun SavedVocabularyEntity.toDomain(): com.example.cakapAi.domain.model.SavedVocab {
+    return com.example.cakapAi.domain.model.SavedVocab(
+        id = id.toInt(),
+        sourceLang = source_lang,
+        targetLang = target_lang,
+        sourceText = source_text,
+        translatedText = translated_text,
+        createdAt = created_at
+    )
+}
