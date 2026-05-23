@@ -40,7 +40,8 @@ Dokumen ini menjelaskan cara menggunakan Git untuk project ini, termasuk strateg
 └──────────────────────────────────────────────────────────────┘
 ```
 
-> **📝 Note untuk Kelompok:** 
+> **📝 Note untuk Kelompok:**
+>
 > - Cukup **1 orang yang fork** repository
 > - Anggota lain di-invite sebagai **collaborator** di Settings > Collaborators
 > - Semua anggota clone dari repository yang sudah di-fork
@@ -78,8 +79,9 @@ project/[Kelompok]-[NamaAplikasi]
 | 121140010, 121140011, 121140012 | Health Tracker | `project/121140010-121140011-121140012-HealthTracker` |
 
 ### Aturan Penamaan
+
 - Gunakan **NIM lengkap** semua anggota (tanpa spasi)
-- NIM dipisahkan dengan **dash (-)** 
+- NIM dipisahkan dengan **dash (-)**
 - NIM diurutkan dari **kecil ke besar**
 - Nama aplikasi menggunakan **PascalCase** (huruf besar di awal setiap kata)
 - **Tidak boleh** mengandung spasi atau karakter khusus selain dash
@@ -102,31 +104,31 @@ project/[Kelompok]-[NamaAplikasi]
 
 ```bash
 # Clone ke komputer lokal
-git clone https://github.com/USERNAME_ANDA/NoteAI-KMP.git
+git clone https://github.com/USERNAME_ANDA/cakapAi-KMP.git
 
 # Masuk ke folder
-cd NoteAI-KMP
+cd cakapAi-KMP
 
 # Cek remote
 git remote -v
 # Output:
-# origin  https://github.com/USERNAME_ANDA/NoteAI-KMP.git (fetch)
-# origin  https://github.com/USERNAME_ANDA/NoteAI-KMP.git (push)
+# origin  https://github.com/USERNAME_ANDA/cakapAi-KMP.git (fetch)
+# origin  https://github.com/USERNAME_ANDA/cakapAi-KMP.git (push)
 ```
 
 ### 3. Tambahkan Upstream Remote
 
 ```bash
 # Tambahkan remote ke repository template (untuk sync update)
-git remote add upstream https://github.com/DOSEN/NoteAI-KMP-Template.git
+git remote add upstream https://github.com/DOSEN/cakapAi-KMP-Template.git
 
 # Verifikasi
 git remote -v
 # Output:
-# origin    https://github.com/USERNAME_ANDA/NoteAI-KMP.git (fetch)
-# origin    https://github.com/USERNAME_ANDA/NoteAI-KMP.git (push)
-# upstream  https://github.com/DOSEN/NoteAI-KMP-Template.git (fetch)
-# upstream  https://github.com/DOSEN/NoteAI-KMP-Template.git (push)
+# origin    https://github.com/USERNAME_ANDA/cakapAi-KMP.git (fetch)
+# origin    https://github.com/USERNAME_ANDA/cakapAi-KMP.git (push)
+# upstream  https://github.com/DOSEN/cakapAi-KMP-Template.git (fetch)
+# upstream  https://github.com/DOSEN/cakapAi-KMP-Template.git (push)
 ```
 
 ### 4. Buat Branch Project
@@ -198,15 +200,15 @@ git push origin project/121140003-121140004-FitnessApp
 
 ### Types
 
-| Type | Kapan Digunakan | Contoh |
-|------|-----------------|--------|
-| `feat` | Menambah fitur baru | `feat: add search functionality` |
-| `fix` | Memperbaiki bug | `fix: resolve crash on empty list` |
-| `refactor` | Refactoring kode | `refactor: extract repository logic` |
-| `style` | Perubahan UI/styling | `style: update button colors` |
-| `docs` | Update dokumentasi | `docs: add API documentation` |
-| `test` | Menambah/update test | `test: add unit tests for ViewModel` |
-| `chore` | Maintenance | `chore: update dependencies` |
+| Type       | Kapan Digunakan      | Contoh                               |
+| ---------- | -------------------- | ------------------------------------ |
+| `feat`     | Menambah fitur baru  | `feat: add search functionality`     |
+| `fix`      | Memperbaiki bug      | `fix: resolve crash on empty list`   |
+| `refactor` | Refactoring kode     | `refactor: extract repository logic` |
+| `style`    | Perubahan UI/styling | `style: update button colors`        |
+| `docs`     | Update dokumentasi   | `docs: add API documentation`        |
+| `test`     | Menambah/update test | `test: add unit tests for ViewModel` |
+| `chore`    | Maintenance          | `chore: update dependencies`         |
 
 ### Contoh Commit Messages
 
@@ -259,6 +261,7 @@ refactor/[nama-refactor]
 ```
 
 Contoh:
+
 - `feature/dark-mode`
 - `feature/export-pdf`
 - `fix/login-crash`
@@ -296,6 +299,7 @@ git push origin project/121140001-TodoMaster
 ## ⚠️ Hal yang Harus Dihindari
 
 ### 1. JANGAN Push ke Main
+
 ```bash
 # ❌ JANGAN LAKUKAN INI
 git checkout main
@@ -311,6 +315,7 @@ git push origin project/121140001-TodoMaster
 ```
 
 ### 2. JANGAN Commit File Sensitif
+
 ```bash
 # File yang TIDAK BOLEH di-commit:
 local.properties          # API keys
@@ -320,6 +325,7 @@ google-services.json     # Firebase config
 ```
 
 ### 3. JANGAN Force Push
+
 ```bash
 # ❌ SANGAT BERBAHAYA
 git push --force
@@ -333,6 +339,7 @@ git push --force-with-lease
 ## 📊 Git History yang Baik
 
 ### Contoh History yang Baik
+
 ```
 * abc1234 feat: add AI summarize feature
 * def5678 test: add unit tests for AIRepository
@@ -345,6 +352,7 @@ git push --force-with-lease
 ```
 
 ### Contoh History yang Buruk
+
 ```
 * abc1234 fix
 * def5678 update
@@ -360,6 +368,7 @@ git push --force-with-lease
 ## 🛠️ Git Commands Cheat Sheet
 
 ### Basic Commands
+
 ```bash
 git status                  # Cek status
 git add .                   # Add semua perubahan
@@ -370,6 +379,7 @@ git pull                    # Pull dari remote
 ```
 
 ### Branch Commands
+
 ```bash
 git branch                  # List branches
 git branch -a               # List semua branches (termasuk remote)
@@ -379,6 +389,7 @@ git branch -d branch-name   # Hapus branch
 ```
 
 ### History Commands
+
 ```bash
 git log                     # Lihat history
 git log --oneline          # History ringkas
@@ -387,6 +398,7 @@ git diff                   # Lihat perubahan
 ```
 
 ### Undo Commands
+
 ```bash
 git checkout -- file.kt    # Undo perubahan file
 git reset HEAD file.kt     # Unstage file
@@ -410,6 +422,7 @@ git reset --hard HEAD~1    # Undo commit terakhir (discard changes)
 ## 🆘 Troubleshooting
 
 ### "Permission denied" saat push
+
 ```bash
 # Cek remote URL
 git remote -v
@@ -420,6 +433,7 @@ git remote set-url origin git@github.com:USERNAME/REPO.git
 ```
 
 ### Conflict saat merge
+
 ```bash
 # 1. Buka file yang conflict
 # 2. Cari marker conflict:
@@ -436,6 +450,7 @@ git commit -m "fix: resolve merge conflict"
 ```
 
 ### Lupa checkout branch
+
 ```bash
 # Jika sudah commit di branch yang salah:
 # 1. Catat commit hash
@@ -453,4 +468,4 @@ git cherry-pick <commit-hash>
 
 ---
 
-*Dokumen ini adalah bagian dari template project Pengembangan Aplikasi Mobile - ITERA*
+_Dokumen ini adalah bagian dari template project Pengembangan Aplikasi Mobile - ITERA_

@@ -1,0 +1,132 @@
+-- CakapAi Database Schema for SQLDelight
+-- File: CakapAi.sq
+
+-- 1. LevelProgressEntity: Menyimpan status kelulusan dan progres setiap level belajar
+CREATE TABLE LevelProgressEntity (
+    id INTEGER PRIMARY KEY NOT NULL, -- Level ID (1 sampai 5)
+    title TEXT NOT NULL,
+    subtitle TEXT NOT NULL,
+    level_type TEXT NOT NULL, -- LISTENING, SPEAKING, VIDEO, READING, GAMING
+    is_unlocked INTEGER NOT NULL DEFAULT 0, -- 0 = locked, 1 = unlocked
+    is_completed INTEGER NOT NULL DEFAULT 0, -- 0 = belum, 1 = selesai
+    high_score INTEGER NOT NULL DEFAULT 0,
+    updated_at INTEGER NOT NULL
+);
+
+-- 2. OfflineVocabularyEntity: Menyimpan kosa kata secara offline (Offline First)
+CREATE TABLE OfflineVocabularyEntity (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    level_id INTEGER NOT NULL,
+    word TEXT NOT NULL,
+    phonetic TEXT,
+    definition TEXT NOT NULL,
+    example TEXT
+);
+
+-- 3. QuizHistoryEntity: Menyimpan riwayat pengerjaan kuis
+CREATE TABLE QuizHistoryEntity (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    level_id INTEGER NOT NULL,
+    score INTEGER NOT NULL,
+    accuracy REAL NOT NULL,
+    completed_at INTEGER NOT NULL
+);
+
+-- ==========================================
+-- Queries for LevelProgressEntity
+-- ==========================================
+
+getAllLevels:
+SELECT * FROM LevelProgressEntity
+ORDER BY id ASC;
+
+getLevelById:
+SELECT * FROM LevelProgressEntity
+WHERE id = ?;
+
+updateLevelProgress:
+UPDATE LevelProgressEntity
+SET is_unlocked = ?, is_completed = ?, high_score = ?, updated_at = ?
+WHERE id = ?;
+
+unlockNextLevel:
+UPDATE LevelProgressEntity
+SET is_unlocked = 1
+WHERE id = ?;
+
+initLevels:
+INSERT OR IGNORE INTO LevelProgressEntity (id, title, subtitle, level_type, is_unlocked, is_completed, high_score, updated_at)
+VALUES 
+(1, 'Level 1 - Basic Greeting', 'Sapaan dasar dan perkenalan diri', 'LISTENING', 1, 0, 0, 0),
+(2, 'Level 2 - Daily Vocabulary', 'Kosakata sehari-hari yang sering digunakan', 'READING', 0, 0, 0, 0),
+(3, 'Level 3 - Simple Grammar', 'Struktur kalimat dan tata bahasa dasar', 'GAMING', 0, 0, 0, 0),
+(4, 'Level 4 - Conversation', 'Latihan percakapan interaktif pendek', 'SPEAKING', 0, 0, 0, 0),
+(5, 'Level 5 - Speaking Practice', 'Latihan pengucapan kata dan kalimat', 'VIDEO', 0, 0, 0, 0);
+
+
+-- ==========================================
+-- Queries for OfflineVocabularyEntity
+-- ==========================================
+
+getVocabsByLevel:
+SELECT * FROM OfflineVocabularyEntity
+WHERE level_id = ?;
+
+insertVocab:
+INSERT OR REPLACE INTO OfflineVocabularyEntity (level_id, word, phonetic, definition, example)
+VALUES (?, ?, ?, ?, ?);
+
+clearAllVocabs:
+DELETE FROM OfflineVocabularyEntity;
+
+
+-- ==========================================
+-- Queries for QuizHistoryEntity
+-- ==========================================
+
+getHistoryByLevel:
+SELECT * FROM QuizHistoryEntity
+WHERE level_id = ?
+ORDER BY completed_at DESC;
+
+getAllHistory:
+SELECT * FROM QuizHistoryEntity
+ORDER BY completed_at DESC;
+
+insertQuizHistory:
+INSERT INTO QuizHistoryEntity (level_id, score, accuracy, completed_at)
+VALUES (?, ?, ?, ?);
+
+clearHistory:
+DELETE FROM QuizHistoryEntity;
+
+
+-- ==========================================
+-- 4. SavedVocabularyEntity: Menyimpan kosa kata dari kamus/translator
+-- ==========================================
+CREATE TABLE SavedVocabularyEntity (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    source_lang TEXT NOT NULL,
+    target_lang TEXT NOT NULL,
+    source_text TEXT NOT NULL,
+    translated_text TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+);
+
+-- Queries for SavedVocabularyEntity
+getAllSavedVocabs:
+SELECT * FROM SavedVocabularyEntity
+ORDER BY created_at DESC;
+
+insertSavedVocab:
+INSERT OR REPLACE INTO SavedVocabularyEntity (source_lang, target_lang, source_text, translated_text, created_at)
+VALUES (?, ?, ?, ?, ?);
+
+deleteSavedVocab:
+DELETE FROM SavedVocabularyEntity
+WHERE id = ?;
+
+updateSavedVocab:
+UPDATE SavedVocabularyEntity
+SET source_text = ?, translated_text = ?
+WHERE id = ?;

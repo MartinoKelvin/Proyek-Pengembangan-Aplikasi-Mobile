@@ -122,7 +122,7 @@ interface TaskRepository {
 Buat screens sesuai kebutuhan aplikasi:
 
 ```
-SEBELUM (NoteAI):
+SEBELUM (cakapAi):
 ├── screens/
 │   ├── home/
 │   ├── addnote/
@@ -387,7 +387,7 @@ Sebelum mengubah template, pastikan:
 
 ## 🔍 Contoh Modifikasi yang Benar
 
-### Mengubah dari NoteAI ke TodoMaster
+### Mengubah dari cakapAi ke TodoMaster
 
 #### Step 1: Rename Package
 
