@@ -45,8 +45,8 @@ class DictionaryViewModel(
             
             geminiService.generateContent(prompt).onSuccess { result ->
                 _translationResult.value = result
-            }.onFailure { 
-                _translationResult.value = "Gagal menerjemahkan. Periksa koneksi internet Anda."
+            }.onFailure { e ->
+                _translationResult.value = "Gagal menerjemahkan: ${e.message ?: "Periksa koneksi internet Anda."}"
             }
             _isTranslating.value = false
         }
