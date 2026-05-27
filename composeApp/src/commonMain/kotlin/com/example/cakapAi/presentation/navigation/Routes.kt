@@ -26,6 +26,12 @@ sealed interface Route {
 
     @Serializable
     data object AITutor : Route
+
+    @Serializable
+    data object Profile : Route
+
+    @Serializable
+    data object Settings : Route
 }
 
 interface NavigationActions {
@@ -40,5 +46,7 @@ interface NavigationActions {
     )
     fun navigateToDictionary()
     fun navigateToAITutor()
+    fun navigateToProfile()
+    fun navigateToSettings()
     fun navigateBack()
 }

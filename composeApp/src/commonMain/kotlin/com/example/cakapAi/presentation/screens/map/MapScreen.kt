@@ -69,6 +69,7 @@ fun MapScreen(
     onNavigateToQuiz: (Int) -> Unit,
     onNavigateToDictionary: () -> Unit,
     onNavigateToAITutor: () -> Unit,
+    onNavigateToProfile: () -> Unit,
     viewModel: MapViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -218,7 +219,8 @@ fun MapScreen(
                         completedCount = completedLevels,
                         totalCount = totalLevels,
                         onNavigateToDictionary = onNavigateToDictionary,
-                        onNavigateToAITutor = onNavigateToAITutor
+                        onNavigateToAITutor = onNavigateToAITutor,
+                        onNavigateToProfile = onNavigateToProfile
                     )
 
                     // Scrollable Map Area where path lines, islands, and buttons scroll in perfect sync
@@ -305,7 +307,8 @@ fun HeaderPanel(
     completedCount: Int,
     totalCount: Int,
     onNavigateToDictionary: () -> Unit,
-    onNavigateToAITutor: () -> Unit
+    onNavigateToAITutor: () -> Unit,
+    onNavigateToProfile: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -397,6 +400,21 @@ fun HeaderPanel(
                     Icon(
                         imageVector = Icons.Default.Face,
                         contentDescription = "AI Tutor",
+                        tint = Color.White,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+
+                // Profile shortcut
+                IconButton(
+                    onClick = onNavigateToProfile,
+                    modifier = Modifier
+                        .size(38.dp)
+                        .background(Color(0xFF10B981), CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Profile",
                         tint = Color.White,
                         modifier = Modifier.size(18.dp)
                     )

@@ -33,6 +33,8 @@ import com.example.cakapAi.presentation.screens.map.MapScreen
 import com.example.cakapAi.presentation.screens.quiz.QuizScreen
 import com.example.cakapAi.presentation.screens.result.ResultScreen
 import com.example.cakapAi.presentation.screens.tutor.AITutorScreen
+import com.example.cakapAi.presentation.screens.profile.ProfileScreen
+import com.example.cakapAi.presentation.screens.settings.SettingsScreen
 
 @Composable
 fun AppNavHost(
@@ -65,6 +67,9 @@ fun AppNavHost(
                     },
                     onNavigateToAITutor = {
                         navigationActions.navigateToAITutor()
+                    },
+                    onNavigateToProfile = {
+                        navigationActions.navigateToProfile()
                     }
                 )
             }
@@ -119,6 +124,25 @@ fun AppNavHost(
                 AITutorScreen(
                     onNavigateBack = {
                         navigationActions.navigateToMap()
+                    }
+                )
+            }
+
+            composable<Route.Profile> {
+                ProfileScreen(
+                    onNavigateBack = {
+                        navigationActions.navigateBack()
+                    },
+                    onNavigateToSettings = {
+                        navigationActions.navigateToSettings()
+                    }
+                )
+            }
+
+            composable<Route.Settings> {
+                SettingsScreen(
+                    onNavigateBack = {
+                        navigationActions.navigateBack()
                     }
                 )
             }
@@ -382,6 +406,18 @@ private fun createNavigationActions(
                 }
                 launchSingleTop = true
                 restoreState = true
+            }
+        }
+
+        override fun navigateToProfile() {
+            navController.navigate(Route.Profile) {
+                launchSingleTop = true
+            }
+        }
+
+        override fun navigateToSettings() {
+            navController.navigate(Route.Settings) {
+                launchSingleTop = true
             }
         }
 
