@@ -63,4 +63,14 @@ class MapViewModel(
             }
         }
     }
+
+    fun savePracticeResult(levelId: Int, score: Int, isPassed: Boolean) {
+        viewModelScope.launch {
+            if (isPassed) {
+                repository.completeLevel(levelId.toLong(), score, 100.0)
+                repository.unlockNextLevel(levelId.toLong() + 1)
+            }
+            repository.insertQuizHistory(levelId.toLong(), score, 5, 100.0, isPassed)
+        }
+    }
 }

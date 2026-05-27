@@ -15,4 +15,7 @@ import org.koin.dsl.module
 val androidModule = module {
     single { DatabaseDriverFactory(androidContext()) }
     single { DataStoreFactory(androidContext()) }
+    single<com.example.cakapAi.core.speech.SpeechRecognizerController> { com.example.cakapAi.core.speech.AndroidSpeechRecognizerController(androidContext()) }
+    single<com.example.cakapAi.core.speech.TextToSpeechController> { com.example.cakapAi.core.speech.AndroidTextToSpeechController(androidContext()) }
+    single<com.example.cakapAi.core.speech.AudioFeedbackController> { com.example.cakapAi.core.speech.AndroidAudioFeedbackController(androidContext()) }
 }

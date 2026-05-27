@@ -15,9 +15,13 @@ import com.example.cakapAi.presentation.screens.map.MapViewModel
 import com.example.cakapAi.presentation.screens.quiz.QuizViewModel
 import com.example.cakapAi.presentation.screens.result.ResultViewModel
 import com.example.cakapAi.presentation.screens.dictionary.DictionaryViewModel
+import com.example.cakapAi.presentation.screens.tutor.AITutorViewModel
 import com.example.cakapAi.presentation.screens.settings.SettingsViewModel
 import com.example.cakapAi.domain.repository.DictionaryRepository
 import com.example.cakapAi.data.repository.DictionaryRepositoryImpl
+import com.example.cakapAi.domain.repository.PracticeRepository
+import com.example.cakapAi.data.repository.PracticeRepositoryImpl
+import com.example.cakapAi.presentation.screens.practice.PracticeViewModel
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -56,6 +60,7 @@ val repositoryModule = module {
     singleOf(::AIRepositoryImpl) bind AIRepository::class
     single<LearningRepository> { LearningRepositoryImpl(get()) }
     single<DictionaryRepository> { DictionaryRepositoryImpl(get()) }
+    single<PracticeRepository> { PracticeRepositoryImpl(geminiService = get()) }
 }
 
 // ==================== VIEWMODEL MODULE ====================
@@ -63,8 +68,20 @@ val repositoryModule = module {
 val viewModelModule = module {
     viewModelOf(::MapViewModel)
     viewModel { (levelId: Int) -> QuizViewModel(levelId = levelId, repository = get()) }
+    viewModel { (levelId: Int, levelTitle: String, levelType: String) ->
+        PracticeViewModel(
+            levelId = levelId,
+            levelTitle = levelTitle,
+            levelType = levelType,
+            repository = get(),
+            speechRecognizerController = get(),
+            textToSpeechController = get(),
+            audioFeedbackController = get()
+        )
+    }
     viewModelOf(::ResultViewModel)
-    viewModelOf(::DictionaryViewModel)
+    viewModel { DictionaryViewModel(repository = get(), geminiService = get()) }
+    viewModel { AITutorViewModel(geminiService = get()) }
     viewModelOf(::SettingsViewModel)
 }
 

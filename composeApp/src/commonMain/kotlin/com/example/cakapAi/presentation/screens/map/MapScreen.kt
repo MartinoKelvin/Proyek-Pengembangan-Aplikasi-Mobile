@@ -36,6 +36,8 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlin.math.sin
 import org.koin.compose.viewmodel.koinViewModel
+import com.example.cakapAi.presentation.screens.map.components.LevelPracticeDetailSheet
+import com.example.cakapAi.presentation.screens.practice.PracticeSessionOverlay
 
 /**
  * Data class representing a Level Step in the Learning Path Map.
@@ -47,7 +49,8 @@ data class PathLevel(
     val title: String,
     val subtitle: String,
     val status: LevelStatus,
-    val xOffsetFactor: Float // S-curve sine-offset (-0.4f to 0.4f)
+    val xOffsetFactor: Float, // S-curve sine-offset (-0.4f to 0.4f)
+    val highScore: Int = 0
 )
 
 enum class LevelType {
@@ -208,12 +211,15 @@ fun MapScreen(
                                 4 -> 0.15f
                                 5 -> -0.2f
                                 else -> 0.0f
-                            }
+                            },
+                            highScore = progress.highScore
                         )
                     }
                 }
 
                 var selectedLevel by remember { mutableStateOf<PathLevel?>(null) }
+                var selectedPracticeLevel by remember { mutableStateOf<PathLevel?>(null) }
+                var isPracticeSessionOpen by remember { mutableStateOf(false) }
 
                 val completedLevels = remember(levels) { levels.count { it.status == LevelStatus.COMPLETED } }
                 val totalLevels = remember(levels) { levels.size }
@@ -285,26 +291,33 @@ fun MapScreen(
                 }
 
                 // Popup Details Overlay when clicking an unlocked Node
-                AnimatedVisibility(
-                    visible = selectedLevel != null,
-                    enter = slideInVertically(initialOffsetY = { it / 2 }) + fadeIn(),
-                    exit = slideOutVertically(targetOffsetY = { it / 2 }) + fadeOut(),
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = 24.dp)
-                ) {
-                    selectedLevel?.let { level ->
-                        LevelPopupDetails(
-                            level = level,
-                            cardColor = cardColor,
-                            emeraldAccent = emeraldAccent,
-                            onStart = {
-                                onNavigateToQuiz(level.id)
-                                selectedLevel = null
-                            },
-                            onClose = { selectedLevel = null }
-                        )
-                    }
+                if (selectedLevel != null) {
+                    LevelPracticeDetailSheet(
+                        level = selectedLevel!!,
+                        onDismiss = { selectedLevel = null },
+                        onStartPractice = {
+                            selectedPracticeLevel = selectedLevel
+                            isPracticeSessionOpen = true
+                            selectedLevel = null
+                        }
+                    )
+                }
+
+                if (isPracticeSessionOpen && selectedPracticeLevel != null) {
+                    PracticeSessionOverlay(
+                        level = selectedPracticeLevel!!,
+                        onClose = {
+                            isPracticeSessionOpen = false
+                            selectedPracticeLevel = null
+                        },
+                        onCompleted = { isSuccess, score ->
+                            isPracticeSessionOpen = false
+                            if (selectedPracticeLevel != null) {
+                                viewModel.savePracticeResult(selectedPracticeLevel!!.id, score, isSuccess)
+                            }
+                            selectedPracticeLevel = null
+                        }
+                    )
                 }
             }
         }

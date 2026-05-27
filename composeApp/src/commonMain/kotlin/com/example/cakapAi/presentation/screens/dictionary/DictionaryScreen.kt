@@ -45,8 +45,15 @@ fun DictionaryScreen(
 
     val scrollState = rememberScrollState()
 
-    // Placeholder logic for translation
-    val translatedText = if (sourceText.isNotBlank()) "Terjemahan: $sourceText" else ""
+    val translationResult by viewModel.translationResult.collectAsStateWithLifecycle()
+    val isTranslating by viewModel.isTranslating.collectAsStateWithLifecycle()
+
+    LaunchedEffect(sourceText, sourceLang, targetLang) {
+        if (sourceText.isNotBlank()) {
+            kotlinx.coroutines.delay(800) // Debounce
+            viewModel.translate(sourceLang, targetLang, sourceText)
+        }
+    }
 
     val isLight = MaterialTheme.colorScheme.background.red > 0.5f
     val backgroundColor = if (isLight) Color(0xFFF0F4F8) else Color(0xFF071224)
@@ -214,7 +221,7 @@ fun DictionaryScreen(
             }
 
             // Output Card (translation result)
-            if (translatedText.isNotEmpty()) {
+            if (translationResult.isNotEmpty() || isTranslating) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = outputCardColor),
@@ -239,12 +246,14 @@ fun DictionaryScreen(
                             )
                             IconButton(
                                 onClick = {
-                                    viewModel.addVocab(
-                                        sourceLang = sourceLang,
-                                        targetLang = targetLang,
-                                        sourceText = sourceText,
-                                        translatedText = translatedText
-                                    )
+                                    if (translationResult.isNotEmpty()) {
+                                        viewModel.addVocab(
+                                            sourceLang = sourceLang,
+                                            targetLang = targetLang,
+                                            sourceText = sourceText,
+                                            translatedText = translationResult
+                                        )
+                                    }
                                 }
                             ) {
                                 Icon(
@@ -254,11 +263,19 @@ fun DictionaryScreen(
                                 )
                             }
                         }
-                        Text(
-                            text = translatedText,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = textPrimary
-                        )
+                        if (isTranslating) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp).align(Alignment.CenterHorizontally),
+                                color = emeraldAccent,
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Text(
+                                text = translationResult,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = textPrimary
+                            )
+                        }
                     }
                 }
             }

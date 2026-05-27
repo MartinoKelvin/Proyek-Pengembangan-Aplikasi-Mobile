@@ -23,11 +23,8 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-data class ChatMessage(
-    val isUser: Boolean,
-    val text: String,
-    val isFeedback: Boolean = false
-)
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * Premium AI Tutor conversational learning screen with dynamic support for Light and Dark modes.
@@ -35,7 +32,8 @@ data class ChatMessage(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AITutorScreen(
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    viewModel: AITutorViewModel = koinViewModel()
 ) {
     val isLight = MaterialTheme.colorScheme.background.red > 0.5f
     val backgroundColor = if (isLight) Color(0xFFF0F4F8) else Color(0xFF071224)
@@ -49,17 +47,9 @@ fun AITutorScreen(
     val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer else Color(0xFF0A1B35)
 
     var inputText by remember { mutableStateOf("") }
-    var isAITyping by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
     
-    val chatHistory = remember {
-        mutableStateListOf(
-            ChatMessage(
-                isUser = false, 
-                text = "Halo! Aku AI Tutor kamu. Coba ketik kalimat dalam bahasa Inggris dan aku akan memberikan feedback mengenai grammar-mu!"
-            )
-        )
-    }
+    val chatHistory by viewModel.chatHistory.collectAsStateWithLifecycle()
+    val isAITyping by viewModel.isAITyping.collectAsStateWithLifecycle()
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -168,22 +158,8 @@ fun AITutorScreen(
                     IconButton(
                         onClick = {
                             if (inputText.isNotBlank() && !isAITyping) {
-                                val textToSend = inputText
-                                chatHistory.add(ChatMessage(isUser = true, text = textToSend))
+                                viewModel.sendMessage(inputText)
                                 inputText = ""
-                                isAITyping = true
-                                
-                                coroutineScope.launch {
-                                    delay(2000)
-                                    isAITyping = false
-                                    chatHistory.add(
-                                        ChatMessage(
-                                            isUser = false, 
-                                            text = "Feedback untuk: \"$textToSend\"\n\nGrammar kamu sudah lumayan bagus! Namun akan lebih natural jika dikatakan seperti ini:\n\n\"(Koreksi yang disarankan AI)\"",
-                                            isFeedback = true
-                                        )
-                                    )
-                                }
                             }
                         },
                         modifier = Modifier
