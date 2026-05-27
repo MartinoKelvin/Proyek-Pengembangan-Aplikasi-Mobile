@@ -1,22 +1,9 @@
 package com.example.cakapAi.presentation.screens.tutor
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -24,32 +11,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -59,15 +29,24 @@ data class ChatMessage(
     val isFeedback: Boolean = false
 )
 
+/**
+ * Premium AI Tutor conversational learning screen with dynamic support for Light and Dark modes.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AITutorScreen(
     onNavigateBack: () -> Unit
 ) {
-    val backgroundColor = Color(0xFF071224)
-    val cardColor = Color(0xFF0F1A30).copy(alpha = 0.95f)
-    val emeraldAccent = Color(0xFF10B981)
-    val skyAccent = Color(0xFF0EA5E9)
+    val isLight = MaterialTheme.colorScheme.background.red > 0.5f
+    val backgroundColor = if (isLight) Color(0xFFF0F4F8) else Color(0xFF071224)
+    val cardColor = if (isLight) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.95f) else Color(0xFF0F1A30).copy(alpha = 0.95f)
+    val emeraldAccent = MaterialTheme.colorScheme.primary
+    val skyAccent = MaterialTheme.colorScheme.secondary
+
+    val textPrimary = if (isLight) MaterialTheme.colorScheme.onBackground else Color.White
+    val textSecondary = if (isLight) MaterialTheme.colorScheme.onSurfaceVariant else Color.LightGray
+    val borderStrokeColor = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.12f) else Color.White.copy(alpha = 0.08f)
+    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer else Color(0xFF0A1B35)
 
     var inputText by remember { mutableStateOf("") }
     var isAITyping by remember { mutableStateOf(false) }
@@ -88,27 +67,27 @@ fun AITutorScreen(
             TopAppBar(
                 title = { 
                     Text(
-                        "AI Tutor", 
-                        color = Color.White,
+                        text = "AI Tutor", 
+                        color = textPrimary,
                         fontWeight = FontWeight.Bold
                     ) 
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Kembali", tint = Color.White)
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Kembali", tint = textPrimary)
                     }
                 },
                 windowInsets = WindowInsets(top = 0.dp),
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
+                    titleContentColor = textPrimary,
+                    navigationIconContentColor = textPrimary
                 )
             )
         },
         modifier = Modifier.background(
             Brush.verticalGradient(
-                colors = listOf(Color(0xFF0A1B35), backgroundColor)
+                colors = listOf(gradientStart, backgroundColor)
             )
         )
     ) { paddingValues ->
@@ -127,7 +106,6 @@ fun AITutorScreen(
                 reverseLayout = false
             ) {
                 item {
-                    // Spacer at top
                     Box(modifier = Modifier.padding(top = 8.dp))
                 }
                 
@@ -150,7 +128,6 @@ fun AITutorScreen(
                 }
                 
                 item {
-                    // Spacer at bottom
                     Box(modifier = Modifier.padding(bottom = 8.dp))
                 }
             }
@@ -162,7 +139,7 @@ fun AITutorScreen(
                     .padding(16.dp),
                 colors = CardDefaults.cardColors(containerColor = cardColor),
                 shape = RoundedCornerShape(24.dp),
-                border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))
+                border = BorderStroke(1.dp, borderStrokeColor)
             ) {
                 Row(
                     modifier = Modifier
@@ -174,7 +151,7 @@ fun AITutorScreen(
                         value = inputText,
                         onValueChange = { inputText = it },
                         modifier = Modifier.weight(1f),
-                        placeholder = { Text("Ketik pesan...", color = Color.Gray) },
+                        placeholder = { Text("Ketik pesan...", color = if (isLight) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f) else Color.Gray) },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
@@ -182,8 +159,8 @@ fun AITutorScreen(
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
                             disabledIndicatorColor = Color.Transparent,
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White
+                            focusedTextColor = textPrimary,
+                            unfocusedTextColor = textPrimary
                         ),
                         maxLines = 3
                     )
@@ -197,9 +174,8 @@ fun AITutorScreen(
                                 isAITyping = true
                                 
                                 coroutineScope.launch {
-                                    delay(2000) // Simulasi AI sedang berpikir
+                                    delay(2000)
                                     isAITyping = false
-                                    // Mock AI response
                                     chatHistory.add(
                                         ChatMessage(
                                             isUser = false, 
@@ -212,7 +188,7 @@ fun AITutorScreen(
                         },
                         modifier = Modifier
                             .padding(end = 4.dp)
-                            .background(if (inputText.isNotBlank()) emeraldAccent else Color.Gray, CircleShape)
+                            .background(if (inputText.isNotBlank()) emeraldAccent else if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.2f) else Color.Gray, CircleShape)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Send,
@@ -234,13 +210,24 @@ fun ChatBubble(
     cardColor: Color
 ) {
     val isUser = message.isUser
+    val isLight = MaterialTheme.colorScheme.background.red > 0.5f
+    val textPrimary = if (isLight) MaterialTheme.colorScheme.onBackground else Color.White
     
     // Bubble alignment
     val alignment = if (isUser) Alignment.CenterEnd else Alignment.CenterStart
     
     // Bubble colors
-    val bubbleColor = if (isUser) skyAccent.copy(alpha = 0.2f) else cardColor
-    val borderColor = if (isUser) skyAccent.copy(alpha = 0.5f) else Color.White.copy(alpha = 0.08f)
+    val bubbleColor = if (isUser) {
+        if (isLight) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f) else skyAccent.copy(alpha = 0.2f)
+    } else {
+        cardColor
+    }
+    
+    val borderColor = if (isUser) {
+        if (isLight) MaterialTheme.colorScheme.primary.copy(alpha = 0.4f) else skyAccent.copy(alpha = 0.5f)
+    } else {
+        if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.12f) else Color.White.copy(alpha = 0.08f)
+    }
     
     // Bubble shape
     val shape = if (isUser) {
@@ -283,7 +270,7 @@ fun ChatBubble(
                 Text(
                     text = message.text,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White
+                    color = textPrimary
                 )
             }
         }
@@ -295,6 +282,9 @@ fun TypingIndicatorBubble(
     cardColor: Color,
     skyAccent: Color
 ) {
+    val isLight = MaterialTheme.colorScheme.background.red > 0.5f
+    val borderStrokeColor = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.12f) else Color.White.copy(alpha = 0.08f)
+
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.CenterStart
@@ -302,7 +292,7 @@ fun TypingIndicatorBubble(
         Card(
             shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 4.dp, bottomEnd = 16.dp),
             colors = CardDefaults.cardColors(containerColor = cardColor),
-            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f)),
+            border = BorderStroke(1.dp, borderStrokeColor),
             modifier = Modifier.widthIn(max = 280.dp)
         ) {
             Column(
@@ -323,6 +313,9 @@ fun TypingIndicatorBubble(
 
 @Composable
 fun TypingIndicator() {
+    val isLight = MaterialTheme.colorScheme.background.red > 0.5f
+    val dotColor = if (isLight) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f) else Color.White.copy(alpha = 0.6f)
+
     val circles = listOf(
         remember { Animatable(initialValue = 0f) },
         remember { Animatable(initialValue = 0f) },
@@ -352,7 +345,7 @@ fun TypingIndicator() {
                 modifier = Modifier
                     .offset(y = (-8 * animatable.value).dp)
                     .size(8.dp)
-                    .background(Color.White.copy(alpha = 0.6f), CircleShape)
+                    .background(dotColor, CircleShape)
             )
         }
     }

@@ -15,6 +15,7 @@ import com.example.cakapAi.presentation.screens.map.MapViewModel
 import com.example.cakapAi.presentation.screens.quiz.QuizViewModel
 import com.example.cakapAi.presentation.screens.result.ResultViewModel
 import com.example.cakapAi.presentation.screens.dictionary.DictionaryViewModel
+import com.example.cakapAi.presentation.screens.settings.SettingsViewModel
 import com.example.cakapAi.domain.repository.DictionaryRepository
 import com.example.cakapAi.data.repository.DictionaryRepositoryImpl
 import org.koin.core.context.startKoin
@@ -64,6 +65,7 @@ val viewModelModule = module {
     viewModel { (levelId: Int) -> QuizViewModel(levelId = levelId, repository = get()) }
     viewModelOf(::ResultViewModel)
     viewModelOf(::DictionaryViewModel)
+    viewModelOf(::SettingsViewModel)
 }
 
 // ==================== SHARED MODULES ====================

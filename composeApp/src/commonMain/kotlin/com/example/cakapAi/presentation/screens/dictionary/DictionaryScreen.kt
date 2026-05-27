@@ -2,49 +2,14 @@ package com.example.cakapAi.presentation.screens.dictionary
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.BookmarkBorder
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.SwapHoriz
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -52,10 +17,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cakapAi.domain.model.SavedVocab
 import org.koin.compose.viewmodel.koinViewModel
 
+/**
+ * Premium Vocabulary & Translator screen with dynamic support for Light and Dark modes.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DictionaryScreen(
@@ -79,11 +48,19 @@ fun DictionaryScreen(
     // Placeholder logic for translation
     val translatedText = if (sourceText.isNotBlank()) "Terjemahan: $sourceText" else ""
 
-    // Map & Quiz color palette
-    val backgroundColor = Color(0xFF071224)
-    val cardColor = Color(0xFF0F1A30).copy(alpha = 0.95f)
-    val emeraldAccent = Color(0xFF10B981)
-    val skyAccent = Color(0xFF0EA5E9)
+    val isLight = MaterialTheme.colorScheme.background.red > 0.5f
+    val backgroundColor = if (isLight) Color(0xFFF0F4F8) else Color(0xFF071224)
+    val cardColor = if (isLight) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.95f) else Color(0xFF0F1A30).copy(alpha = 0.95f)
+    val emeraldAccent = MaterialTheme.colorScheme.primary
+    val skyAccent = MaterialTheme.colorScheme.secondary
+
+    val textPrimary = if (isLight) MaterialTheme.colorScheme.onBackground else Color.White
+    val textSecondary = if (isLight) MaterialTheme.colorScheme.onSurfaceVariant else Color.LightGray
+    val textSecondaryColor = if (isLight) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f) else Color.Gray
+    val borderStrokeColor = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.12f) else Color.White.copy(alpha = 0.08f)
+    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer else Color(0xFF0A1B35)
+    val outputCardColor = if (isLight) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f) else Color(0xFF1E293B).copy(alpha = 0.8f)
+    val textFieldContainer = if (isLight) MaterialTheme.colorScheme.surfaceVariant else Color(0xFF1E293B)
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -91,21 +68,21 @@ fun DictionaryScreen(
             TopAppBar(
                 title = { 
                     Text(
-                        "Translator", 
-                        color = Color.White,
+                        text = "Translator & Kamus", 
+                        color = textPrimary,
                         fontWeight = FontWeight.Bold
                     ) 
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Kembali", tint = Color.White)
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Kembali", tint = textPrimary)
                     }
                 },
                 windowInsets = WindowInsets(top = 0.dp),
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
+                    titleContentColor = textPrimary,
+                    navigationIconContentColor = textPrimary
                 )
             )
         },
@@ -125,7 +102,7 @@ fun DictionaryScreen(
         },
         modifier = Modifier.background(
             Brush.verticalGradient(
-                colors = listOf(Color(0xFF0A1B35), backgroundColor)
+                colors = listOf(gradientStart, backgroundColor)
             )
         )
     ) { paddingValues ->
@@ -142,7 +119,7 @@ fun DictionaryScreen(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = cardColor),
                 shape = RoundedCornerShape(12.dp),
-                border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))
+                border = BorderStroke(1.dp, borderStrokeColor)
             ) {
                 Row(
                     modifier = Modifier
@@ -164,13 +141,13 @@ fun DictionaryScreen(
                             val temp = sourceLang
                             sourceLang = targetLang
                             targetLang = temp
-                            sourceText = "" // clear text when swapping languages
+                            sourceText = ""
                         }
                     ) {
                         Icon(
                             imageVector = Icons.Default.SwapHoriz,
                             contentDescription = "Swap Languages",
-                            tint = Color.White.copy(alpha = 0.7f)
+                            tint = textSecondary
                         )
                     }
 
@@ -190,7 +167,7 @@ fun DictionaryScreen(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = cardColor),
                 shape = RoundedCornerShape(12.dp),
-                border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))
+                border = BorderStroke(1.dp, borderStrokeColor)
             ) {
                 Column(
                     modifier = Modifier
@@ -203,7 +180,7 @@ fun DictionaryScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f, fill = false),
-                        placeholder = { Text("Masukkan teks", color = Color.Gray) },
+                        placeholder = { Text("Masukkan teks", color = textSecondaryColor) },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
@@ -211,8 +188,8 @@ fun DictionaryScreen(
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
                             disabledIndicatorColor = Color.Transparent,
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White
+                            focusedTextColor = textPrimary,
+                            unfocusedTextColor = textPrimary
                         ),
                         textStyle = MaterialTheme.typography.bodyLarge
                     )
@@ -228,7 +205,7 @@ fun DictionaryScreen(
                                 Icon(
                                     imageVector = Icons.Default.Clear,
                                     contentDescription = "Hapus teks",
-                                    tint = Color.White.copy(alpha = 0.5f)
+                                    tint = textSecondary
                                 )
                             }
                         }
@@ -240,7 +217,7 @@ fun DictionaryScreen(
             if (translatedText.isNotEmpty()) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF1E293B).copy(alpha = 0.8f)), // Slight variation for output
+                    colors = CardDefaults.cardColors(containerColor = outputCardColor),
                     shape = RoundedCornerShape(12.dp),
                     border = BorderStroke(1.dp, emeraldAccent.copy(alpha = 0.3f))
                 ) {
@@ -280,7 +257,7 @@ fun DictionaryScreen(
                         Text(
                             text = translatedText,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = Color.White
+                            color = textPrimary
                         )
                     }
                 }
@@ -296,7 +273,7 @@ fun DictionaryScreen(
                 Text(
                     text = "Kosakata Tersimpan",
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.White,
+                    color = textPrimary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
                 )
@@ -305,22 +282,22 @@ fun DictionaryScreen(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
                     modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                    placeholder = { Text("Cari kosakata...", color = Color.Gray) },
+                    placeholder = { Text("Cari kosakata...", color = textSecondaryColor) },
                     leadingIcon = {
-                        Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.Gray)
+                        Icon(Icons.Default.Search, contentDescription = "Search", tint = textSecondaryColor)
                     },
                     trailingIcon = {
                         if (searchQuery.isNotEmpty()) {
                             IconButton(onClick = { searchQuery = "" }) {
-                                Icon(Icons.Default.Clear, contentDescription = "Clear", tint = Color.Gray)
+                                Icon(Icons.Default.Clear, contentDescription = "Clear", tint = textSecondaryColor)
                             }
                         }
                     },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = cardColor,
                         unfocusedContainerColor = cardColor,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
+                        focusedTextColor = textPrimary,
+                        unfocusedTextColor = textPrimary,
                         focusedIndicatorColor = emeraldAccent,
                         unfocusedIndicatorColor = Color.Transparent,
                         cursorColor = emeraldAccent
@@ -332,7 +309,7 @@ fun DictionaryScreen(
                 if (filteredVocabs.isEmpty()) {
                     Text(
                         text = "Tidak ada kosakata yang cocok.",
-                        color = Color.Gray,
+                        color = textSecondaryColor,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(vertical = 16.dp).fillMaxWidth(),
                         textAlign = TextAlign.Center
@@ -340,57 +317,57 @@ fun DictionaryScreen(
                 } else {
                     filteredVocabs.forEach { vocab ->
                         Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = cardColor),
-                        shape = RoundedCornerShape(12.dp),
-                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = cardColor),
+                            shape = RoundedCornerShape(12.dp),
+                            border = BorderStroke(1.dp, borderStrokeColor)
                         ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = vocab.sourceText,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                                Text(
-                                    text = vocab.translatedText,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = emeraldAccent,
-                                    modifier = Modifier.padding(top = 4.dp)
-                                )
-                                Text(
-                                    text = "${vocab.sourceLang} → ${vocab.targetLang}",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = Color.Gray,
-                                    modifier = Modifier.padding(top = 4.dp)
-                                )
-                            }
-                            Row {
-                                IconButton(onClick = {
-                                    editingVocab = vocab
-                                    editSourceText = vocab.sourceText
-                                    editTranslatedText = vocab.translatedText
-                                    showDialog = true
-                                }) {
-                                    Icon(Icons.Default.Edit, contentDescription = "Edit", tint = skyAccent)
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = vocab.sourceText,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = textPrimary,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                    Text(
+                                        text = vocab.translatedText,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = emeraldAccent,
+                                        modifier = Modifier.padding(top = 4.dp)
+                                    )
+                                    Text(
+                                        text = "${vocab.sourceLang} → ${vocab.targetLang}",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = textSecondaryColor,
+                                        modifier = Modifier.padding(top = 4.dp)
+                                    )
                                 }
-                                IconButton(onClick = {
-                                    viewModel.deleteVocab(vocab)
-                                }) {
-                                    Icon(Icons.Default.Delete, contentDescription = "Hapus", tint = Color(0xFFEF4444))
+                                Row {
+                                    IconButton(onClick = {
+                                        editingVocab = vocab
+                                        editSourceText = vocab.sourceText
+                                        editTranslatedText = vocab.translatedText
+                                        showDialog = true
+                                    }) {
+                                        Icon(Icons.Default.Edit, contentDescription = "Edit", tint = skyAccent)
+                                    }
+                                    IconButton(onClick = {
+                                        viewModel.deleteVocab(vocab)
+                                    }) {
+                                        Icon(Icons.Default.Delete, contentDescription = "Hapus", tint = Color(0xFFEF4444))
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
             }
             
             // Add padding to ensure content isn't hidden behind FAB
@@ -401,8 +378,8 @@ fun DictionaryScreen(
             AlertDialog(
                 onDismissRequest = { showDialog = false },
                 containerColor = cardColor,
-                titleContentColor = Color.White,
-                textContentColor = Color.White,
+                titleContentColor = textPrimary,
+                textContentColor = textPrimary,
                 title = {
                     Text(text = if (editingVocab == null) "Tambah Kosakata" else "Edit Kosakata")
                 },
@@ -413,14 +390,14 @@ fun DictionaryScreen(
                             onValueChange = { editSourceText = it },
                             label = { Text("Bahasa Inggris") },
                             colors = TextFieldDefaults.colors(
-                                focusedContainerColor = Color(0xFF1E293B),
-                                unfocusedContainerColor = Color(0xFF1E293B),
-                                focusedTextColor = Color.White,
-                                unfocusedTextColor = Color.White,
+                                focusedContainerColor = textFieldContainer,
+                                unfocusedContainerColor = textFieldContainer,
+                                focusedTextColor = textPrimary,
+                                unfocusedTextColor = textPrimary,
                                 focusedIndicatorColor = emeraldAccent,
                                 unfocusedIndicatorColor = emeraldAccent.copy(alpha = 0.5f),
                                 focusedLabelColor = emeraldAccent,
-                                unfocusedLabelColor = Color.Gray,
+                                unfocusedLabelColor = textSecondaryColor,
                                 cursorColor = emeraldAccent
                             )
                         )
@@ -429,14 +406,14 @@ fun DictionaryScreen(
                             onValueChange = { editTranslatedText = it },
                             label = { Text("Terjemahan") },
                             colors = TextFieldDefaults.colors(
-                                focusedContainerColor = Color(0xFF1E293B),
-                                unfocusedContainerColor = Color(0xFF1E293B),
-                                focusedTextColor = Color.White,
-                                unfocusedTextColor = Color.White,
+                                focusedContainerColor = textFieldContainer,
+                                unfocusedContainerColor = textFieldContainer,
+                                focusedTextColor = textPrimary,
+                                unfocusedTextColor = textPrimary,
                                 focusedIndicatorColor = emeraldAccent,
                                 unfocusedIndicatorColor = emeraldAccent.copy(alpha = 0.5f),
                                 focusedLabelColor = emeraldAccent,
-                                unfocusedLabelColor = Color.Gray,
+                                unfocusedLabelColor = textSecondaryColor,
                                 cursorColor = emeraldAccent
                             )
                         )
@@ -470,10 +447,10 @@ fun DictionaryScreen(
                 },
                 dismissButton = {
                     TextButton(onClick = { showDialog = false }) {
-                        Text("Batal", color = Color.Gray)
+                        Text("Batal", color = textSecondaryColor)
                     }
                 }
             )
         }
     }
-}
+}

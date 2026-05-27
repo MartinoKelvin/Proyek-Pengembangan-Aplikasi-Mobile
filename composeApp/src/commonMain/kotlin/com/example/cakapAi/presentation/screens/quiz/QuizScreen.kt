@@ -53,12 +53,19 @@ fun QuizScreen(
     // Smooth question transition state
     var triggerQuestionTransition by remember { mutableStateOf(true) }
 
-    // Color definitions matching the deep ocean theme
-    val backgroundColor = Color(0xFF071224)
-    val cardColor = Color(0xFF0F1A30).copy(alpha = 0.9f)
-    val emeraldAccent = Color(0xFF10B981)
-    val skyAccent = Color(0xFF0EA5E9)
-    val redAccent = Color(0xFFEF4444)
+    // Color definitions matching the deep ocean theme (fully dynamic)
+    val isLight = MaterialTheme.colorScheme.background.red > 0.5f
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val cardColor = MaterialTheme.colorScheme.surface
+    val emeraldAccent = MaterialTheme.colorScheme.primary
+    val skyAccent = MaterialTheme.colorScheme.secondary
+    val redAccent = MaterialTheme.colorScheme.error
+
+    // Dynamic theme-based text and border colors to support Light Mode perfectly
+    val textPrimary = MaterialTheme.colorScheme.onBackground
+    val textSecondary = MaterialTheme.colorScheme.onSurfaceVariant
+    val borderStrokeColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
+    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) else Color(0xFF0B172E)
 
     var showExitDialog by remember { mutableStateOf(false) }
 
@@ -84,7 +91,7 @@ fun QuizScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color(0xFF0B172E), backgroundColor)
+                    colors = listOf(gradientStart, backgroundColor)
                 )
             )
     ) {
@@ -113,7 +120,7 @@ fun QuizScreen(
                             .padding(16.dp),
                         colors = CardDefaults.cardColors(containerColor = cardColor),
                         shape = RoundedCornerShape(20.dp),
-                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.1f))
+                        border = BorderStroke(1.dp, borderStrokeColor)
                     ) {
                         Column(
                             modifier = Modifier.padding(24.dp),
@@ -128,14 +135,14 @@ fun QuizScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
                                 text = "Gagal Memuat Kuis",
-                                color = Color.White,
+                                color = textPrimary,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 text = state.message,
-                                color = Color.White.copy(alpha = 0.7f),
+                                color = textSecondary,
                                 fontSize = 14.sp,
                                 textAlign = TextAlign.Center
                             )
@@ -158,8 +165,8 @@ fun QuizScreen(
                                 .fillMaxWidth()
                                 .padding(16.dp),
                             shape = RoundedCornerShape(24.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFF0F172A)),
-                            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))
+                            colors = CardDefaults.cardColors(containerColor = cardColor),
+                            border = BorderStroke(1.dp, borderStrokeColor)
                         ) {
                             Column(
                                 modifier = Modifier.padding(24.dp),
@@ -174,7 +181,7 @@ fun QuizScreen(
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
                                     text = "Keluar Kuis?",
-                                    color = Color.White,
+                                    color = textPrimary,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 18.sp,
                                     textAlign = TextAlign.Center
@@ -182,7 +189,7 @@ fun QuizScreen(
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
                                     text = "Progres kuis Anda saat ini akan hilang.",
-                                    color = Color.LightGray,
+                                    color = textSecondary,
                                     fontSize = 14.sp,
                                     textAlign = TextAlign.Center
                                 )
@@ -193,8 +200,8 @@ fun QuizScreen(
                                 ) {
                                     OutlinedButton(
                                         onClick = { showExitDialog = false },
-                                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
-                                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.12f)),
+                                        colors = ButtonDefaults.outlinedButtonColors(contentColor = textPrimary),
+                                        border = BorderStroke(1.dp, borderStrokeColor),
                                         shape = RoundedCornerShape(12.dp),
                                         modifier = Modifier.weight(1f)
                                     ) {
@@ -235,12 +242,12 @@ fun QuizScreen(
                             onClick = { showExitDialog = true },
                             modifier = Modifier
                                 .size(36.dp)
-                                .background(Color.White.copy(alpha = 0.06f), CircleShape)
+                                .background(if (isLight) MaterialTheme.colorScheme.surfaceVariant else Color.White.copy(alpha = 0.06f), CircleShape)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = "Keluar",
-                                tint = Color.White,
+                                tint = if (isLight) MaterialTheme.colorScheme.onBackground else Color.White,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -256,7 +263,7 @@ fun QuizScreen(
                         LinearProgressIndicator(
                             progress = { animatedProgress },
                             color = emeraldAccent,
-                            trackColor = Color.White.copy(alpha = 0.08f),
+                            trackColor = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.2f) else Color.White.copy(alpha = 0.08f),
                             modifier = Modifier
                                 .weight(1f)
                                 .height(10.dp)
@@ -343,13 +350,13 @@ fun QuizScreen(
                                             .shadow(8.dp, RoundedCornerShape(20.dp)),
                                         colors = CardDefaults.cardColors(containerColor = cardColor),
                                         shape = RoundedCornerShape(20.dp),
-                                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))
+                                        border = BorderStroke(1.dp, borderStrokeColor)
                                     ) {
                                         Text(
                                             text = currentQuestion.prompt,
                                             style = MaterialTheme.typography.titleLarge,
                                             fontWeight = FontWeight.ExtraBold,
-                                            color = Color.White,
+                                            color = textPrimary,
                                             lineHeight = 28.sp,
                                             modifier = Modifier.padding(24.dp)
                                         )
@@ -376,7 +383,7 @@ fun QuizScreen(
                                         isAnswerChecked && isSelected && !isCorrectAnswer -> redAccent
                                         isAnswerChecked && !isSelected && isCorrectAnswer -> emeraldAccent
                                         isSelected -> skyAccent
-                                        else -> Color.White.copy(alpha = 0.08f)
+                                        else -> borderStrokeColor
                                     }
 
                                     val cardBgColor = when {
@@ -384,7 +391,7 @@ fun QuizScreen(
                                         isAnswerChecked && isSelected && !isCorrectAnswer -> redAccent.copy(alpha = 0.12f)
                                         isAnswerChecked && !isSelected && isCorrectAnswer -> emeraldAccent.copy(alpha = 0.06f)
                                         isSelected -> skyAccent.copy(alpha = 0.08f)
-                                        else -> Color(0xFF0F1A30).copy(alpha = 0.5f)
+                                        else -> MaterialTheme.colorScheme.surface
                                     }
 
                                     val letterBgColor = when {
@@ -392,13 +399,13 @@ fun QuizScreen(
                                         isAnswerChecked && isSelected && !isCorrectAnswer -> redAccent
                                         isAnswerChecked && !isSelected && isCorrectAnswer -> emeraldAccent
                                         isSelected -> skyAccent
-                                        else -> Color.White.copy(alpha = 0.06f)
+                                        else -> MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
                                     }
 
                                     val letterTextColor = when {
                                         isAnswerChecked && isSelected -> Color.White
                                         isSelected -> Color.White
-                                        else -> Color.LightGray
+                                        else -> textSecondary
                                     }
 
                                     // Tactile option row
@@ -430,7 +437,7 @@ fun QuizScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color(0xFF0B1220))
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
                             .padding(horizontal = 24.dp, vertical = 20.dp)
                     ) {
                         if (!isAnswerChecked) {
@@ -442,7 +449,7 @@ fun QuizScreen(
                                 enabled = selectedAnswer != null,
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = emeraldAccent,
-                                    disabledContainerColor = Color.White.copy(alpha = 0.06f)
+                                    disabledContainerColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
                                 ),
                                 shape = RoundedCornerShape(16.dp),
                                 modifier = Modifier
@@ -453,7 +460,7 @@ fun QuizScreen(
                                     text = "PERIKSA JAWABAN",
                                     fontWeight = FontWeight.ExtraBold,
                                     fontSize = 14.sp,
-                                    color = if (selectedAnswer != null) Color(0xFF030712) else Color.Gray
+                                    color = if (selectedAnswer != null) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                                 )
                             }
                         } else {
@@ -499,7 +506,7 @@ fun QuizScreen(
                                 ) {
                                     Text(
                                         text = "LANJUT",
-                                        color = Color(0xFF030712),
+                                        color = MaterialTheme.colorScheme.onPrimary,
                                         fontWeight = FontWeight.ExtraBold,
                                         fontSize = 14.sp
                                     )
@@ -594,37 +601,37 @@ fun OptionTactileRow(
             // Main choice text
             Text(
                 text = text,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.weight(1f)
             )
 
             // Right checkmark or cross icon when checked
-            if (isAnswerChecked) {
+             if (isAnswerChecked) {
                 if (isSelected && isCorrect) {
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = "Benar",
-                        tint = Color(0xFF10B981),
-                        modifier = Modifier.size(22.dp)
-                    )
+                     Icon(
+                         imageVector = Icons.Default.CheckCircle,
+                         contentDescription = "Benar",
+                         tint = MaterialTheme.colorScheme.primary,
+                         modifier = Modifier.size(22.dp)
+                     )
                 } else if (isSelected && !isCorrect) {
-                    Icon(
-                        imageVector = Icons.Default.Cancel,
-                        contentDescription = "Salah",
-                        tint = Color(0xFFEF4444),
-                        modifier = Modifier.size(22.dp)
-                    )
+                     Icon(
+                         imageVector = Icons.Default.Cancel,
+                         contentDescription = "Salah",
+                         tint = MaterialTheme.colorScheme.error,
+                         modifier = Modifier.size(22.dp)
+                     )
                 } else if (!isSelected && isCorrect) {
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = "Benar",
-                        tint = Color(0xFF10B981).copy(alpha = 0.5f),
-                        modifier = Modifier.size(22.dp)
-                    )
+                     Icon(
+                         imageVector = Icons.Default.CheckCircle,
+                         contentDescription = "Benar",
+                         tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                         modifier = Modifier.size(22.dp)
+                     )
                 }
-            }
+             }
         }
     }
 }

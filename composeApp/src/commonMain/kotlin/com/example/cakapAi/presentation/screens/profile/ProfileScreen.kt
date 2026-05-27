@@ -22,6 +22,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * Premium learning profile screen with dynamic support for Light and Dark Theme modes.
+ */
 @Composable
 fun ProfileScreen(
     onNavigateBack: () -> Unit,
@@ -34,17 +37,24 @@ fun ProfileScreen(
     val totalLevel = 5
     val xp = 250
 
-    val backgroundColor = Color(0xFF071224)
-    val cardColor = Color(0xFF0F1A30)
-    val emeraldAccent = Color(0xFF10B981)
-    val skyAccent = Color(0xFF0EA5E9)
+    val isLight = MaterialTheme.colorScheme.background.red > 0.5f
+    val backgroundColor = if (isLight) Color(0xFFF0F4F8) else Color(0xFF071224)
+    val cardColor = if (isLight) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f) else Color(0xFF0F1A30)
+    val emeraldAccent = MaterialTheme.colorScheme.primary
+    val skyAccent = MaterialTheme.colorScheme.secondary
+
+    val textPrimary = if (isLight) MaterialTheme.colorScheme.onBackground else Color.White
+    val textSecondary = if (isLight) MaterialTheme.colorScheme.onSurfaceVariant else Color.LightGray
+    val borderStrokeColor = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.12f) else Color.White.copy(alpha = 0.1f)
+    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer else Color(0xFF0A1B35)
+    val progressTrack = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.2f) else Color(0xFF1E293B)
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color(0xFF0A1B35), backgroundColor)
+                    colors = listOf(gradientStart, backgroundColor)
                 )
             )
             .systemBarsPadding()
@@ -61,11 +71,24 @@ fun ProfileScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onNavigateBack) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = textPrimary
+                    )
                 }
-                Text("Profile", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                Text(
+                    text = "Profil Pengguna",
+                    color = textPrimary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
                 IconButton(onClick = onNavigateToSettings) {
-                    Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color.White)
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings",
+                        tint = textPrimary
+                    )
                 }
             }
 
@@ -97,13 +120,13 @@ fun ProfileScreen(
                 // Name and Email
                 Text(
                     text = userName,
-                    color = Color.White,
+                    color = textPrimary,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = email,
-                    color = Color.LightGray,
+                    color = textSecondary,
                     fontSize = 14.sp
                 )
 
@@ -114,7 +137,7 @@ fun ProfileScreen(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = cardColor),
                     shape = RoundedCornerShape(20.dp),
-                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.1f))
+                    border = BorderStroke(1.dp, borderStrokeColor)
                 ) {
                     Column(
                         modifier = Modifier.padding(20.dp),
@@ -122,7 +145,7 @@ fun ProfileScreen(
                     ) {
                         Text(
                             text = "Statistik Belajar",
-                            color = Color.White,
+                            color = textPrimary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
@@ -142,8 +165,8 @@ fun ProfileScreen(
                                 Icon(Icons.Default.Star, contentDescription = "Level", tint = skyAccent)
                             }
                             Column {
-                                Text(text = "Level Saat Ini", color = Color.LightGray, fontSize = 12.sp)
-                                Text(text = currentLevel, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                Text(text = "Level Saat Ini", color = textSecondary, fontSize = 12.sp)
+                                Text(text = currentLevel, color = textPrimary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                             }
                         }
 
@@ -162,16 +185,16 @@ fun ProfileScreen(
                                 Icon(Icons.Default.CheckCircle, contentDescription = "Progress", tint = emeraldAccent)
                             }
                             Column(modifier = Modifier.weight(1f)) {
-                                Text(text = "Progress Level", color = Color.LightGray, fontSize = 12.sp)
+                                Text(text = "Progress Level", color = textSecondary, fontSize = 12.sp)
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                     LinearProgressIndicator(
                                         progress = { completedLevel.toFloat() / totalLevel },
                                         modifier = Modifier.weight(1f).height(6.dp).clip(RoundedCornerShape(3.dp)),
                                         color = emeraldAccent,
-                                        trackColor = Color(0xFF1E293B)
+                                        trackColor = progressTrack
                                     )
-                                    Text(text = "$completedLevel/$totalLevel", color = Color.White, fontSize = 12.sp)
+                                    Text(text = "$completedLevel/$totalLevel", color = textPrimary, fontSize = 12.sp)
                                 }
                             }
                         }
@@ -191,8 +214,8 @@ fun ProfileScreen(
                                 Text("XP", color = Color(0xFFF59E0B), fontWeight = FontWeight.Bold)
                             }
                             Column {
-                                Text(text = "Total XP", color = Color.LightGray, fontSize = 12.sp)
-                                Text(text = "$xp XP", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                Text(text = "Total XP", color = textSecondary, fontSize = 12.sp)
+                                Text(text = "$xp XP", color = textPrimary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                             }
                         }
                     }
