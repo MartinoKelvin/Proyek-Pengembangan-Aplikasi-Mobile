@@ -14,7 +14,7 @@ actual class DatabaseDriverFactory {
     actual fun createDriver(): SqlDriver {
         return NativeSqliteDriver(
             schema = NoteDatabase.Schema,
-            name = "cakapAi.db"
+            name = "cakapAi_v2.db"
         )
     }
 }

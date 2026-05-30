@@ -9,62 +9,74 @@ import androidx.compose.ui.graphics.Color
 
 // ==================== COLORS ====================
 
-private val Primary = Color(0xFF6750A4)
+// Brand Primary (Hijau/Emerald premium)
+private val PrimaryEmerald = Color(0xFF10B981)
 private val OnPrimary = Color(0xFFFFFFFF)
-private val PrimaryContainer = Color(0xFFEADDFF)
-private val OnPrimaryContainer = Color(0xFF21005D)
 
-private val Secondary = Color(0xFF625B71)
+// Primary Container for Light vs Dark
+private val PrimaryContainerLight = Color(0xFFD1FAE5) // Soft mint green
+private val OnPrimaryContainerLight = Color(0xFF064E3B)
+
+private val PrimaryContainerDark = Color(0xFF064E3B) // Dark forest green
+private val OnPrimaryContainerDark = Color(0xFFD1FAE5)
+
+// Secondary (Biru/Sky premium)
+private val SecondarySky = Color(0xFF38BDF8)
 private val OnSecondary = Color(0xFFFFFFFF)
-private val SecondaryContainer = Color(0xFFE8DEF8)
-private val OnSecondaryContainer = Color(0xFF1D192B)
 
-private val Tertiary = Color(0xFF7D5260)
+private val SecondaryContainerLight = Color(0xFFE0F2FE)
+private val OnSecondaryContainerLight = Color(0xFF0369A1)
+
+private val SecondaryContainerDark = Color(0xFF0369A1)
+private val OnSecondaryContainerDark = Color(0xFFE0F2FE)
+
+// Tertiary (Neutral Slate / Dark Accents)
+private val TertiarySlate = Color(0xFF0EA5E9) // Sky Blue as Tertiary
 private val OnTertiary = Color(0xFFFFFFFF)
-private val TertiaryContainer = Color(0xFFFFD8E4)
-private val OnTertiaryContainer = Color(0xFF31111D)
 
-private val Error = Color(0xFFB3261E)
+// Errors
+private val ErrorColor = Color(0xFFEF4444)
 private val OnError = Color(0xFFFFFFFF)
-private val ErrorContainer = Color(0xFFF9DEDC)
-private val OnErrorContainer = Color(0xFF410E0B)
+private val ErrorContainerLight = Color(0xFFFEE2E2)
+private val OnErrorContainerLight = Color(0xFF991B1B)
+private val ErrorContainerDark = Color(0xFF991B1B)
+private val OnErrorContainerDark = Color(0xFFFEE2E2)
 
-private val BackgroundLight = Color(0xFFFFFBFE)
-private val OnBackgroundLight = Color(0xFF1C1B1F)
-private val SurfaceLight = Color(0xFFFFFBFE)
-private val OnSurfaceLight = Color(0xFF1C1B1F)
-private val SurfaceVariantLight = Color(0xFFE7E0EC)
-private val OnSurfaceVariantLight = Color(0xFF49454F)
+// Light Theme Background & Surface
+private val BackgroundLight = Color(0xFFF8FAFC) // Very soft light slate
+private val OnBackgroundLight = Color(0xFF0F172A) // Dark slate text
+private val SurfaceLight = Color(0xFFFFFFFF) // Pure white cards
+private val OnSurfaceLight = Color(0xFF0F172A)
+private val SurfaceVariantLight = Color(0xFFF1F5F9) // Extra soft cards
+private val OnSurfaceVariantLight = Color(0xFF475569) // Muted slate text
+private val OutlineLight = Color(0xFFCBD5E1)
 
-private val BackgroundDark = Color(0xFF1C1B1F)
-private val OnBackgroundDark = Color(0xFFE6E1E5)
-private val SurfaceDark = Color(0xFF1C1B1F)
-private val OnSurfaceDark = Color(0xFFE6E1E5)
-private val SurfaceVariantDark = Color(0xFF49454F)
+// Dark Theme Background & Surface (Desain awal gelap laut dalam khas CakapAI)
+private val BackgroundDark = Color(0xFF071224)
+private val OnBackgroundDark = Color(0xFFFFFFFF)
+private val SurfaceDark = Color(0xFF0F1A30) // Surface/card tetap gelap
+private val OnSurfaceDark = Color(0xFFFFFFFF)
+private val SurfaceVariantDark = Color(0xFF1E293B)
 private val OnSurfaceVariantDark = Color(0xFFCAC4D0)
-
-private val OutlineLight = Color(0xFF79747E)
-private val OutlineDark = Color(0xFF938F99)
+private val OutlineDark = Color(0xFF475569)
 
 // ==================== COLOR SCHEMES ====================
 
 private val LightColorScheme = lightColorScheme(
-    primary = Primary,
+    primary = PrimaryEmerald,
     onPrimary = OnPrimary,
-    primaryContainer = PrimaryContainer,
-    onPrimaryContainer = OnPrimaryContainer,
-    secondary = Secondary,
+    primaryContainer = PrimaryContainerLight,
+    onPrimaryContainer = OnPrimaryContainerLight,
+    secondary = SecondarySky,
     onSecondary = OnSecondary,
-    secondaryContainer = SecondaryContainer,
-    onSecondaryContainer = OnSecondaryContainer,
-    tertiary = Tertiary,
+    secondaryContainer = SecondaryContainerLight,
+    onSecondaryContainer = OnSecondaryContainerLight,
+    tertiary = TertiarySlate,
     onTertiary = OnTertiary,
-    tertiaryContainer = TertiaryContainer,
-    onTertiaryContainer = OnTertiaryContainer,
-    error = Error,
+    error = ErrorColor,
     onError = OnError,
-    errorContainer = ErrorContainer,
-    onErrorContainer = OnErrorContainer,
+    errorContainer = ErrorContainerLight,
+    onErrorContainer = OnErrorContainerLight,
     background = BackgroundLight,
     onBackground = OnBackgroundLight,
     surface = SurfaceLight,
@@ -75,22 +87,20 @@ private val LightColorScheme = lightColorScheme(
 )
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFFD0BCFF),
-    onPrimary = Color(0xFF381E72),
-    primaryContainer = Color(0xFF4F378B),
-    onPrimaryContainer = Color(0xFFEADDFF),
-    secondary = Color(0xFFCCC2DC),
-    onSecondary = Color(0xFF332D41),
-    secondaryContainer = Color(0xFF4A4458),
-    onSecondaryContainer = Color(0xFFE8DEF8),
-    tertiary = Color(0xFFEFB8C8),
-    onTertiary = Color(0xFF492532),
-    tertiaryContainer = Color(0xFF633B48),
-    onTertiaryContainer = Color(0xFFFFD8E4),
-    error = Color(0xFFF2B8B5),
-    onError = Color(0xFF601410),
-    errorContainer = Color(0xFF8C1D18),
-    onErrorContainer = Color(0xFFF9DEDC),
+    primary = PrimaryEmerald,
+    onPrimary = OnPrimary,
+    primaryContainer = PrimaryContainerDark,
+    onPrimaryContainer = OnPrimaryContainerDark,
+    secondary = SecondarySky,
+    onSecondary = OnSecondary,
+    secondaryContainer = SecondaryContainerDark,
+    onSecondaryContainer = OnSecondaryContainerDark,
+    tertiary = TertiarySlate,
+    onTertiary = OnTertiary,
+    error = ErrorColor,
+    onError = OnError,
+    errorContainer = ErrorContainerDark,
+    onErrorContainer = OnErrorContainerDark,
     background = BackgroundDark,
     onBackground = OnBackgroundDark,
     surface = SurfaceDark,

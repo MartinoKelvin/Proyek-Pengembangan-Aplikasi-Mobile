@@ -30,9 +30,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.cakapAi.presentation.screens.dictionary.DictionaryScreen
 import com.example.cakapAi.presentation.screens.map.MapScreen
+import com.example.cakapAi.presentation.screens.splash.SplashScreen
 import com.example.cakapAi.presentation.screens.quiz.QuizScreen
 import com.example.cakapAi.presentation.screens.result.ResultScreen
 import com.example.cakapAi.presentation.screens.tutor.AITutorScreen
+import com.example.cakapAi.presentation.screens.profile.ProfileScreen
+import com.example.cakapAi.presentation.screens.settings.SettingsScreen
 
 @Composable
 fun AppNavHost(
@@ -52,9 +55,21 @@ fun AppNavHost(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Route.Map,
+            startDestination = Route.Splash,
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable<Route.Splash> {
+                SplashScreen(
+                    onNavigateToHome = {
+                        navController.navigate(Route.Map) {
+                            popUpTo(Route.Splash) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+            }
+
             composable<Route.Map> {
                 MapScreen(
                     onNavigateToQuiz = { levelId ->
@@ -65,6 +80,9 @@ fun AppNavHost(
                     },
                     onNavigateToAITutor = {
                         navigationActions.navigateToAITutor()
+                    },
+                    onNavigateToProfile = {
+                        navigationActions.navigateToProfile()
                     }
                 )
             }
@@ -122,6 +140,25 @@ fun AppNavHost(
                     }
                 )
             }
+
+            composable<Route.Profile> {
+                ProfileScreen(
+                    onNavigateBack = {
+                        navigationActions.navigateBack()
+                    },
+                    onNavigateToSettings = {
+                        navigationActions.navigateToSettings()
+                    }
+                )
+            }
+
+            composable<Route.Settings> {
+                SettingsScreen(
+                    onNavigateBack = {
+                        navigationActions.navigateBack()
+                    }
+                )
+            }
         }
     }
 }
@@ -134,26 +171,25 @@ private fun BottomNavigationBar(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    // Dynamic active accent glowing color based on the selected screen
-    val activeColor = when {
-        currentDestination.isMapSelected() -> Color(0xFF0EA5E9)       // Sky Blue Map
-        currentDestination.isQuizSelected() -> Color(0xFFFBBF24)      // Gold Quiz
-        currentDestination.isDictionarySelected() -> Color(0xFF10B981)  // Emerald Dictionary
-        currentDestination.isAITutorSelected() -> Color(0xFF8B5CF6)     // Purple AI Tutor
-        else -> Color.White
-    }
+    if (currentDestination?.hasRoute<Route.Splash>() == true) return
+
+    val selectedColor = MaterialTheme.colorScheme.primary
+    val unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
+    val indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+    val containerColor = MaterialTheme.colorScheme.surface
+    val outlineColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFF0F1A30))
+            .background(containerColor)
     ) {
         HorizontalDivider(
-            color = Color.White.copy(alpha = 0.08f),
+            color = outlineColor,
             thickness = 1.dp
         )
         NavigationBar(
-            containerColor = Color(0xFF0F1A30),
+            containerColor = containerColor,
             tonalElevation = 0.dp,
             modifier = Modifier
                 .fillMaxWidth()
@@ -179,7 +215,7 @@ private fun BottomNavigationBar(
                                 scaleX = mapScale
                                 scaleY = mapScale
                             },
-                        tint = if (isMapActive) Color(0xFF0EA5E9) else Color(0xFF64748B)
+                        tint = if (isMapActive) selectedColor else unselectedColor
                     )
                 },
                 label = {
@@ -187,11 +223,11 @@ private fun BottomNavigationBar(
                         text = "Peta",
                         fontWeight = if (isMapActive) FontWeight.ExtraBold else FontWeight.Medium,
                         fontSize = 11.sp,
-                        color = if (isMapActive) Color(0xFF0EA5E9) else Color(0xFF64748B)
+                        color = if (isMapActive) selectedColor else unselectedColor
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color(0xFF0EA5E9).copy(alpha = 0.12f)
+                    indicatorColor = indicatorColor
                 )
             )
 
@@ -214,7 +250,7 @@ private fun BottomNavigationBar(
                                 scaleX = quizScale
                                 scaleY = quizScale
                             },
-                        tint = if (isQuizActive) Color(0xFFFBBF24) else Color(0xFF64748B)
+                        tint = if (isQuizActive) selectedColor else unselectedColor
                     )
                 },
                 label = {
@@ -222,11 +258,11 @@ private fun BottomNavigationBar(
                         text = "Kuis",
                         fontWeight = if (isQuizActive) FontWeight.ExtraBold else FontWeight.Medium,
                         fontSize = 11.sp,
-                        color = if (isQuizActive) Color(0xFFFBBF24) else Color(0xFF64748B)
+                        color = if (isQuizActive) selectedColor else unselectedColor
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color(0xFFFBBF24).copy(alpha = 0.12f)
+                    indicatorColor = indicatorColor
                 )
             )
 
@@ -249,7 +285,7 @@ private fun BottomNavigationBar(
                                 scaleX = dictScale
                                 scaleY = dictScale
                             },
-                        tint = if (isDictActive) Color(0xFF10B981) else Color(0xFF64748B)
+                        tint = if (isDictActive) selectedColor else unselectedColor
                     )
                 },
                 label = {
@@ -257,11 +293,11 @@ private fun BottomNavigationBar(
                         text = "Kamus",
                         fontWeight = if (isDictActive) FontWeight.ExtraBold else FontWeight.Medium,
                         fontSize = 11.sp,
-                        color = if (isDictActive) Color(0xFF10B981) else Color(0xFF64748B)
+                        color = if (isDictActive) selectedColor else unselectedColor
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color(0xFF10B981).copy(alpha = 0.12f)
+                    indicatorColor = indicatorColor
                 )
             )
 
@@ -284,7 +320,7 @@ private fun BottomNavigationBar(
                                 scaleX = tutorScale
                                 scaleY = tutorScale
                             },
-                        tint = if (isTutorActive) Color(0xFF8B5CF6) else Color(0xFF64748B)
+                        tint = if (isTutorActive) selectedColor else unselectedColor
                     )
                 },
                 label = {
@@ -292,11 +328,11 @@ private fun BottomNavigationBar(
                         text = "AI Tutor",
                         fontWeight = if (isTutorActive) FontWeight.ExtraBold else FontWeight.Medium,
                         fontSize = 11.sp,
-                        color = if (isTutorActive) Color(0xFF8B5CF6) else Color(0xFF64748B)
+                        color = if (isTutorActive) selectedColor else unselectedColor
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color(0xFF8B5CF6).copy(alpha = 0.12f)
+                    indicatorColor = indicatorColor
                 )
             )
         }
@@ -382,6 +418,18 @@ private fun createNavigationActions(
                 }
                 launchSingleTop = true
                 restoreState = true
+            }
+        }
+
+        override fun navigateToProfile() {
+            navController.navigate(Route.Profile) {
+                launchSingleTop = true
+            }
+        }
+
+        override fun navigateToSettings() {
+            navController.navigate(Route.Settings) {
+                launchSingleTop = true
             }
         }
 

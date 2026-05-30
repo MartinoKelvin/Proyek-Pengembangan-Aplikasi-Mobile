@@ -36,6 +36,8 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlin.math.sin
 import org.koin.compose.viewmodel.koinViewModel
+import com.example.cakapAi.presentation.screens.map.components.LevelPracticeDetailSheet
+import com.example.cakapAi.presentation.screens.practice.PracticeSessionOverlay
 
 /**
  * Data class representing a Level Step in the Learning Path Map.
@@ -47,7 +49,8 @@ data class PathLevel(
     val title: String,
     val subtitle: String,
     val status: LevelStatus,
-    val xOffsetFactor: Float // S-curve sine-offset (-0.4f to 0.4f)
+    val xOffsetFactor: Float, // S-curve sine-offset (-0.4f to 0.4f)
+    val highScore: Int = 0
 )
 
 enum class LevelType {
@@ -69,22 +72,34 @@ fun MapScreen(
     onNavigateToQuiz: (Int) -> Unit,
     onNavigateToDictionary: () -> Unit,
     onNavigateToAITutor: () -> Unit,
+    onNavigateToProfile: () -> Unit,
     viewModel: MapViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    val backgroundColor = Color(0xFF071224) // Deep navy ocean
-    val cardColor = Color(0xFF0F1A30).copy(alpha = 0.95f)
-    val emeraldAccent = Color(0xFF10B981)
-    val skyAccent = Color(0xFF0EA5E9)
+    val isLight = MaterialTheme.colorScheme.background.red > 0.5f
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val cardColor = MaterialTheme.colorScheme.surface
+    val emeraldAccent = MaterialTheme.colorScheme.primary
+    val skyAccent = MaterialTheme.colorScheme.secondary
     val goldAccent = Color(0xFFF59E0B)
+
+    // Dynamic theme-based text and border colors to support Light Mode perfectly
+    val textPrimary = MaterialTheme.colorScheme.onBackground
+    val textSecondary = MaterialTheme.colorScheme.onSurfaceVariant
+    val textTertiary = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+    val borderStrokeColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
+    val borderStrokeColorAlpha08 = MaterialTheme.colorScheme.outline.copy(alpha = 0.08f)
+    val borderStrokeColorAlpha12 = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
+
+    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) else Color(0xFF0A1B35)
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color(0xFF0A1B35), backgroundColor)
+                    colors = listOf(gradientStart, backgroundColor)
                 )
             )
     ) {
@@ -196,12 +211,15 @@ fun MapScreen(
                                 4 -> 0.15f
                                 5 -> -0.2f
                                 else -> 0.0f
-                            }
+                            },
+                            highScore = progress.highScore
                         )
                     }
                 }
 
                 var selectedLevel by remember { mutableStateOf<PathLevel?>(null) }
+                var selectedPracticeLevel by remember { mutableStateOf<PathLevel?>(null) }
+                var isPracticeSessionOpen by remember { mutableStateOf(false) }
 
                 val completedLevels = remember(levels) { levels.count { it.status == LevelStatus.COMPLETED } }
                 val totalLevels = remember(levels) { levels.size }
@@ -217,8 +235,7 @@ fun MapScreen(
                     HeaderPanel(
                         completedCount = completedLevels,
                         totalCount = totalLevels,
-                        onNavigateToDictionary = onNavigateToDictionary,
-                        onNavigateToAITutor = onNavigateToAITutor
+                        onNavigateToProfile = onNavigateToProfile
                     )
 
                     // Scrollable Map Area where path lines, islands, and buttons scroll in perfect sync
@@ -274,26 +291,33 @@ fun MapScreen(
                 }
 
                 // Popup Details Overlay when clicking an unlocked Node
-                AnimatedVisibility(
-                    visible = selectedLevel != null,
-                    enter = slideInVertically(initialOffsetY = { it / 2 }) + fadeIn(),
-                    exit = slideOutVertically(targetOffsetY = { it / 2 }) + fadeOut(),
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = 24.dp)
-                ) {
-                    selectedLevel?.let { level ->
-                        LevelPopupDetails(
-                            level = level,
-                            cardColor = cardColor,
-                            emeraldAccent = emeraldAccent,
-                            onStart = {
-                                onNavigateToQuiz(level.id)
-                                selectedLevel = null
-                            },
-                            onClose = { selectedLevel = null }
-                        )
-                    }
+                if (selectedLevel != null) {
+                    LevelPracticeDetailSheet(
+                        level = selectedLevel!!,
+                        onDismiss = { selectedLevel = null },
+                        onStartPractice = {
+                            selectedPracticeLevel = selectedLevel
+                            isPracticeSessionOpen = true
+                            selectedLevel = null
+                        }
+                    )
+                }
+
+                if (isPracticeSessionOpen && selectedPracticeLevel != null) {
+                    PracticeSessionOverlay(
+                        level = selectedPracticeLevel!!,
+                        onClose = {
+                            isPracticeSessionOpen = false
+                            selectedPracticeLevel = null
+                        },
+                        onCompleted = { isSuccess, score ->
+                            isPracticeSessionOpen = false
+                            if (selectedPracticeLevel != null) {
+                                viewModel.savePracticeResult(selectedPracticeLevel!!.id, score, isSuccess)
+                            }
+                            selectedPracticeLevel = null
+                        }
+                    )
                 }
             }
         }
@@ -304,16 +328,24 @@ fun MapScreen(
 fun HeaderPanel(
     completedCount: Int,
     totalCount: Int,
-    onNavigateToDictionary: () -> Unit,
-    onNavigateToAITutor: () -> Unit
+    onNavigateToProfile: () -> Unit
 ) {
+    val isLight = MaterialTheme.colorScheme.background.red > 0.5f
+    val cardColor = MaterialTheme.colorScheme.surface
+    val textPrimary = MaterialTheme.colorScheme.onBackground
+    val textSecondary = MaterialTheme.colorScheme.onSurfaceVariant
+    val borderStrokeColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
+    val buttonBackground = MaterialTheme.colorScheme.surfaceVariant
+    val buttonIconTint = MaterialTheme.colorScheme.onSurfaceVariant
+    val progressTrack = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .shadow(12.dp, RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF0F1520).copy(alpha = 0.95f)),
+        colors = CardDefaults.cardColors(containerColor = cardColor),
         shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp),
-        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))
+        border = BorderStroke(1.dp, borderStrokeColor)
     ) {
         Row(
             modifier = Modifier
@@ -327,14 +359,14 @@ fun HeaderPanel(
                 Text(
                     text = "CAKAPAI",
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color(0xFF10B981),
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 2.sp
                 )
                 Text(
                     text = "Peta Perjalanan Belajar",
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.White,
+                    color = textPrimary,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 18.sp
                 )
@@ -349,8 +381,8 @@ fun HeaderPanel(
                     val progressValue = completedCount.toFloat() / totalCount.toFloat()
                     LinearProgressIndicator(
                         progress = { progressValue },
-                        color = Color(0xFF10B981),
-                        trackColor = Color(0xFF1E293B),
+                        color = MaterialTheme.colorScheme.primary,
+                        trackColor = progressTrack,
                         modifier = Modifier
                             .weight(1f)
                             .height(6.dp)
@@ -358,7 +390,7 @@ fun HeaderPanel(
                     )
                     Text(
                         text = "$completedCount/$totalCount Selesai",
-                        color = Color.LightGray,
+                        color = textSecondary,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -372,31 +404,16 @@ fun HeaderPanel(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                // Dictionary shortcut
+                // Profile shortcut
                 IconButton(
-                    onClick = onNavigateToDictionary,
+                    onClick = onNavigateToProfile,
                     modifier = Modifier
                         .size(38.dp)
-                        .background(Color(0xFF1E293B), CircleShape)
+                        .background(Color(0xFF10B981), CircleShape)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Book,
-                        contentDescription = "Kamus",
-                        tint = Color.White,
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-
-                // AI Tutor shortcut
-                IconButton(
-                    onClick = onNavigateToAITutor,
-                    modifier = Modifier
-                        .size(38.dp)
-                        .background(Color(0xFF1E293B), CircleShape)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Face,
-                        contentDescription = "AI Tutor",
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Profile",
                         tint = Color.White,
                         modifier = Modifier.size(18.dp)
                     )
@@ -556,18 +573,45 @@ fun LevelNodeItem(
 
             Spacer(modifier = Modifier.height(10.dp))
 
+            val isLight = MaterialTheme.colorScheme.background.red > 0.5f
+            val labelContainerColor = if (isLight) {
+                MaterialTheme.colorScheme.surface
+            } else {
+                if (level.status == LevelStatus.LOCKED) {
+                    Color(0xFF1E293B).copy(alpha = 0.5f)
+                } else {
+                    Color(0xFF0F172A).copy(alpha = 0.85f)
+                }
+            }
+
+            val labelTextColor = if (isLight) {
+                if (level.status == LevelStatus.LOCKED) {
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                }
+            } else {
+                if (level.status == LevelStatus.LOCKED) {
+                    Color.Gray
+                } else {
+                    Color.White
+                }
+            }
+
+            val labelBorderColor = if (isLight) {
+                if (isCurrentlyActive) emeraldAccent else MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
+            } else {
+                if (isCurrentlyActive) emeraldAccent.copy(alpha = 0.6f) else Color.White.copy(alpha = 0.08f)
+            }
+
             // Sleek glassmorphic card for Level title
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = if (level.status == LevelStatus.LOCKED) {
-                        Color(0xFF1E293B).copy(alpha = 0.5f)
-                    } else {
-                        Color(0xFF0F172A).copy(alpha = 0.85f)
-                    }
+                    containerColor = labelContainerColor
                 ),
                 border = BorderStroke(
                     width = 1.dp,
-                    color = if (isCurrentlyActive) emeraldAccent.copy(alpha = 0.6f) else Color.White.copy(alpha = 0.08f)
+                    color = labelBorderColor
                 ),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
@@ -578,7 +622,7 @@ fun LevelNodeItem(
                     text = level.title,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (level.status == LevelStatus.LOCKED) Color.Gray else Color.White,
+                    color = labelTextColor,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                 )
             }
@@ -604,12 +648,23 @@ fun ConnectionLinesBackdrop(
     val stepHeightPx = with(density) { stepHeight.toPx() }
     val topPaddingPx = with(density) { topPadding.toPx() }
 
+    val colorScheme = MaterialTheme.colorScheme
+    val isLight = colorScheme.background.red > 0.5f
+    val primaryColor = colorScheme.primary
+    val surfaceColor = colorScheme.surface
+    val surfaceVariantColor = colorScheme.surfaceVariant
+    val outlineColor = colorScheme.outline
+
     Canvas(modifier = modifier) {
         val width = size.width
         val height = size.height
 
         // 1. Draw Ocean Background Waves at repeating scroll intervals
-        val waveColor = Color(0xFF38BDF8).copy(alpha = 0.04f)
+        val waveColor = if (isLight) {
+            primaryColor.copy(alpha = 0.08f)
+        } else {
+            Color(0xFF38BDF8).copy(alpha = 0.04f)
+        }
         for (yOffset in 300..height.toInt() step 500) {
             drawCircle(
                 color = waveColor,
@@ -628,20 +683,25 @@ fun ConnectionLinesBackdrop(
         // 2. Draw a beautiful stylized Vintage Compass Rose at top right
         val compassCenter = Offset(width * 0.82f, topPaddingPx + 40.dp.toPx())
         val compassRadius = 30.dp.toPx()
+        val compassColor = if (isLight) {
+            primaryColor.copy(alpha = 0.12f)
+        } else {
+            Color.White.copy(alpha = 0.05f)
+        }
         drawCircle(
-            color = Color.White.copy(alpha = 0.05f),
+            color = compassColor,
             radius = compassRadius,
             center = compassCenter,
             style = Stroke(width = 1.5f)
         )
         drawLine(
-            color = Color.White.copy(alpha = 0.05f),
+            color = compassColor,
             start = Offset(compassCenter.x - compassRadius - 8f, compassCenter.y),
             end = Offset(compassCenter.x + compassRadius + 8f, compassCenter.y),
             strokeWidth = 1.5f
         )
         drawLine(
-            color = Color.White.copy(alpha = 0.05f),
+            color = compassColor,
             start = Offset(compassCenter.x, compassCenter.y - compassRadius - 8f),
             end = Offset(compassCenter.x, compassCenter.y + compassRadius + 8f),
             strokeWidth = 1.5f
@@ -658,20 +718,37 @@ fun ConnectionLinesBackdrop(
         // 4. Draw beautiful "Islands" (Pulau) under each level node coordinate
         levels.forEachIndexed { i, level ->
             val pt = points[i]
-            val islandColor = when (level.status) {
-                LevelStatus.COMPLETED -> Color(0xFF0F3124) // Soft green island
-                LevelStatus.UNLOCKED -> Color(0xFF162D4A) // Soft blue island
-                LevelStatus.LOCKED -> Color(0xFF1B2330) // Soft dark slate island
+            val islandColor = if (isLight) {
+                when (level.status) {
+                    LevelStatus.COMPLETED -> Color(0xFFE6F4EA) // Soft green island
+                    LevelStatus.UNLOCKED -> Color(0xFFE8F0FE) // Soft blue island
+                    LevelStatus.LOCKED -> surfaceVariantColor.copy(alpha = 0.5f) // Soft gray island
+                }
+            } else {
+                when (level.status) {
+                    LevelStatus.COMPLETED -> Color(0xFF0F3124) // Soft green island
+                    LevelStatus.UNLOCKED -> Color(0xFF162D4A) // Soft blue island
+                    LevelStatus.LOCKED -> Color(0xFF1B2330) // Soft dark slate island
+                }
             }
-            val islandBorderColor = when (level.status) {
-                LevelStatus.COMPLETED -> Color(0xFF10B981).copy(alpha = 0.25f)
-                LevelStatus.UNLOCKED -> Color(0xFF0EA5E9).copy(alpha = 0.25f)
-                LevelStatus.LOCKED -> Color(0xFF475569).copy(alpha = 0.08f)
+
+            val islandBorderColor = if (isLight) {
+                when (level.status) {
+                    LevelStatus.COMPLETED -> Color(0xFF10B981).copy(alpha = 0.4f)
+                    LevelStatus.UNLOCKED -> Color(0xFF0EA5E9).copy(alpha = 0.4f)
+                    LevelStatus.LOCKED -> outlineColor.copy(alpha = 0.15f)
+                }
+            } else {
+                when (level.status) {
+                    LevelStatus.COMPLETED -> Color(0xFF10B981).copy(alpha = 0.25f)
+                    LevelStatus.UNLOCKED -> Color(0xFF0EA5E9).copy(alpha = 0.25f)
+                    LevelStatus.LOCKED -> Color(0xFF475569).copy(alpha = 0.08f)
+                }
             }
 
             // Draw multi-layered organic island shadows & landmass
             drawCircle(
-                color = islandColor.copy(alpha = 0.5f),
+                color = if (isLight) surfaceColor else islandColor.copy(alpha = 0.5f),
                 radius = 64.dp.toPx(),
                 center = pt
             )
@@ -688,6 +765,11 @@ fun ConnectionLinesBackdrop(
             )
 
             // Small decorative dots representing shoreline sands
+            val sandColor = if (isLight) {
+                primaryColor.copy(alpha = 0.25f)
+            } else {
+                Color.White.copy(alpha = 0.08f)
+            }
             for (angle in 0..360 step 45) {
                 val radians = Math.toRadians(angle.toDouble())
                 val sandOffset = Offset(
@@ -695,7 +777,7 @@ fun ConnectionLinesBackdrop(
                     (pt.y + Math.sin(radians) * 45.dp.toPx()).toFloat()
                 )
                 drawCircle(
-                    color = Color.White.copy(alpha = 0.08f),
+                    color = sandColor,
                     radius = 1.5f,
                     center = sandOffset
                 )

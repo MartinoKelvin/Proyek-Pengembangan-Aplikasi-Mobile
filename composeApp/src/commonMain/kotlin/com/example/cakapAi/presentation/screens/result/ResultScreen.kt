@@ -59,13 +59,20 @@ fun ResultScreen(
         )
     }
 
-    // Theme Colors matching MapScreen
-    val backgroundColor = Color(0xFF071224)
-    val cardColor = Color(0xFF0F1A30).copy(alpha = 0.9f)
-    val emeraldAccent = Color(0xFF10B981)
-    val redAccent = Color(0xFFEF4444)
-    val skyAccent = Color(0xFF0EA5E9)
+    // Theme Colors matching MapScreen (fully dynamic)
+    val isLight = MaterialTheme.colorScheme.background.red > 0.5f
+    val backgroundColor = if (isLight) Color(0xFFF0F4F8) else Color(0xFF071224)
+    val cardColor = if (isLight) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.95f) else Color(0xFF0F1A30).copy(alpha = 0.9f)
+    val emeraldAccent = MaterialTheme.colorScheme.primary
+    val redAccent = MaterialTheme.colorScheme.error
+    val skyAccent = MaterialTheme.colorScheme.secondary
     val goldColor = Color(0xFFFBBF24)
+
+    // Dynamic theme-based text and border colors to support Light Mode perfectly
+    val textPrimary = if (isLight) MaterialTheme.colorScheme.onBackground else Color.White
+    val textSecondary = if (isLight) MaterialTheme.colorScheme.onSurfaceVariant else Color.White.copy(alpha = 0.7f)
+    val borderStrokeColor = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.12f) else Color.White.copy(alpha = 0.08f)
+    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer else Color(0xFF0B172E)
 
     // Animation entry states
     var startAnimations by remember { mutableStateOf(false) }
@@ -92,7 +99,7 @@ fun ResultScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color(0xFF0B172E), backgroundColor)
+                    colors = listOf(gradientStart, backgroundColor)
                 )
             )
     ) {
@@ -305,8 +312,8 @@ fun ResultScreen(
                             .fillMaxWidth()
                             .height(52.dp),
                         shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
-                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.12f))
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = textPrimary),
+                        border = BorderStroke(1.dp, borderStrokeColor)
                     ) {
                         Text(
                             text = "KEMBALI KE PETA",
@@ -336,12 +343,18 @@ fun StatCard(
     modifier: Modifier = Modifier,
     cardColor: Color
 ) {
+    val isLight = MaterialTheme.colorScheme.background.red > 0.5f
+    val textPrimary = if (isLight) MaterialTheme.colorScheme.onBackground else Color.White
+    val textSecondary = if (isLight) MaterialTheme.colorScheme.onSurfaceVariant else Color.Gray
+    val textTertiary = if (isLight) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f) else Color.LightGray.copy(alpha = 0.6f)
+    val borderStroke = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.12f) else Color.White.copy(alpha = 0.08f)
+
     Card(
         modifier = modifier
             .shadow(4.dp, RoundedCornerShape(20.dp)),
         colors = CardDefaults.cardColors(containerColor = cardColor),
         shape = RoundedCornerShape(20.dp),
-        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))
+        border = BorderStroke(1.dp, borderStroke)
     ) {
         Column(
             modifier = Modifier
@@ -375,13 +388,13 @@ fun StatCard(
                     text = value,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    color = Color.White
+                    color = textPrimary
                 )
                 if (subValue.isNotEmpty()) {
                     Text(
                         text = subValue,
                         fontSize = 11.sp,
-                        color = Color.Gray,
+                        color = textSecondary,
                         modifier = Modifier.padding(bottom = 3.dp, start = 1.dp)
                     )
                 }
@@ -393,7 +406,7 @@ fun StatCard(
             Text(
                 text = title,
                 fontSize = 11.sp,
-                color = Color.LightGray.copy(alpha = 0.6f),
+                color = textTertiary,
                 fontWeight = FontWeight.Bold
             )
         }
