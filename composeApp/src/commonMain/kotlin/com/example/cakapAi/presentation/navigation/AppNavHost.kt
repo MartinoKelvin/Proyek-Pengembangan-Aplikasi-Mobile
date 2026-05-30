@@ -30,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.cakapAi.presentation.screens.dictionary.DictionaryScreen
 import com.example.cakapAi.presentation.screens.map.MapScreen
+import com.example.cakapAi.presentation.screens.splash.SplashScreen
 import com.example.cakapAi.presentation.screens.quiz.QuizScreen
 import com.example.cakapAi.presentation.screens.result.ResultScreen
 import com.example.cakapAi.presentation.screens.tutor.AITutorScreen
@@ -54,9 +55,21 @@ fun AppNavHost(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Route.Map,
+            startDestination = Route.Splash,
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable<Route.Splash> {
+                SplashScreen(
+                    onNavigateToHome = {
+                        navController.navigate(Route.Map) {
+                            popUpTo(Route.Splash) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+            }
+
             composable<Route.Map> {
                 MapScreen(
                     onNavigateToQuiz = { levelId ->
@@ -157,6 +170,8 @@ private fun BottomNavigationBar(
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+
+    if (currentDestination?.hasRoute<Route.Splash>() == true) return
 
     val selectedColor = MaterialTheme.colorScheme.primary
     val unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant

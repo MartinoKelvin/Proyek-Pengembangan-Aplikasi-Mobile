@@ -9,6 +9,8 @@
         android:name="com.example.cakapAi.cakapAiApplication"
         android:allowBackup="true"
         android:label="@string/app_name"
+        android:icon="@drawable/ic_launcher"
+        android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.cakapAi">
 

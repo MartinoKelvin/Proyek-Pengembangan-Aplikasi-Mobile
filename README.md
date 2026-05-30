@@ -1,3 +1,34 @@
+# 🗣️ CakapAi — Sprint 3 Update: Splash Screen Branding
+
+Pada Sprint 3, aplikasi CakapAI ditambahkan screen awal berupa Splash Screen untuk memperkuat identitas aplikasi.
+
+### Fitur yang Ditambahkan
+
+- Splash Screen saat aplikasi pertama kali dibuka
+- Menampilkan logo CakapAI
+- Menampilkan nama aplikasi dan tagline
+- Animasi logo sederhana
+- Loading indicator
+- Transisi otomatis ke halaman utama
+- Support light mode dan dark mode
+
+### Asset Logo
+
+Logo yang digunakan berada di:
+
+```text
+composeApp/src/commonMain/composeResources/drawable/logo_cakapai.png
+```
+
+### Alur Aplikasi
+`App Open → Splash Screen → Main Screen`
+
+### Tujuan
+
+Fitur ini dibuat agar aplikasi terlihat lebih profesional, memiliki identitas visual yang jelas, dan memberikan pengalaman awal yang lebih baik kepada pengguna.
+
+---
+
 # 🗣️ CakapAi — Sprint 2 Core Features
 
 ![CI](https://github.com/MartinoKelvin/Proyek-Pengembangan-Aplikasi-Mobile/actions/workflows/ci.yml/badge.svg)
