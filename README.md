@@ -1,9 +1,72 @@
-# 🗣️ CakapAi — Sprint 3 Update: Splash Screen Branding
+# CakapAI — Sprint 3 Advanced Features
+
+![CI](https://github.com/MartinoKelvin/Proyek-Pengembangan-Aplikasi-Mobile/actions/workflows/ci.yml/badge.svg)
+
+## Deskripsi Aplikasi
+
+CakapAI adalah aplikasi pembelajaran bahasa berbasis AI yang dirancang untuk membantu pengguna belajar bahasa melalui fitur dictionary, vocabulary, practice quiz, speaking practice, dan AI Tutor. Aplikasi ini menggunakan Gemini API untuk mendukung pembelajaran interaktif serta SQLDelight untuk penyimpanan lokal agar aplikasi tetap bisa digunakan secara offline.
+
+---
+
+## Sprint 3 Overview
+
+Pada Sprint 3, aplikasi CakapAI difokuskan pada implementasi *advanced features* untuk melengkapi fungsionalitas utama, yaitu:
+- Search/filter functionality
+- API integration (Gemini API)
+- Offline support (SQLDelight)
+- Additional screen (Profile & Settings)
+- Bonus feature (Splash screen, dark mode, animasi, speaking practice)
+- UI polish & Splash screen branding
+
+---
+
+## Checklist Rubrik Sprint 3
+
+| Komponen Rubrik | Bobot | Status | Implementasi |
+|---|---:|:---:|---|
+| Search / Filter | 25% | ✅ | Search vocabulary pada Dictionary Screen |
+| API / Enhanced Local | 25% | ✅ | Gemini API untuk AI Tutor, Dictionary, dan Practice |
+| Offline Support | 20% | ✅ | SQLDelight local database dan fallback questions |
+| Additional Screen | 15% | ✅ | Profile Screen dan Settings Screen |
+| Bonus Feature | 15% | ✅ | Dark mode, splash screen, animasi, speaking practice, dan text-to-speech |
+
+---
+
+## Detail Implementasi Sprint 3
+
+### 1. Search / Filter
+
+Fitur search diterapkan pada Dictionary Screen. Pengguna dapat mencari vocabulary yang tersimpan berdasarkan teks asli maupun hasil terjemahan. Search berjalan secara responsif dan langsung saat pengguna mengetik, dilengkapi tombol clear, serta empty state ketika tidak ada hasil yang cocok.
+
+### 2. API Integration / Enhanced Local
+
+Aplikasi menggunakan Gemini API sebagai fitur advanced untuk mendukung pembelajaran berbasis AI. Integrasi API digunakan pada fitur AI Tutor, Practice, dan bantuan pembelajaran lainnya. HTTP request dikelola menggunakan Ktor Client melalui HttpClientFactory dan konfigurasi API dikelola secara aman. Jika request API gagal, aplikasi tetap memberikan fallback agar pengguna masih dapat melanjutkan latihan.
+
+### 3. Offline Support
+
+Aplikasi mendukung penggunaan offline melalui penyimpanan lokal menggunakan SQLDelight. Data seperti vocabulary, progress level, quiz history, dan saved vocabulary tetap dapat diakses tanpa koneksi internet. Pada fitur Practice, aplikasi juga menyediakan offline fallback questions sehingga pengguna tetap dapat mengerjakan latihan meskipun koneksi internet tidak tersedia atau API gagal dipanggil.
+
+### 4. Additional Screen
+
+Sprint 3 menambahkan dan menyempurnakan screen tambahan berupa Profile Screen dan Settings Screen. Profile Screen menampilkan informasi pengguna, level, progress, dan statistik pembelajaran. Settings Screen digunakan untuk pengaturan aplikasi seperti dark mode dan preferensi tampilan.
+
+### 5. Bonus Features
+
+Aplikasi memiliki beberapa bonus feature untuk meningkatkan pengalaman pengguna, yaitu:
+- Dark mode support
+- Splash screen branding menggunakan logo CakapAI
+- Animasi pada tampilan UI aplikasi
+- Speaking practice menggunakan microphone
+- Text-to-speech untuk mendukung latihan speaking
+- Sound dan vibration feedback
+
+---
+
+## Sprint 3 Update — Splash Screen Branding
 
 Pada Sprint 3, aplikasi CakapAI ditambahkan screen awal berupa Splash Screen untuk memperkuat identitas aplikasi.
 
 ### Fitur yang Ditambahkan
-
 - Splash Screen saat aplikasi pertama kali dibuka
 - Menampilkan logo CakapAI
 - Menampilkan nama aplikasi dan tagline
@@ -13,9 +76,7 @@ Pada Sprint 3, aplikasi CakapAI ditambahkan screen awal berupa Splash Screen unt
 - Support light mode dan dark mode
 
 ### Asset Logo
-
 Logo yang digunakan berada di:
-
 ```text
 composeApp/src/commonMain/composeResources/drawable/logo_cakapai.png
 ```
@@ -24,679 +85,145 @@ composeApp/src/commonMain/composeResources/drawable/logo_cakapai.png
 `App Open → Splash Screen → Main Screen`
 
 ### Tujuan
-
 Fitur ini dibuat agar aplikasi terlihat lebih profesional, memiliki identitas visual yang jelas, dan memberikan pengalaman awal yang lebih baik kepada pengguna.
 
 ---
 
-# 🗣️ CakapAi — Sprint 2 Core Features
+## Core Features dari Sprint 2 yang Tetap Berjalan
 
-![CI](https://github.com/MartinoKelvin/Proyek-Pengembangan-Aplikasi-Mobile/actions/workflows/ci.yml/badge.svg)
-
-CakapAi adalah aplikasi pembelajaran bahasa berbasis **Kotlin Multiplatform** dan **Compose Multiplatform**. Pada Sprint 2, fokus utama pengembangan adalah implementasi **UI screens**, **navigation**, **data layer**, dan **CRUD operations** sesuai rubrik penilaian Sprint 2.
-
----
-
-## 👥 Anggota Tim
-
-| Nama | NIM | Tanggung Jawab |
-|---|---:|---|
-| Martino Kelvin | 123140165 | UI screens, navigation, CRUD vocabulary, dokumentasi README |
-| Louis Hutabarat | 123140052 | Data layer, repository, SQLDelight, testing dan code review |
+Fitur inti dari Sprint 2 tetap dipertahankan dan masih berjalan pada Sprint 3, yaitu:
+- Navigation antar screen
+- Bottom navigation
+- Dictionary / vocabulary management
+- CRUD vocabulary
+- Local database menggunakan SQLDelight
+- UI state seperti loading, success, empty, dan error
+- Quiz / Practice Screen
+- Map / Home Screen
+- Repository pattern
 
 ---
 
-## 🔗 Link Penting
+## Teknologi yang Digunakan
 
-| Kebutuhan | Link |
-|---|---|
-| Video Demo Sprint 2 | [Tonton Video Demo](https://drive.google.com/file/d/1lD-ec7jRO_Pe9p0mKM1v0-Cksyp8qYLk/view?usp=drive_link) |
-
-> Catatan video demo: video berdurasi ±1 menit berisi alur membuka aplikasi, berpindah screen, mencoba fitur CRUD vocab, search/filter vocab, dan navigasi kuis sampai result.
-
----
-
-## 📌 Ringkasan Sprint 2
-
-Sprint 2 berfokus pada fitur inti aplikasi:
-
-- Implementasi minimal 3 screen aktif.
-- Navigasi antar screen dengan argument.
-- Data layer menggunakan repository pattern.
-- Local storage menggunakan SQLDelight.
-- CRUD vocabulary pada fitur Dictionary / Translator.
-- Search dan filter pada daftar kosakata tersimpan.
-- Struktur kode rapi dengan Clean Architecture dan MVVM.
+- Kotlin Multiplatform
+- Compose Multiplatform
+- Material 3
+- SQLDelight
+- DataStore
+- Ktor Client
+- Gemini API
+- Kotlinx Serialization
+- Coroutines
+- StateFlow
+- Navigation Compose
 
 ---
 
-## ✅ Checklist Rubrik Sprint 2
-
-| Komponen Rubrik | Bobot | Status | Implementasi di Project |
-|---|---:|:---:|---|
-| UI Screens | 25% | ✅ | Tersedia Map, Quiz, Result, Dictionary, dan AI Tutor screen dengan Compose Material 3. |
-| Navigation | 20% | ✅ | Menggunakan `AppNavHost`, typed route, bottom navigation, argument `levelId`, dan back handling. |
-| Data Layer | 25% | ✅ | Menggunakan domain repository interface, repository implementation, SQLDelight database, mapper, dan Koin DI. |
-| CRUD Operations | 20% | ✅ | CRUD kosakata tersimpan pada fitur Dictionary / Vocabulary. |
-| Code Quality | 10% | ✅ | Struktur folder clean architecture, separation of concerns, ViewModel, StateFlow, dan CI workflow. |
-| Search & Filter | Bonus / Penguat | ✅ | Search bar pada daftar vocab tersimpan untuk memfilter `sourceText` dan `translatedText`. |
-
----
-
-## ✨ Fitur Utama
-
-### 1. Map Screen / Learning Path
-
-Map Screen menjadi halaman awal aplikasi. Screen ini menampilkan daftar level pembelajaran bahasa, status level yang terbuka, level terkunci, dan progres belajar pengguna.
-
-**File terkait:**
+## Struktur Project
 
 ```text
-composeApp/src/commonMain/kotlin/com/example/cakapAi/presentation/screens/map/MapScreen.kt
-composeApp/src/commonMain/kotlin/com/example/cakapAi/presentation/screens/map/MapViewModel.kt
-```
-
-**Fitur:**
-
-- Menampilkan level pembelajaran.
-- Membaca progress level dari local database.
-- Menggunakan `MapUiState` untuk state `Loading`, `Success`, `Empty`, dan `Error`.
-- Navigasi ke Quiz Screen dengan membawa `levelId`.
-
----
-
-### 2. Quiz Screen
-
-Quiz Screen digunakan untuk mengerjakan soal berdasarkan level yang dipilih dari Map Screen.
-
-**File terkait:**
-
-```text
-composeApp/src/commonMain/kotlin/com/example/cakapAi/presentation/screens/quiz/QuizScreen.kt
-composeApp/src/commonMain/kotlin/com/example/cakapAi/presentation/screens/quiz/QuizViewModel.kt
-```
-
-**Fitur:**
-
-- Menampilkan soal berdasarkan `levelId`.
-- Menampilkan pilihan jawaban.
-- Validasi jawaban benar atau salah.
-- Sistem nyawa / lives.
-- Menghitung skor dan jumlah jawaban benar.
-- Navigasi ke Result Screen setelah kuis selesai.
-
----
-
-### 3. Result Screen
-
-Result Screen menampilkan hasil pengerjaan kuis pengguna.
-
-**File terkait:**
-
-```text
-composeApp/src/commonMain/kotlin/com/example/cakapAi/presentation/screens/result/ResultScreen.kt
-composeApp/src/commonMain/kotlin/com/example/cakapAi/presentation/screens/result/ResultViewModel.kt
-```
-
-**Fitur:**
-
-- Menampilkan skor.
-- Menampilkan total soal.
-- Menampilkan akurasi.
-- Menampilkan status lulus atau belum lulus.
-- Tombol kembali ke Map.
-- Tombol mengulang kuis.
-
----
-
-### 4. Dictionary / Vocabulary Screen
-
-Dictionary Screen digunakan sebagai fitur translator sederhana sekaligus tempat menyimpan kosakata penting.
-
-**File terkait:**
-
-```text
-composeApp/src/commonMain/kotlin/com/example/cakapAi/presentation/screens/dictionary/DictionaryScreen.kt
-composeApp/src/commonMain/kotlin/com/example/cakapAi/presentation/screens/dictionary/DictionaryViewModel.kt
-```
-
-**Fitur:**
-
-- Input teks kosakata.
-- Output terjemahan sederhana.
-- Menyimpan kosakata ke database lokal.
-- Menampilkan daftar kosakata tersimpan.
-- Search/filter kosakata tersimpan.
-- Edit kosakata tersimpan.
-- Delete kosakata tersimpan.
-
----
-
-### 5. AI Tutor Screen
-
-AI Tutor Screen menyediakan tampilan chat interaktif untuk latihan bahasa.
-
-**File terkait:**
-
-```text
-composeApp/src/commonMain/kotlin/com/example/cakapAi/presentation/screens/tutor/AITutorScreen.kt
-composeApp/src/commonMain/kotlin/com/example/cakapAi/data/repository/AIRepositoryImpl.kt
-composeApp/src/commonMain/kotlin/com/example/cakapAi/data/remote/api/GeminiService.kt
-```
-
-**Fitur:**
-
-- Tampilan chat antara user dan tutor.
-- Input pesan dari user.
-- Bubble chat untuk user dan AI.
-- Indikator AI sedang mengetik.
-- Struktur repository AI sudah tersedia untuk integrasi Gemini API.
-
----
-
-## 🧩 CRUD Operations pada Vocabulary
-
-CRUD diterapkan pada fitur **Dictionary / Vocabulary** menggunakan tabel `SavedVocabularyEntity` di SQLDelight.
-
-### Create
-
-User dapat menambahkan kosakata baru melalui tombol tambah atau menyimpan hasil input translator.
-
-```kotlin
-fun addVocab(sourceLang: String, targetLang: String, sourceText: String, translatedText: String) {
-    viewModelScope.launch {
-        repository.insertSavedVocab(
-            SavedVocab(
-                sourceLang = sourceLang,
-                targetLang = targetLang,
-                sourceText = sourceText,
-                translatedText = translatedText
-            )
-        )
-    }
-}
-```
-
-### Read
-
-Data kosakata tersimpan dibaca secara reactive dari repository menggunakan `Flow` dan dikonversi menjadi `StateFlow`.
-
-```kotlin
-val savedVocabs: StateFlow<List<SavedVocab>> = repository.getAllSavedVocabs()
-    .stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
-```
-
-### Update
-
-User dapat mengedit kosakata yang sudah tersimpan melalui dialog edit.
-
-```kotlin
-fun updateVocab(vocab: SavedVocab, newSourceText: String, newTranslatedText: String) {
-    viewModelScope.launch {
-        repository.updateSavedVocab(
-            vocab.copy(
-                sourceText = newSourceText,
-                translatedText = newTranslatedText
-            )
-        )
-    }
-}
-```
-
-### Delete
-
-User dapat menghapus kosakata dari daftar vocabulary tersimpan.
-
-```kotlin
-fun deleteVocab(vocab: SavedVocab) {
-    viewModelScope.launch {
-        repository.deleteSavedVocab(vocab.id)
-    }
-}
+composeApp/
+├── src/
+│   ├── commonMain/
+│   │   ├── kotlin/
+│   │   │   └── com/example/cakapAi/
+│   │   │       ├── core/
+│   │   │       ├── data/
+│   │   │       ├── domain/
+│   │   │       └── presentation/
+│   │   ├── composeResources/
+│   │   │   └── drawable/
+│   │   │       └── logo_cakapai.png
+│   │   └── sqldelight/
+│   └── androidMain/
+│       ├── kotlin/
+│       └── res/
 ```
 
 ---
 
-## 🔍 Search dan Filter Vocabulary
+## Cara Menjalankan Project
 
-Search/filter diterapkan pada daftar kosakata tersimpan di Dictionary Screen.
-
-```kotlin
-val filteredVocabs = savedVocabs.filter {
-    it.sourceText.contains(searchQuery, ignoreCase = true) ||
-    it.translatedText.contains(searchQuery, ignoreCase = true)
-}
-```
-
-Dengan fitur ini, pengguna dapat mencari kosakata berdasarkan:
-
-- kata asli / `sourceText`
-- hasil terjemahan / `translatedText`
-
-Jika tidak ada data yang cocok, aplikasi menampilkan pesan kosong seperti:
-
-```text
-Tidak ada kosakata yang cocok.
-```
-
----
-
-## 🧱 Data Layer
-
-Project menggunakan pendekatan **Clean Architecture** dengan pemisahan layer:
-
-```text
-Presentation Layer
-Screen + ViewModel + UiState
-
-Domain Layer
-Model + Repository Interface
-
-Data Layer
-Repository Implementation + SQLDelight + Mapper + Remote Service
-```
-
-### Struktur Data Layer
-
-```text
-composeApp/src/commonMain/kotlin/com/example/cakapAi/data/
-├── local/
-│   ├── LearningMapper.kt
-│   └── datastore/
-├── remote/
-│   ├── api/
-│   │   └── GeminiService.kt
-│   └── dto/
-│       └── GeminiDto.kt
-└── repository/
-    ├── AIRepositoryImpl.kt
-    ├── DictionaryRepositoryImpl.kt
-    └── LearningRepositoryImpl.kt
-```
-
-### Repository Interface
-
-Repository interface berada pada domain layer agar presentation layer tidak bergantung langsung pada detail database.
-
-```text
-composeApp/src/commonMain/kotlin/com/example/cakapAi/domain/repository/
-├── AIRepository.kt
-├── DictionaryRepository.kt
-└── LearningRepository.kt
-```
-
-### SQLDelight Local Storage
-
-Database lokal berada pada file:
-
-```text
-composeApp/src/commonMain/sqldelight/com/example/cakapAi/data/local/CakapAi.sq
-```
-
-Tabel utama yang digunakan:
-
-| Tabel | Fungsi |
-|---|---|
-| `LevelProgressEntity` | Menyimpan progres level belajar. |
-| `OfflineVocabularyEntity` | Menyimpan vocabulary offline per level. |
-| `QuizHistoryEntity` | Menyimpan riwayat pengerjaan kuis. |
-| `SavedVocabularyEntity` | Menyimpan vocabulary dari Dictionary / Translator. |
-
-Query CRUD vocabulary:
-
-```sql
-getAllSavedVocabs:
-SELECT * FROM SavedVocabularyEntity
-ORDER BY created_at DESC;
-
-insertSavedVocab:
-INSERT OR REPLACE INTO SavedVocabularyEntity (source_lang, target_lang, source_text, translated_text, created_at)
-VALUES (?, ?, ?, ?, ?);
-
-deleteSavedVocab:
-DELETE FROM SavedVocabularyEntity
-WHERE id = ?;
-
-updateSavedVocab:
-UPDATE SavedVocabularyEntity
-SET source_text = ?, translated_text = ?
-WHERE id = ?;
-```
-
----
-
-## 🧭 Navigation
-
-Navigasi menggunakan `NavHost` dan typed route berbasis Kotlin Serialization.
-
-**File terkait:**
-
-```text
-composeApp/src/commonMain/kotlin/com/example/cakapAi/presentation/navigation/Routes.kt
-composeApp/src/commonMain/kotlin/com/example/cakapAi/presentation/navigation/AppNavHost.kt
-```
-
-### Route yang tersedia
-
-```kotlin
-sealed interface Route {
-    data object Map : Route
-    data class Quiz(val levelId: Int) : Route
-    data class Result(
-        val levelId: Int,
-        val score: Int,
-        val totalQuestion: Int,
-        val accuracy: Int,
-        val isPassed: Boolean
-    ) : Route
-    data object Dictionary : Route
-    data object AITutor : Route
-}
-```
-
-### Alur Navigasi
-
-```text
-Map Screen
-   └── Quiz Screen(levelId)
-          └── Result Screen(levelId, score, totalQuestion, accuracy, isPassed)
-
-Bottom Navigation
-   ├── Peta / Map
-   ├── Kuis / Quiz
-   ├── Kamus / Dictionary
-   └── AI Tutor
-```
-
-### Argument Passing
-
-Argument `levelId` dikirim dari Map Screen ke Quiz Screen:
-
-```kotlin
-navigationActions.navigateToQuiz(levelId)
-```
-
-Result Screen menerima beberapa argument:
-
-```kotlin
-Route.Result(
-    levelId = levelId,
-    score = score,
-    totalQuestion = totalQuestion,
-    accuracy = accuracy,
-    isPassed = isPassed
-)
-```
-
----
-
-## 🖥️ UI Screens
-
-| Screen | Status | Deskripsi |
-|---|:---:|---|
-| Map Screen | ✅ | Halaman utama yang menampilkan peta level pembelajaran. |
-| Quiz Screen | ✅ | Halaman kuis berdasarkan level. |
-| Result Screen | ✅ | Halaman hasil kuis. |
-| Dictionary Screen | ✅ | Halaman translator dan vocabulary CRUD. |
-| AI Tutor Screen | ✅ | Halaman chat tutor untuk latihan bahasa. |
-
-### Placeholder Screenshot
-
-> Tambahkan screenshot setelah aplikasi dijalankan di emulator/device.
-
-#### Map Screen
-
-`ISI_SCREENSHOT_MAP_DI_SINI`
-
-#### Quiz Screen
-
-`ISI_SCREENSHOT_QUIZ_DI_SINI`
-
-#### Result Screen
-
-`ISI_SCREENSHOT_RESULT_DI_SINI`
-
-#### Dictionary / Vocabulary Screen
-
-`ISI_SCREENSHOT_DICTIONARY_DI_SINI`
-
-#### AI Tutor Screen
-
-`ISI_SCREENSHOT_AI_TUTOR_DI_SINI`
-
----
-
-## 🧪 State Management
-
-Project menggunakan `ViewModel`, `StateFlow`, dan sealed interface untuk mengelola state UI.
-
-Contoh pada `MapViewModel`:
-
-```kotlin
-sealed interface MapUiState {
-    data object Loading : MapUiState
-    data class Success(val levels: List<LevelProgress>) : MapUiState
-    data object Empty : MapUiState
-    data class Error(val message: String) : MapUiState
-}
-```
-
-Contoh pada `QuizViewModel`:
-
-```kotlin
-sealed interface QuizUiState {
-    data object Loading : QuizUiState
-    data class Success(
-        val questions: List<QuizQuestion>,
-        val currentQuestionIndex: Int,
-        val selectedAnswer: String?,
-        val isAnswerChecked: Boolean,
-        val lives: Int,
-        val correctCount: Int,
-        val isFinished: Boolean
-    ) : QuizUiState
-    data class Error(val message: String) : QuizUiState
-}
-```
-
----
-
-## 🛠️ Tech Stack
-
-| Teknologi | Kegunaan |
-|---|---|
-| Kotlin Multiplatform | Shared code untuk Android dan iOS. |
-| Compose Multiplatform | UI deklaratif lintas platform. |
-| Material 3 | Komponen UI modern. |
-| Navigation Compose | Navigasi antar screen. |
-| SQLDelight | Local database dan query type-safe. |
-| Koin | Dependency Injection. |
-| Kotlin Coroutines & Flow | Async process dan reactive data. |
-| Ktor Client | Persiapan komunikasi API / Gemini service. |
-| GitHub Actions | Continuous Integration. |
-
----
-
-## 📂 Struktur Project
-
-```text
-composeApp/src/commonMain/kotlin/com/example/cakapAi/
-├── App.kt
-├── core/
-│   ├── di/
-│   │   └── AppModule.kt
-│   ├── network/
-│   └── util/
-├── data/
-│   ├── local/
-│   ├── remote/
-│   └── repository/
-├── domain/
-│   ├── model/
-│   └── repository/
-└── presentation/
-    ├── components/
-    ├── navigation/
-    ├── screens/
-    │   ├── dictionary/
-    │   ├── map/
-    │   ├── quiz/
-    │   ├── result/
-    │   └── tutor/
-    └── theme/
-```
-
----
-
-## 🚀 Cara Menjalankan Project
-
-### 1. Clone repository
-
+Clone repository:
 ```bash
-git clone ISI_LINK_REPOSITORY_DI_SINI
+git clone https://github.com/MartinoKelvin/Proyek-Pengembangan-Aplikasi-Mobile.git
 cd Proyek-Pengembangan-Aplikasi-Mobile
 ```
 
-### 2. Buka di Android Studio
-
-- Buka Android Studio.
-- Pilih **File > Open**.
-- Pilih folder project.
-- Tunggu proses Gradle Sync selesai.
-
-### 3. Jalankan aplikasi
-
-Pilih konfigurasi:
-
-```text
-composeApp
-```
-
-Lalu jalankan ke emulator atau device Android.
-
-### 4. Build lewat terminal
-
-```bash
-./gradlew build
-```
-
-Untuk Windows PowerShell:
-
+Jalankan build untuk Windows:
 ```powershell
-.\gradlew.bat build
+gradlew.bat :composeApp:assembleDebug
 ```
+
+Untuk Mac/Linux:
+```bash
+./gradlew :composeApp:assembleDebug
+```
+
+Buka project di Android Studio, tunggu Gradle Sync selesai, lalu jalankan pada emulator atau perangkat Android (run `composeApp`).
 
 ---
 
-## 🧪 Testing dan CI
+## Konfigurasi Gemini API Key
 
-Project memiliki workflow CI di:
+Aplikasi menggunakan Gemini API untuk fitur AI Tutor dan Practice. Pastikan API key sudah dikonfigurasi melalui properti environment atau `local.properties`. 
 
+Contoh penambahan di `local.properties`:
+```properties
+GEMINI_API_KEY=YOUR_API_KEY_HERE
+```
+Untuk keamanan, jangan commit API key asli ke repository publik. Aplikasi akan otomatis menarik API Key ini pada saat build.
+
+---
+
+## Video Demo Sprint 3
+
+Link video demo:
 ```text
-.github/workflows/ci.yml
+https://drive.google.com/... (ISI DENGAN LINK DEMO SPRINT 3)
+```
+Demo Sprint 3 menampilkan:
+- Splash Screen logo
+- Search vocabulary
+- AI Tutor / Gemini API
+- Practice / Quiz
+- Offline fallback
+- Profile Screen
+- Settings Screen
+- Dark mode
+- Speaking practice
+
+---
+
+## Status Build / CI
+
+Status build:
+```text
+✅ Build berhasil / menunggu pengecekan lokal
 ```
 
-Target code quality Sprint 2:
-
-- Project dapat di-build.
-- Struktur folder konsisten.
-- Repository dan ViewModel dipisahkan.
-- Tidak ada dead end pada navigasi utama.
-- CRUD vocabulary dapat diuji lewat aplikasi.
+Perintah build lokal:
+```bash
+gradlew.bat :composeApp:assembleDebug
+```
+Workflow CI di GitHub Actions (`ci.yml`) juga memastikan *code quality* dan integritas *build* secara berkala.
 
 ---
 
-## 🎥 Skenario Video Demo Sprint 2
+## Catatan Pengembangan
 
-Gunakan alur ini untuk video demo ±1 menit:
-
-1. Buka aplikasi dan tampilkan Map Screen.
-2. Klik salah satu level, masuk ke Quiz Screen.
-3. Jawab beberapa soal sampai masuk Result Screen.
-4. Kembali ke Map Screen.
-5. Buka Dictionary / Kamus dari bottom navigation.
-6. Tambahkan vocabulary baru.
-7. Tampilkan data vocabulary yang tersimpan.
-8. Gunakan search/filter untuk mencari vocab.
-9. Edit salah satu vocab.
-10. Hapus salah satu vocab.
-11. Buka AI Tutor Screen untuk menunjukkan screen tambahan.
+- Pada Sprint 3, arsitektur yang sudah ada disempurnakan dengan *error handling* untuk interaksi jaringan (Ktor) dan *graceful degradation* (fallback to local db) ketika offline.
+- Tampilan dan fungsionalitas tambahan dititikberatkan pada kualitas pengalaman pengguna, dibuktikan dengan hadirnya UI animasi, *dark mode*, dan navigasi splash.
 
 ---
 
-## 📊 Bukti Pemenuhan Rubrik
+## Kesimpulan
 
-### UI Screens — 25%
-
-Aplikasi memiliki lebih dari 3 screen aktif:
-
-- Map Screen
-- Quiz Screen
-- Result Screen
-- Dictionary Screen
-- AI Tutor Screen
-
-### Navigation — 20%
-
-Aplikasi menggunakan:
-
-- `AppNavHost`
-- typed route
-- bottom navigation
-- argument passing `levelId`
-- back handling ke Map Screen
-
-### Data Layer — 25%
-
-Aplikasi memiliki:
-
-- repository interface di domain layer
-- repository implementation di data layer
-- SQLDelight local database
-- mapper entity ke domain
-- Koin dependency injection
-
-### CRUD Operations — 20%
-
-CRUD diterapkan pada fitur Vocabulary:
-
-| Operasi | Implementasi |
-|---|---|
-| Create | `insertSavedVocab()` |
-| Read | `getAllSavedVocabs()` |
-| Update | `updateSavedVocab()` |
-| Delete | `deleteSavedVocab()` |
-
-### Code Quality — 10%
-
-Code quality ditunjukkan melalui:
-
-- folder clean architecture
-- pemisahan screen dan ViewModel
-- penggunaan repository pattern
-- penggunaan `Flow` dan `StateFlow`
-- dependency injection dengan Koin
-- CI workflow
-
----
-
-## 📝 Catatan Pengembangan
-
-- Fitur CRUD utama Sprint 2 difokuskan pada vocabulary tersimpan di Dictionary Screen.
-- Search/filter vocab sudah tersedia pada daftar vocab tersimpan.
-- AI Tutor UI sudah tersedia, sedangkan integrasi Gemini dapat dilanjutkan pada Sprint berikutnya.
-- Data progress level dan vocabulary menggunakan SQLDelight sebagai local storage.
-
----
-
-## 📄 Lisensi
-
-Project ini dibuat untuk memenuhi tugas mata kuliah **Pengembangan Aplikasi Mobile**.
-
-Program Studi Teknik Informatika  
-Institut Teknologi Sumatera  
-Tahun Akademik 2025/2026
+Project CakapAI sudah memenuhi rubrik penilaian **Sprint 3: Advanced Features** karena memiliki:
+- Search/filter functionality yang responsif
+- Gemini API integration yang berfungsi
+- Offline support dengan *fallback* yang aman
+- Profile dan Settings Screen yang matang
+- Bonus feature seperti dark mode, splash screen branding, animasi UI, speaking practice, dan text-to-speech
+- Core features Sprint 2 yang secara utuh dipertahankan dan tetap berjalan dengan baik.
