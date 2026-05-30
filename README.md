@@ -181,7 +181,7 @@ Untuk keamanan, jangan commit API key asli ke repository publik. Aplikasi akan o
 
 Link video demo:
 ```text
-https://drive.google.com/... (ISI DENGAN LINK DEMO SPRINT 3)
+https://drive.google.com/drive/folders/1UU3RQus6D0go0HLjzZQivif-fUOKpKLf?usp=sharing
 ```
 Demo Sprint 3 menampilkan:
 - Splash Screen logo
