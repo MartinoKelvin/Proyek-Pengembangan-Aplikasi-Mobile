@@ -58,6 +58,25 @@ fun PracticeSessionOverlay(
                     onCompleted(state.lives > 0, score) 
                 }
             )
+        } else if (state.errorMessage != null && state.questions.isEmpty()) {
+            Column(
+                modifier = Modifier.fillMaxSize().padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(state.errorMessage ?: "Failed to generate content", color = Color.Red, fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = { viewModel.retry() },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981))
+                ) {
+                    Text("Retry")
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                TextButton(onClick = onClose) {
+                    Text("Kembali", color = Color.Gray)
+                }
+            }
         } else if (state.questions.isNotEmpty()) {
             Column(modifier = Modifier.fillMaxSize()) {
                 // Header

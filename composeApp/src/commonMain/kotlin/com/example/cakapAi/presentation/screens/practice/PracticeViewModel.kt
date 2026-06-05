@@ -39,20 +39,42 @@ class PracticeViewModel(
                     it.copy(
                         isLoading = false,
                         questions = result.getOrNull()!!,
-                        isUsingOfflineFallback = false
+                        isUsingOfflineFallback = false,
+                        errorMessage = null
                     )
                 }
             } else {
                 val fallback = repository.getOfflineFallbackQuestions(levelId)
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        questions = fallback,
-                        isUsingOfflineFallback = true
-                    )
+                if (fallback.isNotEmpty()) {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            questions = fallback,
+                            isUsingOfflineFallback = true,
+                            errorMessage = null
+                        )
+                    }
+                } else {
+                    val errorMsg = if (result.exceptionOrNull()?.message?.contains("internet", ignoreCase = true) == true || result.exceptionOrNull()?.message?.contains("host", ignoreCase = true) == true) {
+                        "No Internet Connection"
+                    } else {
+                        "Failed to generate content"
+                    }
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            questions = emptyList(),
+                            isUsingOfflineFallback = false,
+                            errorMessage = errorMsg
+                        )
+                    }
                 }
             }
         }
+    }
+
+    fun retry() {
+        loadQuestions()
     }
 
     fun selectAnswer(answer: String) {

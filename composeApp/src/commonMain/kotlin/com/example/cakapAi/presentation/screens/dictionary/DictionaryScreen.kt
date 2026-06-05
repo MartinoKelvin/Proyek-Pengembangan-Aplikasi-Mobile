@@ -385,6 +385,32 @@ fun DictionaryScreen(
                         }
                     }
                 }
+            } else {
+                // Empty Vocabulary State
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "No vocabulary available",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = textSecondaryColor
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        onClick = { 
+                            editingVocab = null
+                            editSourceText = ""
+                            editTranslatedText = ""
+                            showDialog = true 
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = emeraldAccent)
+                    ) {
+                        Text("Tambah Kosakata")
+                    }
+                }
             }
             
             // Add padding to ensure content isn't hidden behind FAB

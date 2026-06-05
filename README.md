@@ -1,12 +1,69 @@
-# CakapAI — Sprint 3 Advanced Features
+# CakapAI - Sprint 4 Polish & Testing
 
 ![CI](https://github.com/MartinoKelvin/Proyek-Pengembangan-Aplikasi-Mobile/actions/workflows/ci.yml/badge.svg)
+
+## Sprint 4 Features
+* Bug Fixes
+* UI Polish
+* Unit Testing
+* UI Testing
+* Coverage Report
+
+## Bug Fixes
+* Fixed navigation issue
+* Fixed crash when opening profile
+* Fixed state not updating
+* Fixed search filtering issue
+
+## UI Improvements
+* Splash Screen refinement
+* Consistent spacing
+* Better typography
+* Improved card layout
+* Better dark mode support
+* Improved icon consistency
+
+## Testing Strategy
+
+### Repository Tests
+* Insert note
+* Update note
+* Delete note
+* Search note
+* Error handling
+
+### ViewModel Tests
+* Initial state
+* Loading state
+* Success state
+* Empty state
+* Error state
+
+### UI Tests
+* Home Screen
+* Add Note Flow
+* Vocabulary Search
+
+## Running Tests
+`./gradlew test`
+
+## Generate Coverage
+`./gradlew koverHtmlReport`
+
+## Coverage Screenshot
+![Coverage Screenshot](docs/coverage_screenshot.png)
+
+## Demo Video
+[Link Video Demo Sprint 4](#)
+
+---
 
 ## Deskripsi Aplikasi
 
 CakapAI adalah aplikasi pembelajaran bahasa berbasis AI yang dirancang untuk membantu pengguna belajar bahasa melalui fitur dictionary, vocabulary, practice quiz, speaking practice, dan AI Tutor. Aplikasi ini menggunakan Gemini API untuk mendukung pembelajaran interaktif serta SQLDelight untuk penyimpanan lokal agar aplikasi tetap bisa digunakan secara offline.
 
 ---
+
 
 ## Sprint 3 Overview
 

@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.sqldelight)
+    id("org.jetbrains.kotlinx.kover")
 }
 
 // Load local.properties for API keys
@@ -98,6 +99,15 @@ kotlin {
             implementation(libs.sqldelight.android.driver)
         }
         
+        val androidInstrumentedTest by getting {
+            dependencies {
+                implementation(libs.kotlin.test)
+                implementation("androidx.compose.ui:ui-test-junit4:1.7.0")
+                implementation("androidx.test.ext:junit:1.2.1")
+                implementation("androidx.test.espresso:espresso-core:3.6.1")
+            }
+        }
+        
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
             implementation(libs.sqldelight.native.driver)
@@ -157,3 +167,5 @@ sqldelight {
         }
     }
 }
+dependencies { debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.0") }
+
