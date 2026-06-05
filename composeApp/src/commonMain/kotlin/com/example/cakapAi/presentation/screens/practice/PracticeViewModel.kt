@@ -33,41 +33,33 @@ class PracticeViewModel(
     private fun loadQuestions() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            val result = repository.generatePracticeQuestions(levelId, levelTitle, levelType)
-            if (result.isSuccess && result.getOrNull()?.isNotEmpty() == true) {
+            try {
+                val rawQuestions = repository.getOfflineQuestions(levelId)
+                val randomizedQuestions = rawQuestions.shuffled().take(5).map { q ->
+                    if (q.options.isNotEmpty()) {
+                        q.copy(options = q.options.shuffled())
+                    } else {
+                        q
+                    }
+                }
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        questions = result.getOrNull()!!,
+                        questions = randomizedQuestions,
                         isUsingOfflineFallback = false,
                         errorMessage = null
                     )
                 }
-            } else {
-                val fallback = repository.getOfflineFallbackQuestions(levelId)
-                if (fallback.isNotEmpty()) {
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            questions = fallback,
-                            isUsingOfflineFallback = true,
-                            errorMessage = null
-                        )
-                    }
-                } else {
-                    val errorMsg = if (result.exceptionOrNull()?.message?.contains("internet", ignoreCase = true) == true || result.exceptionOrNull()?.message?.contains("host", ignoreCase = true) == true) {
-                        "No Internet Connection"
-                    } else {
-                        "Failed to generate content"
-                    }
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            questions = emptyList(),
-                            isUsingOfflineFallback = false,
-                            errorMessage = errorMsg
-                        )
-                    }
+            } catch (e: Exception) {
+                println("PracticeViewModel: Failed to load offline questions: ${e.message}")
+                e.printStackTrace()
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        questions = emptyList(),
+                        isUsingOfflineFallback = false,
+                        errorMessage = "Gagal memuat bank soal: ${e.message}"
+                    )
                 }
             }
         }

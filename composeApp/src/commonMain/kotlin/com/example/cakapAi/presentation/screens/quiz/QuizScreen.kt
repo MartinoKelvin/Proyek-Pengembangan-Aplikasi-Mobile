@@ -25,7 +25,7 @@ import kotlin.random.Random
 fun QuizScreen(
     levelId: Int,
     onNavigateBack: () -> Unit,
-    onFinishQuiz: (score: Int, totalQuestion: Int, accuracy: Int, isPassed: Boolean) -> Unit
+    onFinishQuiz: (levelId: Int, score: Int, totalQuestion: Int, accuracy: Int, isPassed: Boolean) -> Unit
 ) {
     var isPracticeSessionOpen by remember { mutableStateOf(false) }
     var randomPracticeLevel by remember { mutableStateOf<PathLevel?>(null) }
@@ -61,7 +61,7 @@ fun QuizScreen(
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "Latihan Tambahan AI",
+                text = "Kuis Latihan Umum",
                 color = if (isLight) Color.Black else Color.White,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
@@ -69,7 +69,7 @@ fun QuizScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Tingkatkan kemampuan bahasamu dengan soal-soal acak yang dibuat khusus untukmu menggunakan Gemini AI.",
+                text = "Tingkatkan kemampuan bahasamu dengan soal-soal latihan acak pilihan dari bank soal CakapAI.",
                 color = if (isLight) Color.DarkGray else Color.LightGray,
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center,
@@ -99,7 +99,7 @@ fun QuizScreen(
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
-                    text = "Generate Latihan Random",
+                    text = "Mulai Kuis Acak",
                     color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
@@ -110,15 +110,17 @@ fun QuizScreen(
         if (isPracticeSessionOpen && randomPracticeLevel != null) {
             PracticeSessionOverlay(
                 level = randomPracticeLevel!!,
+                closeButtonText = "Lihat Hasil",
                 onClose = {
                     isPracticeSessionOpen = false
                     randomPracticeLevel = null
                 },
                 onCompleted = { isSuccess, score ->
+                    val completedLevelId = randomPracticeLevel?.id ?: 999
                     isPracticeSessionOpen = false
                     randomPracticeLevel = null
                     val accuracy = if (isSuccess) 100 else 50
-                    onFinishQuiz(score, 5, accuracy, isSuccess)
+                    onFinishQuiz(completedLevelId, score, 5, accuracy, isSuccess)
                 }
             )
         }

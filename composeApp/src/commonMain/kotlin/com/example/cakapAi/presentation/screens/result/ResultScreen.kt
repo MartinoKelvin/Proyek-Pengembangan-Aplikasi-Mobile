@@ -262,9 +262,14 @@ fun ResultScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Primary Action Button (raised raised 3D design)
+                val isFromMap = levelId <= 5
                 val primaryButtonColor = if (isPassed) emeraldAccent else redAccent
                 val primaryRimColor = if (isPassed) Color(0xFF047857) else Color(0xFF991B1B)
-                val buttonText = if (isPassed) "LANJUTKAN BELAJAR" else "COBA LAGI"
+                val buttonText = if (isPassed) {
+                    if (isFromMap) "LANJUTKAN BELAJAR" else "KEMBALI KE KUIS"
+                } else {
+                    "COBA LAGI"
+                }
 
                 Box(
                     modifier = Modifier
@@ -316,7 +321,7 @@ fun ResultScreen(
                         border = BorderStroke(1.dp, borderStrokeColor)
                     ) {
                         Text(
-                            text = "KEMBALI KE PETA",
+                            text = if (isFromMap) "KEMBALI KE PETA" else "KEMBALI KE KUIS",
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
                             letterSpacing = 0.5.sp
