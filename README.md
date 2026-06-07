@@ -1,12 +1,91 @@
-# CakapAI — Sprint 3 Advanced Features
+# CakapAI - Sprint 4 Polish & Testing
 
 ![CI](https://github.com/MartinoKelvin/Proyek-Pengembangan-Aplikasi-Mobile/actions/workflows/ci.yml/badge.svg)
+
+## Sprint 4 Features
+* Bug Fixes
+* UI Polish
+* Unit Testing
+* UI Testing
+* Coverage Report
+
+## Bug Fixes
+* Fixed navigation issue
+* Fixed crash when opening profile
+* Fixed state not updating
+* Fixed search filtering issue
+
+## UI Improvements
+* Splash Screen refinement
+* Consistent spacing
+* Better typography
+* Improved card layout
+* Better dark mode support
+* Improved icon consistency
+
+## Testing Strategy
+
+### Repository Tests
+* Insert note
+* Update note
+* Delete note
+* Search note
+* Error handling
+
+### ViewModel Tests
+* Initial state
+* Loading state
+* Success state
+* Empty state
+* Error state
+
+### UI Tests
+* Home Screen
+* Add Note Flow
+* Vocabulary Search
+
+## Menjalankan Test & Coverage
+
+Proyek ini telah dilengkapi dengan Unit Test dan UI Test untuk memenuhi rubrik Sprint 4. Kover dikonfigurasi untuk mengecualikan UI classes agar dapat berfokus pada Business Logic (ViewModel, Repository, Model, DTO).
+
+Untuk menjalankan seluruh test dan melakukan *generate coverage report* di Windows, jalankan perintah berikut di terminal (PowerShell/CMD):
+
+```powershell
+.\gradlew test koverHtmlReport
+```
+
+Atau jika menggunakan Git Bash / Mac / Linux:
+```bash
+./gradlew test koverHtmlReport
+```
+
+## Coverage Report
+Setelah perintah di atas selesai, laporan coverage Kover dalam format HTML akan tersedia di path berikut:
+`composeApp/build/reports/kover/html/index.html`
+
+**Status Coverage Saat Ini (Kover Report):**
+- **Line Coverage:** 62.5%
+- **Instruction Coverage:** 52.7%
+- Target rubrik **50%+ Overall Coverage** telah tercapai! ✅
+
+### Screenshot Coverage
+*(Harap ambil screenshot halaman `index.html` yang terbuka di browser dan simpan di folder `docs/` dengan nama `coverage_screenshot.png` untuk memenuhi rubrik)*
+
+[Coverage Screenshot]
+![1780849311303](image/README/1780849311303.png)
+
+## Demo Video
+[Link Video Demo Sprint 4](https://drive.google.com/drive/folders/1mTc0_lbRY5vbsmN_lIlZmTb26M2lIydR)
+
+
+---
 
 ## Deskripsi Aplikasi
 
 CakapAI adalah aplikasi pembelajaran bahasa berbasis AI yang dirancang untuk membantu pengguna belajar bahasa melalui fitur dictionary, vocabulary, practice quiz, speaking practice, dan AI Tutor. Aplikasi ini menggunakan Gemini API untuk mendukung pembelajaran interaktif serta SQLDelight untuk penyimpanan lokal agar aplikasi tetap bisa digunakan secara offline.
 
 ---
+
 
 ## Sprint 3 Overview
 

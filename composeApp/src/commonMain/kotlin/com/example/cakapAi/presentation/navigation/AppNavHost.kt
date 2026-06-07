@@ -95,9 +95,9 @@ fun AppNavHost(
                     onNavigateBack = {
                         navigationActions.navigateToMap()
                     },
-                    onFinishQuiz = { score, totalQuestions, accuracy, isPassed ->
+                    onFinishQuiz = { completedLevelId, score, totalQuestions, accuracy, isPassed ->
                         navigationActions.navigateToResult(
-                            levelId = route.levelId,
+                            levelId = completedLevelId,
                             score = score,
                             totalQuestion = totalQuestions,
                             accuracy = accuracy,
@@ -117,7 +117,14 @@ fun AppNavHost(
                     accuracy = route.accuracy,
                     isPassed = route.isPassed,
                     onBackToMap = {
-                        navigationActions.navigateToMap()
+                        if (route.levelId <= 5) {
+                            navigationActions.navigateToMap()
+                        } else {
+                            val popped = navController.popBackStack(Route.Quiz(levelId = 1), inclusive = false)
+                            if (!popped) {
+                                navigationActions.navigateToMap()
+                            }
+                        }
                     },
                     onRetryQuiz = {
                         navigationActions.navigateToQuiz(route.levelId)

@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -25,7 +26,7 @@ import kotlin.random.Random
 fun QuizScreen(
     levelId: Int,
     onNavigateBack: () -> Unit,
-    onFinishQuiz: (score: Int, totalQuestion: Int, accuracy: Int, isPassed: Boolean) -> Unit
+    onFinishQuiz: (levelId: Int, score: Int, totalQuestion: Int, accuracy: Int, isPassed: Boolean) -> Unit
 ) {
     var isPracticeSessionOpen by remember { mutableStateOf(false) }
     var randomPracticeLevel by remember { mutableStateOf<PathLevel?>(null) }
@@ -38,6 +39,7 @@ fun QuizScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .testTag("QuizScreen")
             .background(
                 Brush.verticalGradient(
                     colors = listOf(gradientStart, backgroundColor)
@@ -61,7 +63,7 @@ fun QuizScreen(
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "Latihan Tambahan AI",
+                text = "Kuis Latihan Umum",
                 color = if (isLight) Color.Black else Color.White,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
@@ -69,7 +71,7 @@ fun QuizScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Tingkatkan kemampuan bahasamu dengan soal-soal acak yang dibuat khusus untukmu menggunakan Gemini AI.",
+                text = "Tingkatkan kemampuan bahasamu dengan soal-soal latihan acak pilihan dari bank soal CakapAI.",
                 color = if (isLight) Color.DarkGray else Color.LightGray,
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center,
@@ -94,12 +96,13 @@ fun QuizScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(56.dp)
+                    .testTag("QuizButton"),
                 colors = ButtonDefaults.buttonColors(containerColor = emeraldAccent),
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
-                    text = "Generate Latihan Random",
+                    text = "Mulai Kuis Acak",
                     color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
@@ -110,15 +113,17 @@ fun QuizScreen(
         if (isPracticeSessionOpen && randomPracticeLevel != null) {
             PracticeSessionOverlay(
                 level = randomPracticeLevel!!,
+                closeButtonText = "Lihat Hasil",
                 onClose = {
                     isPracticeSessionOpen = false
                     randomPracticeLevel = null
                 },
                 onCompleted = { isSuccess, score ->
+                    val completedLevelId = randomPracticeLevel?.id ?: 999
                     isPracticeSessionOpen = false
                     randomPracticeLevel = null
                     val accuracy = if (isSuccess) 100 else 50
-                    onFinishQuiz(score, 5, accuracy, isSuccess)
+                    onFinishQuiz(completedLevelId, score, 5, accuracy, isSuccess)
                 }
             )
         }

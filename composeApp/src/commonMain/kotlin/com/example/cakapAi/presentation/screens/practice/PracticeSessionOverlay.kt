@@ -32,9 +32,12 @@ import org.koin.core.parameter.parametersOf
 fun PracticeSessionOverlay(
     level: PathLevel,
     onClose: () -> Unit,
-    onCompleted: (isSuccess: Boolean, score: Int) -> Unit
+    onCompleted: (isSuccess: Boolean, score: Int) -> Unit,
+    closeButtonText: String = "Kembali ke Peta"
 ) {
+    val sessionKey = remember(level) { "level_${level.id}_${kotlin.random.Random.nextInt()}" }
     val viewModel: PracticeViewModel = koinViewModel(
+        key = sessionKey,
         parameters = { parametersOf(level.id, level.title, level.type.name) }
     )
     val state by viewModel.uiState.collectAsState()
@@ -53,11 +56,31 @@ fun PracticeSessionOverlay(
             PracticeResult(
                 correctCount = state.correctCount,
                 totalCount = state.questions.size,
+                closeButtonText = closeButtonText,
                 onClose = { 
                     val score = if (state.questions.isEmpty()) 0 else (state.correctCount * 100) / state.questions.size
                     onCompleted(state.lives > 0, score) 
                 }
             )
+        } else if (state.errorMessage != null && state.questions.isEmpty()) {
+            Column(
+                modifier = Modifier.fillMaxSize().padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(state.errorMessage ?: "Failed to generate content", color = Color.Red, fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = { viewModel.retry() },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981))
+                ) {
+                    Text("Retry")
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                TextButton(onClick = onClose) {
+                    Text("Kembali", color = Color.Gray)
+                }
+            }
         } else if (state.questions.isNotEmpty()) {
             Column(modifier = Modifier.fillMaxSize()) {
                 // Header
@@ -201,24 +224,35 @@ fun PracticeSessionOverlay(
                                 )
                                 if (question.options.isNotEmpty()) {
                                     Spacer(modifier = Modifier.height(16.dp))
-                                    Row(
+                                    Column(
                                         modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceEvenly
+                                        verticalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
-                                        question.options.forEach { option ->
-                                            val isSelected = state.typedAnswer == option
-                                            OutlinedButton(
-                                                onClick = { 
-                                                    viewModel.updateTypedAnswer(option)
-                                                    viewModel.speak(option)
-                                                },
-                                                colors = ButtonDefaults.outlinedButtonColors(
-                                                    containerColor = if (isSelected) Color(0xFF0EA5E9) else Color.Transparent,
-                                                    contentColor = Color.White
-                                                ),
-                                                border = BorderStroke(1.dp, if (isSelected) Color(0xFF0EA5E9) else Color.Gray)
+                                        question.options.chunked(2).forEach { rowOptions ->
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                                             ) {
-                                                Text(option)
+                                                rowOptions.forEach { option ->
+                                                    val isSelected = state.typedAnswer == option
+                                                    OutlinedButton(
+                                                        onClick = { 
+                                                            viewModel.updateTypedAnswer(option)
+                                                            viewModel.speak(option)
+                                                        },
+                                                        modifier = Modifier.weight(1f),
+                                                        colors = ButtonDefaults.outlinedButtonColors(
+                                                            containerColor = if (isSelected) Color(0xFF0EA5E9) else Color.Transparent,
+                                                            contentColor = Color.White
+                                                        ),
+                                                        border = BorderStroke(1.dp, if (isSelected) Color(0xFF0EA5E9) else Color.Gray)
+                                                    ) {
+                                                        Text(option, color = Color.White)
+                                                    }
+                                                }
+                                                if (rowOptions.size < 2) {
+                                                    Spacer(modifier = Modifier.weight(1f))
+                                                }
                                             }
                                         }
                                     }
@@ -339,6 +373,7 @@ fun PracticeSessionOverlay(
 fun PracticeResult(
     correctCount: Int,
     totalCount: Int,
+    closeButtonText: String,
     onClose: () -> Unit
 ) {
     Column(
@@ -371,7 +406,7 @@ fun PracticeResult(
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981)),
             shape = RoundedCornerShape(16.dp)
         ) {
-            Text("Kembali ke Peta", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
+            Text(closeButtonText, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
         }
     }
 }

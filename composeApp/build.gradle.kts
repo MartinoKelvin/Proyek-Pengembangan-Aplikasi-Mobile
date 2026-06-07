@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.sqldelight)
+    id("org.jetbrains.kotlinx.kover")
 }
 
 // Load local.properties for API keys
@@ -89,6 +90,7 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.turbine)
+            implementation("io.ktor:ktor-client-mock:3.0.1")
         }
         
         androidMain.dependencies {
@@ -96,6 +98,15 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.sqldelight.android.driver)
+        }
+        
+        val androidInstrumentedTest by getting {
+            dependencies {
+                implementation(libs.kotlin.test)
+                implementation("androidx.compose.ui:ui-test-junit4:1.7.0")
+                implementation("androidx.test.ext:junit:1.2.1")
+                implementation("androidx.test.espresso:espresso-core:3.6.1")
+            }
         }
         
         iosMain.dependencies {
@@ -154,6 +165,31 @@ sqldelight {
     databases {
         create("NoteDatabase") {
             packageName.set("com.example.cakapAi.data.local")
+        }
+    }
+}
+dependencies { debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.0") }
+
+kover {
+    reports {
+        filters {
+            excludes {
+                classes(
+                    "*.generated.resources.*",
+                    "*.presentation.theme.*",
+                    "*.presentation.navigation.*",
+                    "*App*",
+                    "*MainActivity*",
+                    "*BuildConfig*",
+                    "*Preview*",
+                    "*ComposableSingletons*",
+                    "*Screen*",
+                    "*Overlay*",
+                    "*Item*",
+                    "*Component*",
+                    "*Button*"
+                )
+            }
         }
     }
 }

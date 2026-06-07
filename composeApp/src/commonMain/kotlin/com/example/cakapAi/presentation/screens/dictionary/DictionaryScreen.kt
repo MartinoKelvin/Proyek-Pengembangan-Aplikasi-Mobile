@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.platform.testTag
 import com.example.cakapAi.domain.model.SavedVocab
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -101,6 +102,7 @@ fun DictionaryScreen(
                     editTranslatedText = ""
                     showDialog = true 
                 },
+                modifier = Modifier.testTag("AddVocabularyButton"),
                 containerColor = emeraldAccent,
                 contentColor = Color.White
             ) {
@@ -298,7 +300,7 @@ fun DictionaryScreen(
                 TextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp).testTag("SearchField"),
                     placeholder = { Text("Cari kosakata...", color = textSecondaryColor) },
                     leadingIcon = {
                         Icon(Icons.Default.Search, contentDescription = "Search", tint = textSecondaryColor)
@@ -334,7 +336,7 @@ fun DictionaryScreen(
                 } else {
                     filteredVocabs.forEach { vocab ->
                         Card(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().testTag("VocabularyItem"),
                             colors = CardDefaults.cardColors(containerColor = cardColor),
                             shape = RoundedCornerShape(12.dp),
                             border = BorderStroke(1.dp, borderStrokeColor)
@@ -383,6 +385,32 @@ fun DictionaryScreen(
                                 }
                             }
                         }
+                    }
+                }
+            } else {
+                // Empty Vocabulary State
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "No vocabulary available",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = textSecondaryColor
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        onClick = { 
+                            editingVocab = null
+                            editSourceText = ""
+                            editTranslatedText = ""
+                            showDialog = true 
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = emeraldAccent)
+                    ) {
+                        Text("Tambah Kosakata")
                     }
                 }
             }

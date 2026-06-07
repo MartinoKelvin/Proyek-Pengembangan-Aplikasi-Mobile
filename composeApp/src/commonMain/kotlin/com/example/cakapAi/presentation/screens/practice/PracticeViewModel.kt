@@ -33,26 +33,40 @@ class PracticeViewModel(
     private fun loadQuestions() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            val result = repository.generatePracticeQuestions(levelId, levelTitle, levelType)
-            if (result.isSuccess && result.getOrNull()?.isNotEmpty() == true) {
+            try {
+                val rawQuestions = repository.getOfflineQuestions(levelId)
+                val randomizedQuestions = rawQuestions.shuffled().take(5).map { q ->
+                    if (q.options.isNotEmpty()) {
+                        q.copy(options = q.options.shuffled())
+                    } else {
+                        q
+                    }
+                }
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        questions = result.getOrNull()!!,
-                        isUsingOfflineFallback = false
+                        questions = randomizedQuestions,
+                        isUsingOfflineFallback = false,
+                        errorMessage = null
                     )
                 }
-            } else {
-                val fallback = repository.getOfflineFallbackQuestions(levelId)
+            } catch (e: Exception) {
+                println("PracticeViewModel: Failed to load offline questions: ${e.message}")
+                e.printStackTrace()
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        questions = fallback,
-                        isUsingOfflineFallback = true
+                        questions = emptyList(),
+                        isUsingOfflineFallback = false,
+                        errorMessage = "Gagal memuat bank soal: ${e.message}"
                     )
                 }
             }
         }
+    }
+
+    fun retry() {
+        loadQuestions()
     }
 
     fun selectAnswer(answer: String) {
