@@ -61,7 +61,25 @@ VALUES
 (2, 'Level 2 - Daily Vocabulary', 'Kosakata sehari-hari yang sering digunakan', 'READING', 0, 0, 0, 0),
 (3, 'Level 3 - Simple Grammar', 'Struktur kalimat dan tata bahasa dasar', 'GAMING', 0, 0, 0, 0),
 (4, 'Level 4 - Conversation', 'Latihan percakapan interaktif pendek', 'SPEAKING', 0, 0, 0, 0),
-(5, 'Level 5 - Speaking Practice', 'Latihan pengucapan kata dan kalimat', 'VIDEO', 0, 0, 0, 0);
+(5, 'Level 5 - Speaking Practice', 'Latihan pengucapan kata dan kalimat', 'VIDEO', 0, 0, 0, 0),
+(6, 'Level 6 - Family & Friends', 'Kosakata tentang keluarga dan pertemanan', 'LISTENING', 0, 0, 0, 0),
+(7, 'Level 7 - Numbers & Time', 'Belajar angka dan menyatakan waktu', 'READING', 0, 0, 0, 0),
+(8, 'Level 8 - Simple Present Tense', 'Penggunaan kalimat masa kini sederhana', 'GAMING', 0, 0, 0, 0),
+(9, 'Level 9 - At the Restaurant', 'Percakapan memesan makanan dan minuman', 'SPEAKING', 0, 0, 0, 0),
+(10, 'Level 10 - In the Office', 'Istilah dunia kerja dan komunikasi formal', 'VIDEO', 0, 0, 0, 0),
+(11, 'Level 11 - Asking for Directions', 'Cara menanyakan dan menunjukkan arah', 'LISTENING', 0, 0, 0, 0),
+(12, 'Level 12 - Present Continuous', 'Menyatakan kegiatan yang sedang dilakukan', 'READING', 0, 0, 0, 0),
+(13, 'Level 13 - Shopping & Prices', 'Berbelanja dan menanyakan harga barang', 'GAMING', 0, 0, 0, 0),
+(14, 'Level 14 - Expressing Feelings', 'Mengungkapkan emosi dan perasaan', 'SPEAKING', 0, 0, 0, 0),
+(15, 'Level 15 - Simple Past Tense', 'Menceritakan kejadian di masa lampau', 'VIDEO', 0, 0, 0, 0),
+(16, 'Level 16 - Health & Illness', 'Kosakata kesehatan dan pergi ke dokter', 'LISTENING', 0, 0, 0, 0),
+(17, 'Level 17 - Future Plans', 'Menyatakan rencana menggunakan will', 'READING', 0, 0, 0, 0),
+(18, 'Level 18 - Weather & Seasons', 'Mendeskripsikan cuaca dan musim', 'GAMING', 0, 0, 0, 0),
+(19, 'Level 19 - Modals & Requests', 'Membuat permohonan sopan dengan modals', 'SPEAKING', 0, 0, 0, 0),
+(20, 'Level 20 - Idioms & Proverbs', 'Memahami ungkapan populer sehari-hari', 'VIDEO', 0, 0, 0, 0);
+
+clearAllLevels:
+DELETE FROM LevelProgressEntity;
 
 
 -- ==========================================

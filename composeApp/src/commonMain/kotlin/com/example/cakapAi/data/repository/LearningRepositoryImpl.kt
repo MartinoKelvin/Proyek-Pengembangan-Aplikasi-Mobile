@@ -104,7 +104,8 @@ class LearningRepositoryImpl(
         withContext(Dispatchers.IO) {
             queries.transaction {
                 val levels = queries.getAllLevels().executeAsList()
-                if (levels.isEmpty()) {
+                if (levels.size < 20) {
+                    queries.clearAllLevels()
                     queries.initLevels()
                 }
             }

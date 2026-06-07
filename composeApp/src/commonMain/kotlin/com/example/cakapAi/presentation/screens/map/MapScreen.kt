@@ -207,14 +207,7 @@ fun MapScreen(
                                 progress.isUnlocked -> LevelStatus.UNLOCKED
                                 else -> LevelStatus.LOCKED
                             },
-                            xOffsetFactor = when (progress.id) {
-                                1 -> 0.0f
-                                2 -> 0.25f
-                                3 -> 0.38f
-                                4 -> 0.15f
-                                5 -> -0.2f
-                                else -> 0.0f
-                            },
+                            xOffsetFactor = sin((progress.id.toFloat() - 1f) * 1.3f) * 0.35f,
                             highScore = progress.highScore
                         )
                     }
