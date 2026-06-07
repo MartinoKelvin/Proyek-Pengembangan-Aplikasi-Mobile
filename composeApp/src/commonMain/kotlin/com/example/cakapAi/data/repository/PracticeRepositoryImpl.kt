@@ -2065,6 +2065,96 @@ class PracticeRepositoryImpl(
                     options = listOf("Mempersingkat cerita", "Memperpanjang masalah", "Membaca buku cerita", "Berbohong kepada orang lain"),
                     correctAnswer = "Mempersingkat cerita",
                     explanation = "'To make a long story short' digunakan untuk langsung ke inti masalah/mempersingkat cerita."
+                ),
+                PracticeQuestion(
+                    id = "gen-q2",
+                    levelId = levelId,
+                    type = PracticeQuestionType.MULTIPLE_CHOICE,
+                    instruction = "Pilih kata ganti kepemilikan yang tepat",
+                    prompt = "This is my book, so this book is ___.",
+                    options = listOf("mine", "yours", "his", "hers"),
+                    correctAnswer = "mine",
+                    explanation = "'Mine' adalah possessive pronoun untuk menunjukkan kepemilikan 'saya'."
+                ),
+                PracticeQuestion(
+                    id = "gen-q3",
+                    levelId = levelId,
+                    type = PracticeQuestionType.FILL_BLANK,
+                    instruction = "Lengkapi kata sambung yang sesuai",
+                    prompt = "I wanted to go for a walk, ___ it started to rain.",
+                    options = listOf("but", "or", "and", "so"),
+                    correctAnswer = "but",
+                    explanation = "Gunakan kata hubung pertentangan 'but' (tetapi) karena situasi kontras."
+                ),
+                PracticeQuestion(
+                    id = "gen-q4",
+                    levelId = levelId,
+                    type = PracticeQuestionType.FILL_BLANK,
+                    instruction = "Lengkapi auxiliary verb berikut",
+                    prompt = "She ___ not like to drink coffee.",
+                    options = listOf("does", "do", "is", "are"),
+                    correctAnswer = "does",
+                    explanation = "Untuk subjek tunggal 'she' pada present simple negatif, gunakan auxiliary verb 'does'."
+                ),
+                PracticeQuestion(
+                    id = "gen-q5",
+                    levelId = levelId,
+                    type = PracticeQuestionType.SPEAKING,
+                    instruction = "Ucapkan kalimat sopan berikut",
+                    prompt = "Could you please help me with this task?",
+                    options = emptyList(),
+                    correctAnswer = "Could you please help me with this task?",
+                    explanation = "Latihan melafalkan permintaan tolong secara sopan menggunakan 'Could you'."
+                ),
+                PracticeQuestion(
+                    id = "gen-q6",
+                    levelId = levelId,
+                    type = PracticeQuestionType.MULTIPLE_CHOICE,
+                    instruction = "Pilih arti idiom penyemangat berikut",
+                    prompt = "Apa arti dari ungkapan idiom 'Break a leg'?",
+                    options = listOf("Semoga sukses", "Mengalami kecelakaan", "Bekerja sangat keras", "Beristirahat sejenak"),
+                    correctAnswer = "Semoga sukses",
+                    explanation = "'Break a leg' adalah idiom yang digunakan untuk mengucapkan semoga sukses sebelum pertunjukan/ujian."
+                ),
+                PracticeQuestion(
+                    id = "gen-q7",
+                    levelId = levelId,
+                    type = PracticeQuestionType.FILL_BLANK,
+                    instruction = "Lengkapi kata depan (preposition) berikut",
+                    prompt = "We have been friends ___ five years.",
+                    options = listOf("for", "since", "during", "ago"),
+                    correctAnswer = "for",
+                    explanation = "Gunakan 'for' untuk menunjukkan durasi waktu ('selama lima tahun')."
+                ),
+                PracticeQuestion(
+                    id = "gen-q8",
+                    levelId = levelId,
+                    type = PracticeQuestionType.FILL_BLANK,
+                    instruction = "Lengkapi bentuk kata kerja yang sesuai",
+                    prompt = "She is looking forward to ___ you.",
+                    options = listOf("meeting", "meet", "met", "meets"),
+                    correctAnswer = "meeting",
+                    explanation = "Frasa 'look forward to' diikuti oleh verb-ing (gerund)."
+                ),
+                PracticeQuestion(
+                    id = "gen-q9",
+                    levelId = levelId,
+                    type = PracticeQuestionType.MULTIPLE_CHOICE,
+                    instruction = "Pilih arti idiom frekuensi berikut",
+                    prompt = "Apa arti dari ungkapan idiom 'Once in a blue moon'?",
+                    options = listOf("Sangat jarang terjadi", "Sering dilakukan", "Terjadi setiap malam", "Hanya saat bulan purnama"),
+                    correctAnswer = "Sangat jarang terjadi",
+                    explanation = "'Once in a blue moon' adalah idiom untuk menyatakan sesuatu yang sangat jarang terjadi."
+                ),
+                PracticeQuestion(
+                    id = "gen-q10",
+                    levelId = levelId,
+                    type = PracticeQuestionType.SPEAKING,
+                    instruction = "Ucapkan kalimat berikut dengan lancar",
+                    prompt = "Please drive safely on your way home.",
+                    options = emptyList(),
+                    correctAnswer = "Please drive safely on your way home.",
+                    explanation = "Latihan melafalkan ucapan hati-hati di jalan untuk orang lain."
                 )
             )
         }

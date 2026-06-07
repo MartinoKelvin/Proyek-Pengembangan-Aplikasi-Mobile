@@ -199,9 +199,15 @@ fun ChatBubble(
         RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp, bottomStart = 4.dp, bottomEnd = 18.dp)
     }
 
-    val userGradient = Brush.horizontalGradient(
-        colors = listOf(Color(0xFF10B981), Color(0xFF059669))
-    )
+    val userGradient = if (isLight) {
+        Brush.horizontalGradient(
+            colors = listOf(Color(0xFF10B981), Color(0xFF059669))
+        )
+    } else {
+        Brush.horizontalGradient(
+            colors = listOf(Color(0xFF0284C7), Color(0xFF0369A1))
+        )
+    }
 
     val aiBubbleColor = if (isLight) {
         Color.White.copy(alpha = 0.9f)
@@ -236,7 +242,7 @@ fun ChatBubble(
                     Text(
                         text = "AI Feedback",
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color(0xFF10B981),
+                        color = if (isLight) Color(0xFF10B981) else Color(0xFF34D399),
                         fontWeight = FontWeight.ExtraBold,
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
@@ -244,7 +250,7 @@ fun ChatBubble(
                     Text(
                         text = "AI Tutor",
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color(0xFF0EA5E9),
+                        color = if (isLight) Color(0xFF0EA5E9) else Color(0xFF38BDF8),
                         fontWeight = FontWeight.ExtraBold,
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
