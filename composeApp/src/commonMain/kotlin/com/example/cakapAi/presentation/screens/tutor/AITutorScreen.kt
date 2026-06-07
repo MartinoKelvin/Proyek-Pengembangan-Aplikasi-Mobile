@@ -3,6 +3,7 @@ package com.example.cakapAi.presentation.screens.tutor
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -187,66 +188,73 @@ fun ChatBubble(
 ) {
     val isUser = message.isUser
     val isLight = MaterialTheme.colorScheme.background.red > 0.5f
-    val textPrimary = if (isLight) MaterialTheme.colorScheme.onBackground else Color.White
-    
+
     // Bubble alignment
     val alignment = if (isUser) Alignment.CenterEnd else Alignment.CenterStart
-    
-    // Bubble colors
-    val bubbleColor = if (isUser) {
-        if (isLight) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f) else skyAccent.copy(alpha = 0.2f)
-    } else {
-        cardColor
-    }
-    
-    val borderColor = if (isUser) {
-        if (isLight) MaterialTheme.colorScheme.primary.copy(alpha = 0.4f) else skyAccent.copy(alpha = 0.5f)
-    } else {
-        if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.12f) else Color.White.copy(alpha = 0.08f)
-    }
-    
+
     // Bubble shape
     val shape = if (isUser) {
-        RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 4.dp)
+        RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp, bottomStart = 18.dp, bottomEnd = 4.dp)
     } else {
-        RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 4.dp, bottomEnd = 16.dp)
+        RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp, bottomStart = 4.dp, bottomEnd = 18.dp)
+    }
+
+    val userGradient = Brush.horizontalGradient(
+        colors = listOf(Color(0xFF10B981), Color(0xFF059669))
+    )
+
+    val aiBubbleColor = if (isLight) {
+        Color.White.copy(alpha = 0.9f)
+    } else {
+        Color(0xFF1E293B).copy(alpha = 0.8f)
+    }
+
+    val borderColor = if (isUser) {
+        Color.Transparent
+    } else {
+        if (isLight) Color.Black.copy(alpha = 0.06f) else Color.White.copy(alpha = 0.12f)
     }
 
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = alignment
     ) {
-        Card(
-            shape = shape,
-            colors = CardDefaults.cardColors(containerColor = bubbleColor),
-            border = BorderStroke(1.dp, borderColor),
-            modifier = Modifier.widthIn(max = 280.dp)
+        Box(
+            modifier = Modifier
+                .widthIn(max = 280.dp)
+                .background(
+                    brush = if (isUser) userGradient else Brush.linearGradient(listOf(aiBubbleColor, aiBubbleColor)),
+                    shape = shape
+                )
+                .then(
+                    if (!isUser) Modifier.background(Color.Transparent).border(1.dp, borderColor, shape) else Modifier
+                )
+                .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
+            Column {
                 if (!isUser && message.isFeedback) {
                     Text(
                         text = "AI Feedback",
                         style = MaterialTheme.typography.labelSmall,
-                        color = emeraldAccent,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 6.dp)
+                        color = Color(0xFF10B981),
+                        fontWeight = FontWeight.ExtraBold,
+                        modifier = Modifier.padding(bottom = 4.dp)
                     )
                 } else if (!isUser) {
                     Text(
                         text = "AI Tutor",
                         style = MaterialTheme.typography.labelSmall,
-                        color = skyAccent,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 6.dp)
+                        color = Color(0xFF0EA5E9),
+                        fontWeight = FontWeight.ExtraBold,
+                        modifier = Modifier.padding(bottom = 4.dp)
                     )
                 }
 
                 Text(
                     text = message.text,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = textPrimary
+                    color = if (isUser) Color.White else (if (isLight) Color(0xFF1E293B) else Color.White),
+                    lineHeight = 20.sp
                 )
             }
         }

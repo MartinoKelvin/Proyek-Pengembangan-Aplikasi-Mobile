@@ -610,6 +610,41 @@ fun LevelNodeItem(
                     )
                 }
 
+                // Floating Player Indicator ("Kamu") above the active level
+                if (isPulsing) {
+                    val bobbingTransition = rememberInfiniteTransition(label = "bobbing")
+                    val bobOffset by bobbingTransition.animateFloat(
+                        initialValue = 0f,
+                        targetValue = -6f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(1000, easing = EaseInOutQuad),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                        label = "bobOffset"
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .offset(y = (-28).dp + bobOffset.dp)
+                            .background(
+                                brush = Brush.horizontalGradient(
+                                    colors = listOf(Color(0xFFF59E0B), Color(0xFFD97706))
+                                ),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                    ) {
+                        Text(
+                            text = "KAMU",
+                            color = Color.White,
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            letterSpacing = 0.5.sp
+                        )
+                    }
+                }
+
                 // 3D tactile button stack
                 Box(
                     modifier = Modifier
@@ -743,6 +778,17 @@ fun ConnectionLinesBackdrop(
     val surfaceVariantColor = colorScheme.surfaceVariant
     val outlineColor = colorScheme.outline
 
+    val infiniteTransition = rememberInfiniteTransition(label = "waves")
+    val waveOffset by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(8000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "waveOffset"
+    )
+
     Canvas(modifier = modifier) {
         val width = size.width
         val height = size.height
@@ -753,16 +799,17 @@ fun ConnectionLinesBackdrop(
         } else {
             Color(0xFF38BDF8).copy(alpha = 0.04f)
         }
+        val radOffset = (sin(waveOffset * 3.14159f / 180f) * 10f).dp.toPx()
         for (yOffset in 300..height.toInt() step 500) {
             drawCircle(
                 color = waveColor,
-                radius = 120.dp.toPx(),
+                radius = 120.dp.toPx() + radOffset,
                 center = Offset(width * 0.15f, yOffset.toFloat()),
                 style = Stroke(width = 2f)
             )
             drawCircle(
                 color = waveColor,
-                radius = 140.dp.toPx(),
+                radius = 140.dp.toPx() - radOffset,
                 center = Offset(width * 0.15f, yOffset.toFloat()),
                 style = Stroke(width = 1.5f)
             )

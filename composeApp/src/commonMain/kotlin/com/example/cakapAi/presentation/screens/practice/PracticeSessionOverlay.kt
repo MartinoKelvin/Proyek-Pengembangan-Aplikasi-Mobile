@@ -1,6 +1,7 @@
 package com.example.cakapAi.presentation.screens.practice
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -104,9 +105,16 @@ fun PracticeSessionOverlay(
                     }
                     
                     // Progress Bar
-                    val progress = (state.currentQuestionIndex.toFloat() / state.questions.size)
+                    val targetProgress = if (state.questions.isNotEmpty()) {
+                        state.currentQuestionIndex.toFloat() / state.questions.size
+                    } else 0f
+                    val progressAnim by animateFloatAsState(
+                        targetValue = targetProgress,
+                        animationSpec = tween(durationMillis = 400, easing = LinearOutSlowInEasing),
+                        label = "progressBar"
+                    )
                     LinearProgressIndicator(
-                        progress = { progress },
+                        progress = { progressAnim },
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 16.dp)
@@ -315,59 +323,83 @@ fun PracticeSessionOverlay(
                     }
 
                     // Bottom Feedback Panel
-                    if (state.isAnswerChecked) {
-                        val isCorrect = state.isCurrentAnswerCorrect == true
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(if (isCorrect) Color(0xFF10B981).copy(alpha = if (isLight) 0.15f else 0.2f) else Color.Red.copy(alpha = if (isLight) 0.15f else 0.2f))
-                                .padding(24.dp)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateContentSize()
+                    ) {
+                        this@Column.AnimatedVisibility(
+                            visible = state.isAnswerChecked,
+                            enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                            exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Column {
-                                Text(
-                                    text = if (isCorrect) "Benar!" else "Belum Tepat",
-                                    color = if (isCorrect) Color(0xFF10B981) else Color.Red,
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                if (!isCorrect) {
+                            val isCorrect = state.isCurrentAnswerCorrect == true
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        color = if (isCorrect) Color(0xFF10B981).copy(alpha = if (isLight) 0.15f else 0.2f) 
+                                                else Color.Red.copy(alpha = if (isLight) 0.15f else 0.2f),
+                                        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+                                    )
+                                    .padding(24.dp)
+                            ) {
+                                Column {
                                     Text(
-                                        text = "Jawaban benar: ${question.correctAnswer}",
-                                        color = textPrimary,
-                                        modifier = Modifier.padding(top = 4.dp)
+                                        text = if (isCorrect) "Benar!" else "Belum Tepat",
+                                        color = if (isCorrect) Color(0xFF10B981) else Color.Red,
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.Bold
                                     )
-                                }
-                                Text(
-                                    text = question.explanation,
-                                    color = textSecondary,
-                                    modifier = Modifier.padding(top = 8.dp)
-                                )
-                                Spacer(modifier = Modifier.height(16.dp))
-                                Button(
-                                    onClick = { viewModel.nextQuestion() },
-                                    modifier = Modifier.fillMaxWidth().height(50.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = if (isCorrect) Color(0xFF10B981) else Color.Red
+                                    if (!isCorrect) {
+                                        Text(
+                                            text = "Jawaban benar: ${question.correctAnswer}",
+                                            color = textPrimary,
+                                            modifier = Modifier.padding(top = 4.dp)
+                                        )
+                                    }
+                                    Text(
+                                        text = question.explanation,
+                                        color = textSecondary,
+                                        modifier = Modifier.padding(top = 8.dp)
                                     )
-                                ) {
-                                    Text("Lanjut", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Button(
+                                        onClick = { viewModel.nextQuestion() },
+                                        modifier = Modifier.fillMaxWidth().height(50.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = if (isCorrect) Color(0xFF10B981) else Color.Red
+                                        ),
+                                        shape = RoundedCornerShape(14.dp)
+                                    ) {
+                                        Text("Lanjut", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                    }
                                 }
                             }
                         }
-                    } else {
-                        val isCheckEnabled = when (question.type) {
-                            PracticeQuestionType.MULTIPLE_CHOICE -> state.selectedAnswer != null
-                            PracticeQuestionType.FILL_BLANK -> state.typedAnswer.isNotBlank()
-                            PracticeQuestionType.SPEAKING -> state.spokenText.isNotBlank()
-                        }
-                        Box(modifier = Modifier.padding(24.dp)) {
-                            Button(
-                                onClick = { viewModel.checkAnswer() },
-                                enabled = isCheckEnabled,
-                                modifier = Modifier.fillMaxWidth().height(50.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0EA5E9))
-                            ) {
-                                Text("Cek Jawaban", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+
+                        this@Column.AnimatedVisibility(
+                            visible = !state.isAnswerChecked,
+                            enter = fadeIn(),
+                            exit = fadeOut(),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            val isCheckEnabled = when (question.type) {
+                                PracticeQuestionType.MULTIPLE_CHOICE -> state.selectedAnswer != null
+                                PracticeQuestionType.FILL_BLANK -> state.typedAnswer.isNotBlank()
+                                PracticeQuestionType.SPEAKING -> state.spokenText.isNotBlank()
+                            }
+                            Box(modifier = Modifier.padding(24.dp)) {
+                                Button(
+                                    onClick = { viewModel.checkAnswer() },
+                                    enabled = isCheckEnabled,
+                                    modifier = Modifier.fillMaxWidth().height(50.dp),
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0EA5E9)),
+                                    shape = RoundedCornerShape(14.dp)
+                                ) {
+                                    Text("Cek Jawaban", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                }
                             }
                         }
                     }
