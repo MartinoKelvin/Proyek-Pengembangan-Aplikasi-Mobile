@@ -2,6 +2,7 @@ package com.example.cakapAi.presentation.screens.profile
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,8 +12,10 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import org.koin.compose.viewmodel.koinViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,25 +32,31 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun ProfileScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToSettings: () -> Unit
+    onNavigateToSettings: () -> Unit,
+    viewModel: ProfileViewModel = koinViewModel()
 ) {
-    val userName = "Martino Kelvin"
-    val email = "martinokelvin06032005@gmail.com"
+    val state by viewModel.uiState.collectAsState()
+    val userName = state.userName
+    val email = state.email
     val currentLevel = "Level 2 - Explorer"
     val completedLevel = 2
     val totalLevel = 5
     val xp = 250
 
+    var showEditDialog by remember { mutableStateOf(false) }
+    var editName by remember(userName) { mutableStateOf(userName) }
+    var editEmail by remember(email) { mutableStateOf(email) }
+
     val isLight = MaterialTheme.colorScheme.background.red > 0.5f
-    val backgroundColor = if (isLight) Color(0xFFF0F4F8) else Color(0xFF071224)
-    val cardColor = if (isLight) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f) else Color(0xFF0F1A30)
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val cardColor = if (isLight) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surface
     val emeraldAccent = MaterialTheme.colorScheme.primary
     val skyAccent = MaterialTheme.colorScheme.secondary
 
     val textPrimary = if (isLight) MaterialTheme.colorScheme.onBackground else Color.White
     val textSecondary = if (isLight) MaterialTheme.colorScheme.onSurfaceVariant else Color.LightGray
-    val borderStrokeColor = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.12f) else Color.White.copy(alpha = 0.1f)
-    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer else Color(0xFF0A1B35)
+    val borderStrokeColor = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.12f) else MaterialTheme.colorScheme.outline
+    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer else Color(0xFF012B1E)
     val progressTrack = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.2f) else Color(0xFF1E293B)
 
     Box(
@@ -104,19 +113,36 @@ fun ProfileScreen(
                     .padding(horizontal = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Avatar
+                // Avatar with premium dual-color glowing ring and initials
+                val initials = if (userName.isNotBlank()) {
+                    userName.trim().split("\\s+".toRegex())
+                        .take(2)
+                        .map { it.first().uppercaseChar() }
+                        .joinToString("")
+                } else {
+                    "U"
+                }
+
                 Box(
                     modifier = Modifier
-                        .size(100.dp)
+                        .size(108.dp)
+                        .border(
+                            BorderStroke(
+                                3.dp,
+                                Brush.linearGradient(listOf(emeraldAccent, skyAccent))
+                            ),
+                            CircleShape
+                        )
+                        .padding(5.dp)
                         .clip(CircleShape)
-                        .background(emeraldAccent),
+                        .background(emeraldAccent.copy(alpha = 0.15f)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Avatar",
-                        tint = Color.White,
-                        modifier = Modifier.size(60.dp)
+                    Text(
+                        text = initials,
+                        color = emeraldAccent,
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.ExtraBold
                     )
                 }
 
@@ -135,97 +161,236 @@ fun ProfileScreen(
                     fontSize = 14.sp
                 )
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                // Stats Card
+                Button(
+                    onClick = { showEditDialog = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = emeraldAccent.copy(alpha = 0.1f), contentColor = emeraldAccent),
+                    border = BorderStroke(1.dp, emeraldAccent.copy(alpha = 0.5f)),
+                    shape = RoundedCornerShape(14.dp),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit Profil",
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Edit Profil",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(28.dp))
+
+                // modern Grid-based Learning Stats Title
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(
+                        text = "Statistik Belajar",
+                        color = textPrimary,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 18.sp
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Two columns for Level & XP
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    // Level Card
+                    Card(
+                        modifier = Modifier.weight(1f),
+                        colors = CardDefaults.cardColors(containerColor = cardColor),
+                        shape = RoundedCornerShape(16.dp),
+                        border = BorderStroke(1.dp, borderStrokeColor)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .clip(CircleShape)
+                                    .background(skyAccent.copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(Icons.Default.Star, contentDescription = "Level", tint = skyAccent, modifier = Modifier.size(20.dp))
+                            }
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text(text = "Level Saat Ini", color = textSecondary, fontSize = 11.sp)
+                            Text(text = currentLevel, color = textPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        }
+                    }
+
+                    // XP Card
+                    Card(
+                        modifier = Modifier.weight(1f),
+                        colors = CardDefaults.cardColors(containerColor = cardColor),
+                        shape = RoundedCornerShape(16.dp),
+                        border = BorderStroke(1.dp, borderStrokeColor)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFF59E0B).copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("XP", color = Color(0xFFF59E0B), fontWeight = FontWeight.ExtraBold, fontSize = 12.sp)
+                            }
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text(text = "Total XP", color = textSecondary, fontSize = 11.sp)
+                            Text(text = "$xp XP", color = textPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Progress Card (Full width at bottom)
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = cardColor),
-                    shape = RoundedCornerShape(20.dp),
+                    shape = RoundedCornerShape(16.dp),
                     border = BorderStroke(1.dp, borderStrokeColor)
                 ) {
                     Column(
-                        modifier = Modifier.padding(20.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        modifier = Modifier.padding(16.dp)
                     ) {
-                        Text(
-                            text = "Statistik Belajar",
-                            color = textPrimary,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
-                        )
-
-                        // Level
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(40.dp)
+                                    .size(36.dp)
                                     .clip(CircleShape)
-                                    .background(skyAccent.copy(alpha = 0.2f)),
+                                    .background(emeraldAccent.copy(alpha = 0.15f)),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(Icons.Default.Star, contentDescription = "Level", tint = skyAccent)
+                                Icon(Icons.Default.CheckCircle, contentDescription = "Progress", tint = emeraldAccent, modifier = Modifier.size(20.dp))
                             }
                             Column {
-                                Text(text = "Level Saat Ini", color = textSecondary, fontSize = 12.sp)
-                                Text(text = currentLevel, color = textPrimary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                Text(text = "Progress Level", color = textSecondary, fontSize = 11.sp)
+                                Text(text = "Tahap Belajar", color = textPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                             }
                         }
-
-                        // Progress
+                        Spacer(modifier = Modifier.height(12.dp))
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            Box(
+                            LinearProgressIndicator(
+                                progress = { completedLevel.toFloat() / totalLevel },
                                 modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
-                                    .background(emeraldAccent.copy(alpha = 0.2f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(Icons.Default.CheckCircle, contentDescription = "Progress", tint = emeraldAccent)
-                            }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(text = "Progress Level", color = textSecondary, fontSize = 12.sp)
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    LinearProgressIndicator(
-                                        progress = { completedLevel.toFloat() / totalLevel },
-                                        modifier = Modifier.weight(1f).height(6.dp).clip(RoundedCornerShape(3.dp)),
-                                        color = emeraldAccent,
-                                        trackColor = progressTrack
-                                    )
-                                    Text(text = "$completedLevel/$totalLevel", color = textPrimary, fontSize = 12.sp)
-                                }
-                            }
-                        }
-
-                        // XP
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
-                                    .background(Color(0xFFF59E0B).copy(alpha = 0.2f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text("XP", color = Color(0xFFF59E0B), fontWeight = FontWeight.Bold)
-                            }
-                            Column {
-                                Text(text = "Total XP", color = textSecondary, fontSize = 12.sp)
-                                Text(text = "$xp XP", color = textPrimary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                            }
+                                    .weight(1f)
+                                    .height(8.dp)
+                                    .clip(RoundedCornerShape(4.dp)),
+                                color = emeraldAccent,
+                                trackColor = progressTrack
+                            )
+                            Text(
+                                text = "$completedLevel/$totalLevel",
+                                color = textPrimary,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
                 }
             }
+        }
+
+        if (showEditDialog) {
+            AlertDialog(
+                onDismissRequest = { showEditDialog = false },
+                title = {
+                    Text(
+                        text = "Edit Profil",
+                        color = textPrimary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+                },
+                text = {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = editName,
+                            onValueChange = { editName = it },
+                            label = { Text("Nama Lengkap") },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = textPrimary,
+                                unfocusedTextColor = textPrimary,
+                                focusedLabelColor = emeraldAccent,
+                                unfocusedLabelColor = textSecondary,
+                                focusedBorderColor = emeraldAccent,
+                                unfocusedBorderColor = borderStrokeColor
+                            )
+                        )
+
+                        OutlinedTextField(
+                            value = editEmail,
+                            onValueChange = { editEmail = it },
+                            label = { Text("Alamat Email") },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = textPrimary,
+                                unfocusedTextColor = textPrimary,
+                                focusedLabelColor = emeraldAccent,
+                                unfocusedLabelColor = textSecondary,
+                                focusedBorderColor = emeraldAccent,
+                                unfocusedBorderColor = borderStrokeColor
+                            )
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            if (editName.isNotBlank() && editEmail.isNotBlank()) {
+                                viewModel.updateProfile(editName.trim(), editEmail.trim())
+                                showEditDialog = false
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = emeraldAccent),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("Simpan", color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            showEditDialog = false
+                            editName = userName
+                            editEmail = email
+                        }
+                    ) {
+                        Text("Batal", color = textSecondary)
+                    }
+                },
+                containerColor = if (isLight) MaterialTheme.colorScheme.surface else Color(0xFF0F1A30),
+                shape = RoundedCornerShape(20.dp)
+            )
         }
     }
 }

@@ -41,15 +41,32 @@ class AITutorViewModel(
         _isAITyping.value = true
 
         viewModelScope.launch {
-            val prompt = """
-                Kamu adalah 'CakapAI Tutor', asisten belajar bahasa Inggris pribadi yang sangat ramah, suportif, dan gaul. 
-                Tugas utamamu adalah:
-                1. Menganalisa setiap kalimat bahasa Inggris yang diketikkan pengguna.
-                2. Jika ada kesalahan grammar atau pemilihan kata (vocabulary), berikan koreksi yang sopan, jelaskan kesalahannya dalam bahasa Indonesia, lalu berikan contoh kalimat yang lebih natural (native-like).
-                3. Jika kalimatnya sudah sempurna, berikan pujian dan lanjutkan percakapan dengan bertanya kembali dalam bahasa Inggris untuk memancing pengguna terus berlatih.
-                4. Jangan memberikan jawaban yang terlalu panjang, buatlah seakan-akan ini adalah chat WhatsApp (singkat, padat, dan gunakan emoji secukupnya).
+            val historyContext = _chatHistory.value.takeLast(10).dropLast(1).joinToString("\n") { msg ->
+                if (msg.isUser) "Pengguna: ${msg.text}" else "Tutor: ${msg.text}"
+            }
 
-                Pesan dari pengguna: "$text"
+            val prompt = """
+                Kamu adalah 'CakapAI Tutor', asisten belajar bahasa Inggris pribadi yang ramah, sopan, dan suportif.
+                Tugas utamamu adalah mendampingi percakapan pengguna dalam bahasa Inggris sekaligus membantu mengoreksi grammar-nya.
+
+                ATURAN FORMAT RESPONS (SANGAT PENTING):
+                1. JANGAN gunakan markdown format seperti tanda bintang (** atau *), tanda petik dua yang berlebihan, hashtag, list bullet points, atau modifikasi teks lainnya. Wajib tulis dalam teks biasa (plain text).
+                2. Batasi penggunaan emoji. Gunakan maksimal 1 emoji saja per respons, atau tidak sama sekali jika tidak terlalu diperlukan.
+                3. Jawab secara ringkas, padat, dan ramah seperti chat personal. Jangan menulis artikel/paragraf yang terlalu panjang, namun pastikan penjelasan tetap tuntas, jelas, dan natural.
+
+                TUGAS UTAMA PERCAKAPAN:
+                1. Analisis kalimat terbaru dari pengguna.
+                2. Jika ada kesalahan tata bahasa (grammar) atau kosakata (vocabulary):
+                   - Berikan penjelasan koreksi yang ramah dalam bahasa Indonesia secara tuntas namun tetap ringkas.
+                   - Berikan contoh-contoh kalimat perbaikan yang lebih alami (native-like) agar pengguna mudah memahaminya.
+                3. Jika kalimat pengguna sudah benar:
+                   - Berikan apresiasi/pujian singkat.
+                   - Balas percakapan dan berikan 1 pertanyaan singkat dalam bahasa Inggris agar percakapan terus mengalir.
+
+                Riwayat percakapan sebelumnya:
+                ${if (historyContext.isNotEmpty()) historyContext else "(Belum ada riwayat)"}
+
+                Pesan terbaru dari pengguna: "$text"
             """.trimIndent()
 
             geminiService.generateContent(prompt).onSuccess { response ->

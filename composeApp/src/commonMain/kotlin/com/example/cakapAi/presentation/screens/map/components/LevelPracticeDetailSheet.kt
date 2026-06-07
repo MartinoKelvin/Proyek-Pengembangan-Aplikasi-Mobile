@@ -24,9 +24,14 @@ fun LevelPracticeDetailSheet(
     onDismiss: () -> Unit,
     onStartPractice: () -> Unit
 ) {
+    val isLight = MaterialTheme.colorScheme.background.red > 0.5f
+    val containerColor = MaterialTheme.colorScheme.surface
+    val textPrimary = if (isLight) MaterialTheme.colorScheme.onBackground else Color.White
+    val textSecondary = if (isLight) MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f) else Color.LightGray
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        containerColor = Color(0xFF0F1A30),
+        containerColor = containerColor,
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
     ) {
         Column(
@@ -56,7 +61,7 @@ fun LevelPracticeDetailSheet(
                 text = level.title,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = textPrimary
             )
             
             Spacer(modifier = Modifier.height(8.dp))
@@ -64,7 +69,7 @@ fun LevelPracticeDetailSheet(
             Text(
                 text = level.subtitle,
                 fontSize = 14.sp,
-                color = Color.LightGray
+                color = textSecondary
             )
             
             Spacer(modifier = Modifier.height(24.dp))
@@ -111,8 +116,12 @@ fun LevelPracticeDetailSheet(
 
 @Composable
 private fun MetaItem(label: String, value: String) {
+    val isLight = MaterialTheme.colorScheme.background.red > 0.5f
+    val textPrimary = if (isLight) MaterialTheme.colorScheme.onBackground else Color.White
+    val textLabel = if (isLight) MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f) else Color.Gray
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = label, color = Color.Gray, fontSize = 12.sp)
-        Text(text = value, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+        Text(text = label, color = textLabel, fontSize = 12.sp)
+        Text(text = value, color = textPrimary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
     }
 }

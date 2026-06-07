@@ -39,6 +39,7 @@ import kotlin.math.sin
 import org.koin.compose.viewmodel.koinViewModel
 import com.example.cakapAi.presentation.screens.map.components.LevelPracticeDetailSheet
 import com.example.cakapAi.presentation.screens.practice.PracticeSessionOverlay
+import com.example.cakapAi.core.util.BackHandler
 
 /**
  * Data class representing a Level Step in the Learning Path Map.
@@ -93,7 +94,7 @@ fun MapScreen(
     val borderStrokeColorAlpha08 = MaterialTheme.colorScheme.outline.copy(alpha = 0.08f)
     val borderStrokeColorAlpha12 = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
 
-    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) else Color(0xFF0A1B35)
+    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) else Color(0xFF012B1E)
 
     Box(
         modifier = Modifier
@@ -222,6 +223,7 @@ fun MapScreen(
                 var selectedLevel by remember { mutableStateOf<PathLevel?>(null) }
                 var selectedPracticeLevel by remember { mutableStateOf<PathLevel?>(null) }
                 var isPracticeSessionOpen by remember { mutableStateOf(false) }
+                var showExitConfirmDialog by remember { mutableStateOf(false) }
 
                 val completedLevels = remember(levels) { levels.count { it.status == LevelStatus.COMPLETED } }
                 val totalLevels = remember(levels) { levels.size }
@@ -305,12 +307,15 @@ fun MapScreen(
                     )
                 }
 
+                BackHandler(enabled = isPracticeSessionOpen) {
+                    showExitConfirmDialog = true
+                }
+
                 if (isPracticeSessionOpen && selectedPracticeLevel != null) {
                     PracticeSessionOverlay(
                         level = selectedPracticeLevel!!,
                         onClose = {
-                            isPracticeSessionOpen = false
-                            selectedPracticeLevel = null
+                            showExitConfirmDialog = true
                         },
                         onCompleted = { isSuccess, score ->
                             isPracticeSessionOpen = false
@@ -318,6 +323,41 @@ fun MapScreen(
                                 viewModel.savePracticeResult(selectedPracticeLevel!!.id, score, isSuccess)
                             }
                             selectedPracticeLevel = null
+                        }
+                    )
+                }
+
+                if (showExitConfirmDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showExitConfirmDialog = false },
+                        containerColor = cardColor,
+                        titleContentColor = textPrimary,
+                        textContentColor = textPrimary,
+                        title = { Text(text = "Keluar dari kuis?", fontWeight = FontWeight.Bold) },
+                        text = { Text(text = "Progress pengerjaan saat ini akan hilang. Apakah kamu yakin ingin keluar?") },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    showExitConfirmDialog = false
+                                    isPracticeSessionOpen = false
+                                    selectedPracticeLevel = null
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = emeraldAccent),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text("Keluar", color = Color.White, fontWeight = FontWeight.Bold)
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(
+                                onClick = { showExitConfirmDialog = false }
+                            ) {
+                                Text(
+                                    text = "Batal",
+                                    color = textSecondary,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
                         }
                     )
                 }

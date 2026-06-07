@@ -42,10 +42,18 @@ fun PracticeSessionOverlay(
     )
     val state by viewModel.uiState.collectAsState()
 
+    val isLight = MaterialTheme.colorScheme.background.red > 0.5f
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val cardColor = if (isLight) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface
+    val textPrimary = if (isLight) MaterialTheme.colorScheme.onBackground else Color.White
+    val textSecondary = if (isLight) MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f) else Color.LightGray
+    val borderOptionColor = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.3f) else MaterialTheme.colorScheme.outline
+    val inputBorderColor = if (isLight) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.outline
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF071224))
+            .background(backgroundColor)
             .systemBarsPadding()
     ) {
         if (state.isLoading) {
@@ -105,7 +113,7 @@ fun PracticeSessionOverlay(
                             .height(12.dp)
                             .clip(RoundedCornerShape(6.dp)),
                         color = Color(0xFF10B981),
-                        trackColor = Color(0xFF1E293B)
+                        trackColor = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.2f) else Color(0xFF1E293B)
                     )
                     
                     // Lives
@@ -143,7 +151,7 @@ fun PracticeSessionOverlay(
                     ) {
                         Text(
                             text = question.instruction,
-                            color = Color.White,
+                            color = textPrimary,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -151,7 +159,7 @@ fun PracticeSessionOverlay(
                         
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFF0F1A30)),
+                            colors = CardDefaults.cardColors(containerColor = cardColor),
                             shape = RoundedCornerShape(16.dp)
                         ) {
                             Row(
@@ -161,7 +169,7 @@ fun PracticeSessionOverlay(
                             ) {
                                 Text(
                                     text = question.prompt,
-                                    color = Color.White,
+                                    color = textPrimary,
                                     fontSize = 18.sp,
                                     modifier = Modifier.weight(1f)
                                 )
@@ -196,14 +204,14 @@ fun PracticeSessionOverlay(
                                             }
                                             .border(
                                                 width = 2.dp,
-                                                color = if (isSelected) Color(0xFF0EA5E9) else Color(0xFF1E293B),
+                                                color = if (isSelected) Color(0xFF0EA5E9) else borderOptionColor,
                                                 shape = RoundedCornerShape(16.dp)
                                             ),
-                                        colors = CardDefaults.cardColors(containerColor = Color(0xFF0F1A30))
+                                        colors = CardDefaults.cardColors(containerColor = cardColor)
                                     ) {
                                         Text(
                                             text = option,
-                                            color = Color.White,
+                                            color = textPrimary,
                                             modifier = Modifier.padding(16.dp)
                                         )
                                     }
@@ -215,12 +223,12 @@ fun PracticeSessionOverlay(
                                     onValueChange = { viewModel.updateTypedAnswer(it) },
                                     modifier = Modifier.fillMaxWidth(),
                                     colors = OutlinedTextFieldDefaults.colors(
-                                        focusedTextColor = Color.White,
-                                        unfocusedTextColor = Color.White,
+                                        focusedTextColor = textPrimary,
+                                        unfocusedTextColor = textPrimary,
                                         focusedBorderColor = Color(0xFF0EA5E9),
-                                        unfocusedBorderColor = Color(0xFF1E293B)
+                                        unfocusedBorderColor = inputBorderColor
                                     ),
-                                    placeholder = { Text("Ketik jawaban di sini", color = Color.Gray) }
+                                    placeholder = { Text("Ketik jawaban di sini", color = textSecondary) }
                                 )
                                 if (question.options.isNotEmpty()) {
                                     Spacer(modifier = Modifier.height(16.dp))
@@ -243,11 +251,11 @@ fun PracticeSessionOverlay(
                                                         modifier = Modifier.weight(1f),
                                                         colors = ButtonDefaults.outlinedButtonColors(
                                                             containerColor = if (isSelected) Color(0xFF0EA5E9) else Color.Transparent,
-                                                            contentColor = Color.White
+                                                            contentColor = if (isSelected) Color.White else textPrimary
                                                         ),
-                                                        border = BorderStroke(1.dp, if (isSelected) Color(0xFF0EA5E9) else Color.Gray)
+                                                        border = BorderStroke(1.dp, if (isSelected) Color(0xFF0EA5E9) else borderOptionColor)
                                                     ) {
-                                                        Text(option, color = Color.White)
+                                                        Text(option, color = if (isSelected) Color.White else textPrimary)
                                                     }
                                                 }
                                                 if (rowOptions.size < 2) {
@@ -280,10 +288,10 @@ fun PracticeSessionOverlay(
                                     }
                                     Spacer(modifier = Modifier.height(16.dp))
                                     if (state.isListening) {
-                                        Text("Mendengarkan...", color = Color.White)
+                                        Text("Mendengarkan...", color = textPrimary)
                                     }
                                     if (state.spokenText.isNotEmpty()) {
-                                        Text("Kamu mengucapkan: \"${state.spokenText}\"", color = Color.LightGray)
+                                        Text("Kamu mengucapkan: \"${state.spokenText}\"", color = textSecondary)
                                     }
                                     if (state.errorMessage != null) {
                                         Text(state.errorMessage!!, color = Color.Red, fontSize = 12.sp)
@@ -293,12 +301,12 @@ fun PracticeSessionOverlay(
                                             onValueChange = { viewModel.updateSpokenTextFallback(it) },
                                             modifier = Modifier.fillMaxWidth(),
                                             colors = OutlinedTextFieldDefaults.colors(
-                                                focusedTextColor = Color.White,
-                                                unfocusedTextColor = Color.White,
+                                                focusedTextColor = textPrimary,
+                                                unfocusedTextColor = textPrimary,
                                                 focusedBorderColor = Color(0xFF0EA5E9),
-                                                unfocusedBorderColor = Color(0xFF1E293B)
+                                                unfocusedBorderColor = inputBorderColor
                                             ),
-                                            placeholder = { Text("Ketik jawaban fallback di sini", color = Color.Gray) }
+                                            placeholder = { Text("Ketik jawaban fallback di sini", color = textSecondary) }
                                         )
                                     }
                                 }
@@ -312,7 +320,7 @@ fun PracticeSessionOverlay(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(if (isCorrect) Color(0xFF10B981).copy(alpha = 0.2f) else Color.Red.copy(alpha = 0.2f))
+                                .background(if (isCorrect) Color(0xFF10B981).copy(alpha = if (isLight) 0.15f else 0.2f) else Color.Red.copy(alpha = if (isLight) 0.15f else 0.2f))
                                 .padding(24.dp)
                         ) {
                             Column {
@@ -325,13 +333,13 @@ fun PracticeSessionOverlay(
                                 if (!isCorrect) {
                                     Text(
                                         text = "Jawaban benar: ${question.correctAnswer}",
-                                        color = Color.White,
+                                        color = textPrimary,
                                         modifier = Modifier.padding(top = 4.dp)
                                     )
                                 }
                                 Text(
                                     text = question.explanation,
-                                    color = Color.LightGray,
+                                    color = textSecondary,
                                     modifier = Modifier.padding(top = 8.dp)
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
@@ -376,26 +384,31 @@ fun PracticeResult(
     closeButtonText: String,
     onClose: () -> Unit
 ) {
+    val isLight = MaterialTheme.colorScheme.background.red > 0.5f
+    val cardColor = if (isLight) MaterialTheme.colorScheme.surfaceVariant else Color(0xFF0F1A30)
+    val textPrimary = if (isLight) MaterialTheme.colorScheme.onBackground else Color.White
+    val textSecondary = if (isLight) MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f) else Color.LightGray
+
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Latihan Selesai!", color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold)
+        Text("Latihan Selesai!", color = textPrimary, fontSize = 32.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(24.dp))
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF0F1A30)),
+            colors = CardDefaults.cardColors(containerColor = cardColor),
             shape = RoundedCornerShape(16.dp)
         ) {
             Column(
                 modifier = Modifier.padding(24.dp).fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Jawaban Benar", color = Color.Gray, fontSize = 16.sp)
+                Text("Jawaban Benar", color = textSecondary, fontSize = 16.sp)
                 Text("$correctCount / $totalCount", color = Color(0xFF10B981), fontSize = 32.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("XP Didapat", color = Color.Gray, fontSize = 16.sp)
+                Text("XP Didapat", color = textSecondary, fontSize = 16.sp)
                 Text("+${correctCount * 10}", color = Color(0xFFF59E0B), fontSize = 32.sp, fontWeight = FontWeight.Bold)
             }
         }

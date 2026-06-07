@@ -52,13 +52,13 @@ private val OnSurfaceVariantLight = Color(0xFF475569) // Muted slate text
 private val OutlineLight = Color(0xFFCBD5E1)
 
 // Dark Theme Background & Surface (Desain awal gelap laut dalam khas CakapAI)
-private val BackgroundDark = Color(0xFF071224)
+private val BackgroundDark = Color(0xFF050B14)
 private val OnBackgroundDark = Color(0xFFFFFFFF)
-private val SurfaceDark = Color(0xFF0F1A30) // Surface/card tetap gelap
+private val SurfaceDark = Color(0xFF0C1424) // Surface/card tetap gelap
 private val OnSurfaceDark = Color(0xFFFFFFFF)
-private val SurfaceVariantDark = Color(0xFF1E293B)
-private val OnSurfaceVariantDark = Color(0xFFCAC4D0)
-private val OutlineDark = Color(0xFF475569)
+private val SurfaceVariantDark = Color(0xFF152238)
+private val OnSurfaceVariantDark = Color(0xFFE2E8F0)
+private val OutlineDark = Color(0xFF1E293B)
 
 // ==================== COLOR SCHEMES ====================
 
