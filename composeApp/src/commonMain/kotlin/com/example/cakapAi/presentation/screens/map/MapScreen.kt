@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -97,6 +98,7 @@ fun MapScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .testTag("HomeScreen")
             .background(
                 Brush.verticalGradient(
                     colors = listOf(gradientStart, backgroundColor)
@@ -409,6 +411,7 @@ fun HeaderPanel(
                     onClick = onNavigateToProfile,
                     modifier = Modifier
                         .size(38.dp)
+                        .testTag("ProfileButton")
                         .background(Color(0xFF10B981), CircleShape)
                 ) {
                     Icon(

@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,7 @@ fun QuizScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .testTag("QuizScreen")
             .background(
                 Brush.verticalGradient(
                     colors = listOf(gradientStart, backgroundColor)
@@ -94,7 +96,8 @@ fun QuizScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(56.dp)
+                    .testTag("QuizButton"),
                 colors = ButtonDefaults.buttonColors(containerColor = emeraldAccent),
                 shape = RoundedCornerShape(16.dp)
             ) {

@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,6 +53,7 @@ fun ProfileScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .testTag("ProfileScreen")
             .background(
                 Brush.verticalGradient(
                     colors = listOf(gradientStart, backgroundColor)
@@ -83,7 +85,10 @@ fun ProfileScreen(
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
-                IconButton(onClick = onNavigateToSettings) {
+                IconButton(
+                    onClick = onNavigateToSettings,
+                    modifier = Modifier.testTag("SettingsButton")
+                ) {
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = "Settings",
