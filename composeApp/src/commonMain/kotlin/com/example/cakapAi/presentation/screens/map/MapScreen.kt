@@ -63,6 +63,30 @@ enum class LevelStatus {
     LOCKED, UNLOCKED, COMPLETED
 }
 
+data class Chapter(
+    val id: Int,
+    val title: String,
+    val description: String,
+    val badge: String
+)
+
+val chapters = listOf(
+    Chapter(1, "Foundations of English", "Start with basic communication, essential vocabulary, and simple grammar.", "CHAPTER 1"),
+    Chapter(2, "Daily Socialization & Work", "Learn numbers, time, daily situations, present tense, and office communication.", "CHAPTER 2"),
+    Chapter(3, "Getting Around & Tenses", "Ask for directions, shopping, past events, and expressing emotions.", "CHAPTER 3"),
+    Chapter(4, "Advanced Contexts & Expressions", "Discuss health, future plans, weather, requests, and idioms.", "CHAPTER 4")
+)
+
+fun getNumHeadersBeforeLevel(levelId: Int): Int {
+    return when (levelId) {
+        in 1..5 -> 1
+        in 6..10 -> 2
+        in 11..15 -> 3
+        in 16..20 -> 4
+        else -> 5
+    }
+}
+
 /**
  * Elegant Learning Path Map Screen designed for Jetpack Compose / Compose Multiplatform.
  * Features a beautifully unified scrollable map layout where islands, routes, waves,
@@ -225,7 +249,8 @@ fun MapScreen(
                 val stepHeight = 156.dp
                 val topPadding = 60.dp
                 val bottomPadding = 140.dp
-                val totalHeight = topPadding + bottomPadding + (stepHeight * levels.size)
+                val headerHeight = 124.dp
+                val totalHeight = topPadding + bottomPadding + (stepHeight * levels.size) + (headerHeight * 4)
 
                 Column(modifier = Modifier.fillMaxSize()) {
                     // Premium Header Section showing actual level progress and shortcuts
@@ -253,6 +278,7 @@ fun MapScreen(
                                 levels = levels,
                                 stepHeight = stepHeight,
                                 topPadding = topPadding,
+                                headerHeight = headerHeight,
                                 pathColor = emeraldAccent,
                                 dashedColor = Color.White.copy(alpha = 0.35f),
                                 modifier = Modifier
@@ -260,9 +286,33 @@ fun MapScreen(
                                     .height(totalHeight)
                             )
 
+                            // Render Chapter Headers at correct positions
+                            chapters.forEach { chapter ->
+                                val firstLevelId = (chapter.id - 1) * 5 + 1
+                                val isChapterUnlocked = levels.find { it.id == firstLevelId }?.status != LevelStatus.LOCKED
+
+                                val headerYOffset = topPadding + (stepHeight * (chapter.id - 1) * 5) + (headerHeight * (chapter.id - 1))
+
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .offset(y = headerYOffset)
+                                        .padding(horizontal = 20.dp)
+                                ) {
+                                    ChapterHeaderItem(
+                                        chapter = chapter,
+                                        isUnlocked = isChapterUnlocked,
+                                        isLight = isLight,
+                                        cardColor = cardColor,
+                                        textPrimary = textPrimary,
+                                        textSecondary = textSecondary
+                                    )
+                                }
+                            }
+
                             // Interactive Level Nodes placed at the exact same scrollable coordinates
                             levels.forEach { item ->
-                                val yOffset = topPadding + (stepHeight * item.index)
+                                val yOffset = topPadding + (stepHeight * item.index) + (headerHeight * getNumHeadersBeforeLevel(item.id))
 
                                 Box(
                                     modifier = Modifier
@@ -676,6 +726,7 @@ fun ConnectionLinesBackdrop(
     levels: List<PathLevel>,
     stepHeight: Dp,
     topPadding: Dp,
+    headerHeight: Dp,
     pathColor: Color,
     dashedColor: Color,
     modifier: Modifier = Modifier
@@ -683,6 +734,7 @@ fun ConnectionLinesBackdrop(
     val density = LocalDensity.current
     val stepHeightPx = with(density) { stepHeight.toPx() }
     val topPaddingPx = with(density) { topPadding.toPx() }
+    val headerHeightPx = with(density) { headerHeight.toPx() }
 
     val colorScheme = MaterialTheme.colorScheme
     val isLight = colorScheme.background.red > 0.5f
@@ -746,7 +798,14 @@ fun ConnectionLinesBackdrop(
         // 3. Generate island point coordinates (adding 38.dp to align with center of 76.dp node buttons)
         val points = mutableListOf<Offset>()
         levels.forEach { level ->
-            val py = topPaddingPx + (level.index * stepHeightPx) + (38.dp.toPx())
+            val numHeaders = when (level.id) {
+                in 1..5 -> 1
+                in 6..10 -> 2
+                in 11..15 -> 3
+                in 16..20 -> 4
+                else -> 5
+            }
+            val py = topPaddingPx + (level.index * stepHeightPx) + (numHeaders * headerHeightPx) + (38.dp.toPx())
             val px = (width / 2) + (level.xOffsetFactor * 160.dp.toPx())
             points.add(Offset(px, py))
         }
@@ -956,6 +1015,116 @@ fun LevelPopupDetails(
                     fontSize = 13.sp
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun ChapterHeaderItem(
+    chapter: Chapter,
+    isUnlocked: Boolean,
+    isLight: Boolean,
+    cardColor: Color,
+    textPrimary: Color,
+    textSecondary: Color,
+    modifier: Modifier = Modifier
+) {
+    val accentColor = when (chapter.id) {
+        1 -> Color(0xFF10B981) // Emerald
+        2 -> Color(0xFF0EA5E9) // Sky Blue
+        3 -> Color(0xFFF59E0B) // Amber/Gold
+        4 -> Color(0xFF8B5CF6) // Purple
+        else -> Color(0xFF10B981)
+    }
+
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .shadow(
+                elevation = if (isUnlocked) 8.dp else 2.dp,
+                shape = RoundedCornerShape(24.dp),
+                clip = false
+            ),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isUnlocked) {
+                if (isLight) Color.White.copy(alpha = 0.9f) else cardColor.copy(alpha = 0.85f)
+            } else {
+                if (isLight) Color(0xFFF1F5F9).copy(alpha = 0.6f) else Color(0xFF1E293B).copy(alpha = 0.6f)
+            }
+        ),
+        border = BorderStroke(
+            width = 1.5.dp,
+            color = if (isUnlocked) accentColor.copy(alpha = 0.3f) else Color.Gray.copy(alpha = 0.15f)
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // Badge
+                Box(
+                    modifier = Modifier
+                        .background(
+                            color = if (isUnlocked) accentColor.copy(alpha = 0.15f) else Color.Gray.copy(alpha = 0.15f),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = chapter.badge,
+                        color = if (isUnlocked) accentColor else Color.Gray,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    )
+                }
+
+                if (!isUnlocked) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = "Terkunci",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Text(
+                            text = "TERKUNCI",
+                            color = Color.Gray,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = chapter.title,
+                color = if (isUnlocked) textPrimary else textPrimary.copy(alpha = 0.5f),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.ExtraBold
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = chapter.description,
+                color = if (isUnlocked) textSecondary else textSecondary.copy(alpha = 0.5f),
+                fontSize = 12.sp,
+                lineHeight = 16.sp
+            )
         }
     }
 }
