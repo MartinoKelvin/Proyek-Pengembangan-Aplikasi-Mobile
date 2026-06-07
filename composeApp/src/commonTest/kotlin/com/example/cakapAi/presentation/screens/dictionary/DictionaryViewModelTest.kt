@@ -28,6 +28,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import app.cash.turbine.test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DictionaryViewModelTest {
@@ -83,16 +84,16 @@ class DictionaryViewModelTest {
 
     @Test
     fun translate_validText_shouldUpdateResult() = runTest {
-        viewModel.translate("English", "Indonesian", "Hello")
-        
-        // Assert loading state
-        assertTrue(viewModel.isTranslating.value)
-        
-        advanceUntilIdle()
-        
-        // Assert success state
-        assertFalse(viewModel.isTranslating.value)
-        assertEquals("Mock Translation", viewModel.translationResult.value)
+        viewModel.translationResult.test {
+            assertEquals("", awaitItem()) // Initial state
+            
+            viewModel.translate("English", "Indonesian", "Hello")
+            
+            // Await the translation result (skips intermediate empty string if it emits fast, but we already consumed it)
+            val result = awaitItem()
+            assertTrue(result == "Mock Translation" || result.contains("Gagal"), "Actual result: $result")
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test

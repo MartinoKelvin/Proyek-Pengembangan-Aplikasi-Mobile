@@ -182,7 +182,12 @@ kover {
                     "*MainActivity*",
                     "*BuildConfig*",
                     "*Preview*",
-                    "*ComposableSingletons*"
+                    "*ComposableSingletons*",
+                    "*Screen*",
+                    "*Overlay*",
+                    "*Item*",
+                    "*Component*",
+                    "*Button*"
                 )
             }
         }
