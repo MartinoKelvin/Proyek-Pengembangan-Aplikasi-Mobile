@@ -18,7 +18,7 @@ actual class DatabaseDriverFactory(
         return AndroidSqliteDriver(
             schema = NoteDatabase.Schema,
             context = context,
-            name = "cakapAi-v2.db"
+            name = "cakapAi.db"
         )
     }
 }
