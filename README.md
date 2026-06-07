@@ -71,7 +71,8 @@ Setelah perintah di atas selesai, laporan coverage Kover dalam format HTML akan 
 ### Screenshot Coverage
 *(Harap ambil screenshot halaman `index.html` yang terbuka di browser dan simpan di folder `docs/` dengan nama `coverage_screenshot.png` untuk memenuhi rubrik)*
 
-![Coverage Screenshot](docs/coverage_screenshot.png)
+[Coverage Screenshot]
+![1780849311303](image/README/1780849311303.png)
 
 ## Demo Video
 [Link Video Demo Sprint 4](#)
