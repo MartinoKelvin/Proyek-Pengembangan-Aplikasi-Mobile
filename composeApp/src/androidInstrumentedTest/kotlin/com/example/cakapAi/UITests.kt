@@ -28,7 +28,9 @@ class UITests {
         }
 
         // Verify HomeScreen is displayed
+        composeTestRule.onNodeWithTag("HomeScreen").assertExists()
         composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Peta Perjalanan Belajar").assertExists()
         composeTestRule.onNodeWithText("Peta Perjalanan Belajar").assertIsDisplayed()
     }
 
@@ -55,11 +57,12 @@ class UITests {
         composeTestRule.onNodeWithTag("SearchField").performTextInput("Apple")
 
         // Assert search field is displayed
+        composeTestRule.onNodeWithTag("SearchField").assertExists()
         composeTestRule.onNodeWithTag("SearchField").assertIsDisplayed()
     }
 
     @Test
-    fun profileButton_click_shouldNavigateToProfileScreen() {
+    fun profileButton_shouldNavigateToProfileScreen() {
         composeTestRule.setContent {
             App()
         }
@@ -75,7 +78,26 @@ class UITests {
             composeTestRule.onAllNodesWithTag("ProfileScreen").fetchSemanticsNodes().isNotEmpty()
         }
         
+        composeTestRule.onNodeWithTag("ProfileScreen").assertExists()
         composeTestRule.onNodeWithTag("ProfileScreen").assertIsDisplayed()
+    }
+
+    @Test
+    fun settingsButton_shouldNavigateToSettingsScreen() {
+        composeTestRule.setContent {
+            App()
+        }
+
+        composeTestRule.waitUntil(timeoutMillis = 4000) {
+            composeTestRule.onAllNodesWithTag("HomeScreen").fetchSemanticsNodes().isNotEmpty()
+        }
+
+        composeTestRule.onNodeWithTag("ProfileButton").performClick()
+
+        // Wait for ProfileScreen
+        composeTestRule.waitUntil(timeoutMillis = 2000) {
+            composeTestRule.onAllNodesWithTag("ProfileScreen").fetchSemanticsNodes().isNotEmpty()
+        }
         
         // Click Settings
         composeTestRule.onNodeWithTag("SettingsButton").performClick()
@@ -84,6 +106,33 @@ class UITests {
         composeTestRule.waitUntil(timeoutMillis = 2000) {
             composeTestRule.onAllNodesWithTag("SettingsScreen").fetchSemanticsNodes().isNotEmpty()
         }
+        composeTestRule.onNodeWithTag("SettingsScreen").assertExists()
         composeTestRule.onNodeWithTag("SettingsScreen").assertIsDisplayed()
+    }
+
+    @Test
+    fun startQuizButton_shouldOpenQuizScreen() {
+        composeTestRule.setContent {
+            App()
+        }
+
+        composeTestRule.waitUntil(timeoutMillis = 4000) {
+            composeTestRule.onAllNodesWithTag("HomeScreen").fetchSemanticsNodes().isNotEmpty()
+        }
+
+        // Navigate to Quiz using Bottom Navigation Bar
+        composeTestRule.onNodeWithContentDescription("Quiz").performClick()
+
+        // Wait for Quiz Screen
+        composeTestRule.waitUntil(timeoutMillis = 2000) {
+            composeTestRule.onAllNodesWithTag("QuizScreen").fetchSemanticsNodes().isNotEmpty()
+        }
+
+        composeTestRule.onNodeWithTag("QuizScreen").assertExists()
+        composeTestRule.onNodeWithTag("QuizScreen").assertIsDisplayed()
+        
+        // Assert QuizButton (Start Quiz Button) exists and is displayed
+        composeTestRule.onNodeWithTag("QuizButton").assertExists()
+        composeTestRule.onNodeWithTag("QuizButton").assertIsDisplayed()
     }
 }

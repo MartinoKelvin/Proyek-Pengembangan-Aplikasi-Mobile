@@ -8,10 +8,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -110,11 +113,18 @@ class MapViewModelTest {
             LevelProgress(1, "Test 1", "Sub 1", "LISTENING", true, false, 0, 0)
         )
         viewModel = MapViewModel(repository)
+        
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect()
+        }
+        
         advanceUntilIdle() // Process flows
 
         val state = viewModel.uiState.value
         assertTrue(state is MapUiState.Success)
         assertEquals(1, (state as MapUiState.Success).levels.size)
+        
+        collectJob.cancel()
     }
 
     @Test
@@ -123,6 +133,10 @@ class MapViewModelTest {
         // Prevent initializeLevelsIfEmpty from polluting by redefining the behaviour or just check after clear
         repository.levelsFlow.value = emptyList()
         viewModel = MapViewModel(repository)
+        
+        val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect()
+        }
         
         // Wait for init to populate data
         advanceUntilIdle()
@@ -133,6 +147,8 @@ class MapViewModelTest {
 
         val state = viewModel.uiState.value
         assertTrue(state is MapUiState.Empty)
+        
+        collectJob.cancel()
     }
 
     @Test
