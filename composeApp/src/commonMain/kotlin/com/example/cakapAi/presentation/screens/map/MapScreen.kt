@@ -1053,10 +1053,6 @@ fun ChapterHeaderItem(
             } else {
                 if (isLight) Color(0xFFF1F5F9).copy(alpha = 0.6f) else Color(0xFF1E293B).copy(alpha = 0.6f)
             }
-        ),
-        border = BorderStroke(
-            width = 1.5.dp,
-            color = if (isUnlocked) accentColor.copy(alpha = 0.3f) else Color.Gray.copy(alpha = 0.15f)
         )
     ) {
         Column(
