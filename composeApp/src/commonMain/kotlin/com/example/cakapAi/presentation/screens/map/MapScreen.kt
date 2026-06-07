@@ -249,7 +249,7 @@ fun MapScreen(
                 val stepHeight = 156.dp
                 val topPadding = 60.dp
                 val bottomPadding = 140.dp
-                val headerHeight = 124.dp
+                val headerHeight = 170.dp
                 val totalHeight = topPadding + bottomPadding + (stepHeight * levels.size) + (headerHeight * 4)
 
                 Column(modifier = Modifier.fillMaxSize()) {
