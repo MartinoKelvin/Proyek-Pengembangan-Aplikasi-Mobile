@@ -9,7 +9,7 @@
 *   **Daftar Pengembang:**
     *   **Martino Kelvin** (NIM: 123140165)
     *   **Louis Hutabarat** (NIM: 123140052)
-*   **Link Video Demo Aplikasi (YouTube):** [Tonton Video Demo di YouTube](https://youtube.com/...)
+*   **Link Video Demo Aplikasi (YouTube):** [Tonton Video Demo di YouTube](https://youtu.be/6lOIxRjGujM)
 
 ---
 
