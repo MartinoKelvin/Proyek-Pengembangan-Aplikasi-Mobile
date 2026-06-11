@@ -9,6 +9,8 @@ class AndroidTextToSpeechController(context: Context) : TextToSpeechController, 
     private var isInitialized = false
     private var pendingText: String? = null
 
+    private var pendingLanguage: String? = null
+
     init {
         tts = TextToSpeech(context, this)
     }
@@ -18,19 +20,25 @@ class AndroidTextToSpeechController(context: Context) : TextToSpeechController, 
             tts?.language = Locale.US
             isInitialized = true
             pendingText?.let {
-                speak(it)
+                speak(it, pendingLanguage)
                 pendingText = null
+                pendingLanguage = null
             }
         }
     }
 
-    override fun speak(text: String) {
+    override fun speak(text: String, language: String?) {
         if (isInitialized) {
-            val locale = detectLocale(text)
+            val locale = when (language?.lowercase()) {
+                "id" -> Locale("id", "ID")
+                "en" -> Locale.US
+                else -> detectLocale(text)
+            }
             tts?.language = locale
             tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
         } else {
             pendingText = text
+            pendingLanguage = language
         }
     }
 

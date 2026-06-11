@@ -102,8 +102,9 @@ class PracticeViewModel(
         }
     }
 
-    fun speak(text: String) {
-        textToSpeechController.speak(text)
+    fun speak(text: String, language: String? = null) {
+        val processedText = text.replace(Regex("_+"), "blankblankblank")
+        textToSpeechController.speak(processedText, language)
     }
 
     fun checkAnswer() {
