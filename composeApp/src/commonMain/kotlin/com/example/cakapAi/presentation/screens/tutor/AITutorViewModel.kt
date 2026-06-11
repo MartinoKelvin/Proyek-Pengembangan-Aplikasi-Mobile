@@ -80,11 +80,14 @@ class AITutorViewModel(
                 )
                 _chatHistory.value = newHistory
             }.onFailure { error ->
+                println("AI Tutor Error: ${error.message}")
+                error.printStackTrace()
+                
                 val newHistory = _chatHistory.value.toMutableList()
                 newHistory.add(
                     ChatMessage(
                         isUser = false,
-                        text = "Maaf, aku sedang tidak bisa merespons saat ini. Periksa koneksi internetmu ya! Error: ${error.message}",
+                        text = "Maaf, aku sedang tidak bisa merespons saat ini. Periksa koneksi internetmu ya!",
                         isFeedback = true
                     )
                 )

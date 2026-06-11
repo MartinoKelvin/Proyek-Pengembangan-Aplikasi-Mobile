@@ -334,7 +334,13 @@ fun PracticeSessionOverlay(
                             exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            val isCorrect = state.isCurrentAnswerCorrect == true
+                            var lastIsCorrect by remember { mutableStateOf<Boolean?>(null) }
+                            LaunchedEffect(state.isCurrentAnswerCorrect) {
+                                if (state.isCurrentAnswerCorrect != null) {
+                                    lastIsCorrect = state.isCurrentAnswerCorrect
+                                }
+                            }
+                            val isCorrect = lastIsCorrect == true
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
