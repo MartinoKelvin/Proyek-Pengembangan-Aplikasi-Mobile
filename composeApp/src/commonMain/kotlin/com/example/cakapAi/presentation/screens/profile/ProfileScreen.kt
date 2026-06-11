@@ -38,9 +38,9 @@ fun ProfileScreen(
     val state by viewModel.uiState.collectAsState()
     val userName = state.userName
     val email = state.email
-    val currentLevel = "Level 2 - Explorer"
-    val completedLevel = 2
-    val totalLevel = 5
+    val currentLevel = state.currentLevelTitle
+    val completedLevel = state.completedLevelCount
+    val totalLevel = state.totalLevelsCount
 
     var showEditDialog by remember { mutableStateOf(false) }
     var editName by remember(userName) { mutableStateOf(userName) }
