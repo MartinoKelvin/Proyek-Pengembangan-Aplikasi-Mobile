@@ -84,7 +84,6 @@ fun LevelPracticeDetailSheet(
                 } else {
                     MetaItem("Soal", "5")
                 }
-                MetaItem("XP", "+${if (level.highScore > 0) level.highScore / 10 else 20}")
                 MetaItem("Hearts", "3")
             }
             

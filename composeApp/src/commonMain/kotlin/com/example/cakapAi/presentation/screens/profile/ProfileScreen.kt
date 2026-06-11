@@ -41,7 +41,6 @@ fun ProfileScreen(
     val currentLevel = "Level 2 - Explorer"
     val completedLevel = 2
     val totalLevel = 5
-    val xp = 250
 
     var showEditDialog by remember { mutableStateOf(false) }
     var editName by remember(userName) { mutableStateOf(userName) }
@@ -200,61 +199,29 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Two columns for Level & XP
-                Row(
+                // Level Card (Full Width)
+                Card(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    colors = CardDefaults.cardColors(containerColor = cardColor),
+                    shape = RoundedCornerShape(16.dp),
+                    border = BorderStroke(1.dp, borderStrokeColor)
                 ) {
-                    // Level Card
-                    Card(
-                        modifier = Modifier.weight(1f),
-                        colors = CardDefaults.cardColors(containerColor = cardColor),
-                        shape = RoundedCornerShape(16.dp),
-                        border = BorderStroke(1.dp, borderStrokeColor)
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.Start
                     ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            horizontalAlignment = Alignment.Start
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(skyAccent.copy(alpha = 0.15f)),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .clip(CircleShape)
-                                    .background(skyAccent.copy(alpha = 0.15f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(Icons.Default.Star, contentDescription = "Level", tint = skyAccent, modifier = Modifier.size(20.dp))
-                            }
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Text(text = "Level Saat Ini", color = textSecondary, fontSize = 11.sp)
-                            Text(text = currentLevel, color = textPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                            Icon(Icons.Default.Star, contentDescription = "Level", tint = skyAccent, modifier = Modifier.size(20.dp))
                         }
-                    }
-
-                    // XP Card
-                    Card(
-                        modifier = Modifier.weight(1f),
-                        colors = CardDefaults.cardColors(containerColor = cardColor),
-                        shape = RoundedCornerShape(16.dp),
-                        border = BorderStroke(1.dp, borderStrokeColor)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            horizontalAlignment = Alignment.Start
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .clip(CircleShape)
-                                    .background(Color(0xFFF59E0B).copy(alpha = 0.15f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text("XP", color = Color(0xFFF59E0B), fontWeight = FontWeight.ExtraBold, fontSize = 12.sp)
-                            }
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Text(text = "Total XP", color = textSecondary, fontSize = 11.sp)
-                            Text(text = "$xp XP", color = textPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(text = "Level Saat Ini", color = textSecondary, fontSize = 11.sp)
+                        Text(text = currentLevel, color = textPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     }
                 }
 

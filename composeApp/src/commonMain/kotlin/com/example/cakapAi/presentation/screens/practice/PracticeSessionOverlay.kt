@@ -448,9 +448,6 @@ fun PracticeResult(
             ) {
                 Text("Jawaban Benar", color = textSecondary, fontSize = 16.sp)
                 Text("$correctCount / $totalCount", color = Color(0xFF10B981), fontSize = 32.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(16.dp))
-                Text("XP Didapat", color = textSecondary, fontSize = 16.sp)
-                Text("+${correctCount * 10}", color = Color(0xFFF59E0B), fontSize = 32.sp, fontWeight = FontWeight.Bold)
             }
         }
         Spacer(modifier = Modifier.height(48.dp))
