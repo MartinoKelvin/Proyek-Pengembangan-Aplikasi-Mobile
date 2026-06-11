@@ -17,6 +17,7 @@ import com.example.cakapAi.presentation.screens.result.ResultViewModel
 import com.example.cakapAi.presentation.screens.dictionary.DictionaryViewModel
 import com.example.cakapAi.presentation.screens.tutor.AITutorViewModel
 import com.example.cakapAi.presentation.screens.settings.SettingsViewModel
+import com.example.cakapAi.presentation.screens.profile.ProfileViewModel
 import com.example.cakapAi.domain.repository.DictionaryRepository
 import com.example.cakapAi.data.repository.DictionaryRepositoryImpl
 import com.example.cakapAi.domain.repository.PracticeRepository
@@ -83,6 +84,7 @@ val viewModelModule = module {
     viewModel { DictionaryViewModel(repository = get(), geminiService = get()) }
     viewModel { AITutorViewModel(geminiService = get()) }
     viewModelOf(::SettingsViewModel)
+    viewModelOf(::ProfileViewModel)
 }
 
 // ==================== SHARED MODULES ====================

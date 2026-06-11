@@ -62,22 +62,12 @@ class PracticeRepositoryImplTest {
     fun testGetOfflineQuestions() = runTest {
         val repo = PracticeRepositoryImpl(fakeGeminiService)
         
-        val level1 = repo.getOfflineQuestions(1)
-        assertTrue(level1.isNotEmpty())
-        
-        val level2 = repo.getOfflineQuestions(2)
-        assertTrue(level2.isNotEmpty())
-        
-        val level3 = repo.getOfflineQuestions(3)
-        assertTrue(level3.isNotEmpty())
-        
-        val level4 = repo.getOfflineQuestions(4)
-        assertTrue(level4.isNotEmpty())
-        
-        val level5 = repo.getOfflineQuestions(5)
-        assertTrue(level5.isNotEmpty())
+        for (lvl in 1..20) {
+            val questions = repo.getOfflineQuestions(lvl)
+            assertEquals(10, questions.size, "Level $lvl should have exactly 10 questions")
+        }
         
         val levelOther = repo.getOfflineQuestions(99)
-        assertTrue(levelOther.isNotEmpty())
+        assertEquals(10, levelOther.size, "Fallback level should have exactly 10 questions")
     }
 }

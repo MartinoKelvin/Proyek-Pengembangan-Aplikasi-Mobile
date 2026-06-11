@@ -39,6 +39,7 @@ import kotlin.math.sin
 import org.koin.compose.viewmodel.koinViewModel
 import com.example.cakapAi.presentation.screens.map.components.LevelPracticeDetailSheet
 import com.example.cakapAi.presentation.screens.practice.PracticeSessionOverlay
+import com.example.cakapAi.core.util.BackHandler
 
 /**
  * Data class representing a Level Step in the Learning Path Map.
@@ -60,6 +61,30 @@ enum class LevelType {
 
 enum class LevelStatus {
     LOCKED, UNLOCKED, COMPLETED
+}
+
+data class Chapter(
+    val id: Int,
+    val title: String,
+    val description: String,
+    val badge: String
+)
+
+val chapters = listOf(
+    Chapter(1, "Foundations of English", "Start with basic communication, essential vocabulary, and simple grammar.", "CHAPTER 1"),
+    Chapter(2, "Daily Socialization & Work", "Learn numbers, time, daily situations, present tense, and office communication.", "CHAPTER 2"),
+    Chapter(3, "Getting Around & Tenses", "Ask for directions, shopping, past events, and expressing emotions.", "CHAPTER 3"),
+    Chapter(4, "Advanced Contexts & Expressions", "Discuss health, future plans, weather, requests, and idioms.", "CHAPTER 4")
+)
+
+fun getNumHeadersBeforeLevel(levelId: Int): Int {
+    return when (levelId) {
+        in 1..5 -> 1
+        in 6..10 -> 2
+        in 11..15 -> 3
+        in 16..20 -> 4
+        else -> 5
+    }
 }
 
 /**
@@ -93,7 +118,7 @@ fun MapScreen(
     val borderStrokeColorAlpha08 = MaterialTheme.colorScheme.outline.copy(alpha = 0.08f)
     val borderStrokeColorAlpha12 = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
 
-    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) else Color(0xFF0A1B35)
+    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) else Color(0xFF012B1E)
 
     Box(
         modifier = Modifier
@@ -206,14 +231,7 @@ fun MapScreen(
                                 progress.isUnlocked -> LevelStatus.UNLOCKED
                                 else -> LevelStatus.LOCKED
                             },
-                            xOffsetFactor = when (progress.id) {
-                                1 -> 0.0f
-                                2 -> 0.25f
-                                3 -> 0.38f
-                                4 -> 0.15f
-                                5 -> -0.2f
-                                else -> 0.0f
-                            },
+                            xOffsetFactor = sin((progress.id.toFloat() - 1f) * 1.3f) * 0.35f,
                             highScore = progress.highScore
                         )
                     }
@@ -222,6 +240,7 @@ fun MapScreen(
                 var selectedLevel by remember { mutableStateOf<PathLevel?>(null) }
                 var selectedPracticeLevel by remember { mutableStateOf<PathLevel?>(null) }
                 var isPracticeSessionOpen by remember { mutableStateOf(false) }
+                var showExitConfirmDialog by remember { mutableStateOf(false) }
 
                 val completedLevels = remember(levels) { levels.count { it.status == LevelStatus.COMPLETED } }
                 val totalLevels = remember(levels) { levels.size }
@@ -230,7 +249,8 @@ fun MapScreen(
                 val stepHeight = 156.dp
                 val topPadding = 60.dp
                 val bottomPadding = 140.dp
-                val totalHeight = topPadding + bottomPadding + (stepHeight * levels.size)
+                val headerHeight = 170.dp
+                val totalHeight = topPadding + bottomPadding + (stepHeight * levels.size) + (headerHeight * 4)
 
                 Column(modifier = Modifier.fillMaxSize()) {
                     // Premium Header Section showing actual level progress and shortcuts
@@ -258,6 +278,7 @@ fun MapScreen(
                                 levels = levels,
                                 stepHeight = stepHeight,
                                 topPadding = topPadding,
+                                headerHeight = headerHeight,
                                 pathColor = emeraldAccent,
                                 dashedColor = Color.White.copy(alpha = 0.35f),
                                 modifier = Modifier
@@ -265,9 +286,33 @@ fun MapScreen(
                                     .height(totalHeight)
                             )
 
+                            // Render Chapter Headers at correct positions
+                            chapters.forEach { chapter ->
+                                val firstLevelId = (chapter.id - 1) * 5 + 1
+                                val isChapterUnlocked = levels.find { it.id == firstLevelId }?.status != LevelStatus.LOCKED
+
+                                val headerYOffset = topPadding + (stepHeight * (chapter.id - 1) * 5) + (headerHeight * (chapter.id - 1))
+
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .offset(y = headerYOffset)
+                                        .padding(horizontal = 20.dp)
+                                ) {
+                                    ChapterHeaderItem(
+                                        chapter = chapter,
+                                        isUnlocked = isChapterUnlocked,
+                                        isLight = isLight,
+                                        cardColor = cardColor,
+                                        textPrimary = textPrimary,
+                                        textSecondary = textSecondary
+                                    )
+                                }
+                            }
+
                             // Interactive Level Nodes placed at the exact same scrollable coordinates
                             levels.forEach { item ->
-                                val yOffset = topPadding + (stepHeight * item.index)
+                                val yOffset = topPadding + (stepHeight * item.index) + (headerHeight * getNumHeadersBeforeLevel(item.id))
 
                                 Box(
                                     modifier = Modifier
@@ -305,12 +350,15 @@ fun MapScreen(
                     )
                 }
 
+                BackHandler(enabled = isPracticeSessionOpen) {
+                    showExitConfirmDialog = true
+                }
+
                 if (isPracticeSessionOpen && selectedPracticeLevel != null) {
                     PracticeSessionOverlay(
                         level = selectedPracticeLevel!!,
                         onClose = {
-                            isPracticeSessionOpen = false
-                            selectedPracticeLevel = null
+                            showExitConfirmDialog = true
                         },
                         onCompleted = { isSuccess, score ->
                             isPracticeSessionOpen = false
@@ -318,6 +366,41 @@ fun MapScreen(
                                 viewModel.savePracticeResult(selectedPracticeLevel!!.id, score, isSuccess)
                             }
                             selectedPracticeLevel = null
+                        }
+                    )
+                }
+
+                if (showExitConfirmDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showExitConfirmDialog = false },
+                        containerColor = cardColor,
+                        titleContentColor = textPrimary,
+                        textContentColor = textPrimary,
+                        title = { Text(text = "Keluar dari kuis?", fontWeight = FontWeight.Bold) },
+                        text = { Text(text = "Progress pengerjaan saat ini akan hilang. Apakah kamu yakin ingin keluar?") },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    showExitConfirmDialog = false
+                                    isPracticeSessionOpen = false
+                                    selectedPracticeLevel = null
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = emeraldAccent),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text("Keluar", color = Color.White, fontWeight = FontWeight.Bold)
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(
+                                onClick = { showExitConfirmDialog = false }
+                            ) {
+                                Text(
+                                    text = "Batal",
+                                    color = textSecondary,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
                         }
                     )
                 }
@@ -527,6 +610,41 @@ fun LevelNodeItem(
                     )
                 }
 
+                // Floating Player Indicator ("Kamu") above the active level
+                if (isPulsing) {
+                    val bobbingTransition = rememberInfiniteTransition(label = "bobbing")
+                    val bobOffset by bobbingTransition.animateFloat(
+                        initialValue = 0f,
+                        targetValue = -6f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(1000, easing = EaseInOutQuad),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                        label = "bobOffset"
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .offset(y = (-28).dp + bobOffset.dp)
+                            .background(
+                                brush = Brush.horizontalGradient(
+                                    colors = listOf(Color(0xFFF59E0B), Color(0xFFD97706))
+                                ),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                    ) {
+                        Text(
+                            text = "KAMU",
+                            color = Color.White,
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            letterSpacing = 0.5.sp
+                        )
+                    }
+                }
+
                 // 3D tactile button stack
                 Box(
                     modifier = Modifier
@@ -643,6 +761,7 @@ fun ConnectionLinesBackdrop(
     levels: List<PathLevel>,
     stepHeight: Dp,
     topPadding: Dp,
+    headerHeight: Dp,
     pathColor: Color,
     dashedColor: Color,
     modifier: Modifier = Modifier
@@ -650,6 +769,7 @@ fun ConnectionLinesBackdrop(
     val density = LocalDensity.current
     val stepHeightPx = with(density) { stepHeight.toPx() }
     val topPaddingPx = with(density) { topPadding.toPx() }
+    val headerHeightPx = with(density) { headerHeight.toPx() }
 
     val colorScheme = MaterialTheme.colorScheme
     val isLight = colorScheme.background.red > 0.5f
@@ -657,6 +777,17 @@ fun ConnectionLinesBackdrop(
     val surfaceColor = colorScheme.surface
     val surfaceVariantColor = colorScheme.surfaceVariant
     val outlineColor = colorScheme.outline
+
+    val infiniteTransition = rememberInfiniteTransition(label = "waves")
+    val waveOffset by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(8000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "waveOffset"
+    )
 
     Canvas(modifier = modifier) {
         val width = size.width
@@ -668,16 +799,17 @@ fun ConnectionLinesBackdrop(
         } else {
             Color(0xFF38BDF8).copy(alpha = 0.04f)
         }
+        val radOffset = (sin(waveOffset * 3.14159f / 180f) * 10f).dp.toPx()
         for (yOffset in 300..height.toInt() step 500) {
             drawCircle(
                 color = waveColor,
-                radius = 120.dp.toPx(),
+                radius = 120.dp.toPx() + radOffset,
                 center = Offset(width * 0.15f, yOffset.toFloat()),
                 style = Stroke(width = 2f)
             )
             drawCircle(
                 color = waveColor,
-                radius = 140.dp.toPx(),
+                radius = 140.dp.toPx() - radOffset,
                 center = Offset(width * 0.15f, yOffset.toFloat()),
                 style = Stroke(width = 1.5f)
             )
@@ -713,7 +845,14 @@ fun ConnectionLinesBackdrop(
         // 3. Generate island point coordinates (adding 38.dp to align with center of 76.dp node buttons)
         val points = mutableListOf<Offset>()
         levels.forEach { level ->
-            val py = topPaddingPx + (level.index * stepHeightPx) + (38.dp.toPx())
+            val numHeaders = when (level.id) {
+                in 1..5 -> 1
+                in 6..10 -> 2
+                in 11..15 -> 3
+                in 16..20 -> 4
+                else -> 5
+            }
+            val py = topPaddingPx + (level.index * stepHeightPx) + (numHeaders * headerHeightPx) + (38.dp.toPx())
             val px = (width / 2) + (level.xOffsetFactor * 160.dp.toPx())
             points.add(Offset(px, py))
         }
@@ -923,6 +1062,112 @@ fun LevelPopupDetails(
                     fontSize = 13.sp
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun ChapterHeaderItem(
+    chapter: Chapter,
+    isUnlocked: Boolean,
+    isLight: Boolean,
+    cardColor: Color,
+    textPrimary: Color,
+    textSecondary: Color,
+    modifier: Modifier = Modifier
+) {
+    val accentColor = when (chapter.id) {
+        1 -> Color(0xFF10B981) // Emerald
+        2 -> Color(0xFF0EA5E9) // Sky Blue
+        3 -> Color(0xFFF59E0B) // Amber/Gold
+        4 -> Color(0xFF8B5CF6) // Purple
+        else -> Color(0xFF10B981)
+    }
+
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .shadow(
+                elevation = if (isUnlocked) 8.dp else 2.dp,
+                shape = RoundedCornerShape(24.dp),
+                clip = false
+            ),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isUnlocked) {
+                if (isLight) Color.White.copy(alpha = 0.9f) else cardColor.copy(alpha = 0.85f)
+            } else {
+                if (isLight) Color(0xFFF1F5F9).copy(alpha = 0.6f) else Color(0xFF1E293B).copy(alpha = 0.6f)
+            }
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // Badge
+                Box(
+                    modifier = Modifier
+                        .background(
+                            color = if (isUnlocked) accentColor.copy(alpha = 0.15f) else Color.Gray.copy(alpha = 0.15f),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = chapter.badge,
+                        color = if (isUnlocked) accentColor else Color.Gray,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    )
+                }
+
+                if (!isUnlocked) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = "Terkunci",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Text(
+                            text = "TERKUNCI",
+                            color = Color.Gray,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = chapter.title,
+                color = if (isUnlocked) textPrimary else textPrimary.copy(alpha = 0.5f),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.ExtraBold
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = chapter.description,
+                color = if (isUnlocked) textSecondary else textSecondary.copy(alpha = 0.5f),
+                fontSize = 12.sp,
+                lineHeight = 16.sp
+            )
         }
     }
 }

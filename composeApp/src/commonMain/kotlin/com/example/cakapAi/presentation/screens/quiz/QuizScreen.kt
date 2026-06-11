@@ -20,6 +20,7 @@ import com.example.cakapAi.presentation.screens.map.LevelStatus
 import com.example.cakapAi.presentation.screens.map.LevelType
 import com.example.cakapAi.presentation.screens.map.PathLevel
 import com.example.cakapAi.presentation.screens.practice.PracticeSessionOverlay
+import com.example.cakapAi.core.util.BackHandler
 import kotlin.random.Random
 
 @Composable
@@ -30,11 +31,15 @@ fun QuizScreen(
 ) {
     var isPracticeSessionOpen by remember { mutableStateOf(false) }
     var randomPracticeLevel by remember { mutableStateOf<PathLevel?>(null) }
+    var showExitConfirmDialog by remember { mutableStateOf(false) }
 
     val isLight = MaterialTheme.colorScheme.background.red > 0.5f
     val backgroundColor = MaterialTheme.colorScheme.background
     val emeraldAccent = MaterialTheme.colorScheme.primary
-    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) else Color(0xFF0B172E)
+    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) else Color(0xFF012B1E)
+    val cardColor = MaterialTheme.colorScheme.surface
+    val textPrimary = MaterialTheme.colorScheme.onBackground
+    val textSecondary = MaterialTheme.colorScheme.onSurfaceVariant
 
     Box(
         modifier = Modifier
@@ -110,13 +115,16 @@ fun QuizScreen(
             }
         }
 
+        BackHandler(enabled = isPracticeSessionOpen) {
+            showExitConfirmDialog = true
+        }
+
         if (isPracticeSessionOpen && randomPracticeLevel != null) {
             PracticeSessionOverlay(
                 level = randomPracticeLevel!!,
                 closeButtonText = "Lihat Hasil",
                 onClose = {
-                    isPracticeSessionOpen = false
-                    randomPracticeLevel = null
+                    showExitConfirmDialog = true
                 },
                 onCompleted = { isSuccess, score ->
                     val completedLevelId = randomPracticeLevel?.id ?: 999
@@ -124,6 +132,42 @@ fun QuizScreen(
                     randomPracticeLevel = null
                     val accuracy = if (isSuccess) 100 else 50
                     onFinishQuiz(completedLevelId, score, 5, accuracy, isSuccess)
+                }
+            )
+        }
+
+        if (showExitConfirmDialog) {
+            AlertDialog(
+                onDismissRequest = { showExitConfirmDialog = false },
+                containerColor = cardColor,
+                titleContentColor = textPrimary,
+                textContentColor = textPrimary,
+                title = { Text(text = "Keluar dari kuis?", fontWeight = FontWeight.Bold) },
+                text = { Text(text = "Progress pengerjaan saat ini akan hilang. Apakah kamu yakin ingin keluar?") },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showExitConfirmDialog = false
+                            isPracticeSessionOpen = false
+                            randomPracticeLevel = null
+                            onNavigateBack()
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = emeraldAccent),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("Keluar", color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showExitConfirmDialog = false }
+                    ) {
+                        Text(
+                            text = "Batal",
+                            color = textSecondary,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                 }
             )
         }

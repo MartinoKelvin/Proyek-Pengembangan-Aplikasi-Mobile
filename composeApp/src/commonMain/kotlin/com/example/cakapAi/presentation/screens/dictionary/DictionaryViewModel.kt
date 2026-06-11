@@ -31,22 +31,24 @@ class DictionaryViewModel(
         _isTranslating.value = true
         viewModelScope.launch {
             val prompt = """
-                Kamu adalah Kamus dan Translator Bahasa tingkat lanjut.
-                Terjemahkan teks berikut dari bahasa $sourceLang ke bahasa $targetLang.
-                
-                Teks: "$text"
-                
-                ATURAN BALASAN:
-                1. Berikan terjemahan langsungnya dengan jelas.
-                2. Jika teks tersebut adalah satu kata tunggal atau frasa idiom, berikan penjelasan singkat maknanya.
-                3. Berikan 1 contoh penggunaan kalimat yang natural menggunakan kata/teks tersebut beserta artinya.
-                4. Jangan bertele-tele, format balasanmu agar rapi dan mudah dibaca.
+                Kamu adalah penerjemah bahasa yang sangat akurat.
+                Tugasmu adalah menerjemahkan teks dari bahasa $sourceLang ke bahasa $targetLang.
+
+                ATURAN BALASAN (SANGAT KETAT):
+                1. Tuliskan HANYA hasil terjemahan langsungnya saja.
+                2. JANGAN sertakan penjelasan, definisi, alternatif, pengulangan teks sumber, ataupun contoh kalimat.
+                3. JANGAN gunakan tanda petik atau format markdown apapun pada hasil terjemahan.
+                4. Output harus bersih berupa teks hasil terjemahan saja.
+
+                Teks sumber untuk diterjemahkan: "$text"
             """.trimIndent()
             
             geminiService.generateContent(prompt).onSuccess { result ->
                 _translationResult.value = result
             }.onFailure { e ->
-                _translationResult.value = "Gagal menerjemahkan: ${e.message ?: "Periksa koneksi internet Anda."}"
+                println("Translation Error: ${e.message}")
+                e.printStackTrace()
+                _translationResult.value = "Gagal menerjemahkan. Periksa koneksi internet Anda."
             }
             _isTranslating.value = false
         }

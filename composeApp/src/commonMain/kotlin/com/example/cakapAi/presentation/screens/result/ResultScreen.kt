@@ -61,8 +61,8 @@ fun ResultScreen(
 
     // Theme Colors matching MapScreen (fully dynamic)
     val isLight = MaterialTheme.colorScheme.background.red > 0.5f
-    val backgroundColor = if (isLight) Color(0xFFF0F4F8) else Color(0xFF071224)
-    val cardColor = if (isLight) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.95f) else Color(0xFF0F1A30).copy(alpha = 0.9f)
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val cardColor = if (isLight) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.95f) else MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
     val emeraldAccent = MaterialTheme.colorScheme.primary
     val redAccent = MaterialTheme.colorScheme.error
     val skyAccent = MaterialTheme.colorScheme.secondary
@@ -71,8 +71,8 @@ fun ResultScreen(
     // Dynamic theme-based text and border colors to support Light Mode perfectly
     val textPrimary = if (isLight) MaterialTheme.colorScheme.onBackground else Color.White
     val textSecondary = if (isLight) MaterialTheme.colorScheme.onSurfaceVariant else Color.White.copy(alpha = 0.7f)
-    val borderStrokeColor = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.12f) else Color.White.copy(alpha = 0.08f)
-    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer else Color(0xFF0B172E)
+    val borderStrokeColor = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.12f) else MaterialTheme.colorScheme.outline
+    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer else Color(0xFF012B1E)
 
     // Animation entry states
     var startAnimations by remember { mutableStateOf(false) }

@@ -57,18 +57,18 @@ fun DictionaryScreen(
     }
 
     val isLight = MaterialTheme.colorScheme.background.red > 0.5f
-    val backgroundColor = if (isLight) Color(0xFFF0F4F8) else Color(0xFF071224)
-    val cardColor = if (isLight) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.95f) else Color(0xFF0F1A30).copy(alpha = 0.95f)
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val cardColor = if (isLight) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.95f) else MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
     val emeraldAccent = MaterialTheme.colorScheme.primary
     val skyAccent = MaterialTheme.colorScheme.secondary
 
     val textPrimary = if (isLight) MaterialTheme.colorScheme.onBackground else Color.White
     val textSecondary = if (isLight) MaterialTheme.colorScheme.onSurfaceVariant else Color.LightGray
     val textSecondaryColor = if (isLight) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f) else Color.Gray
-    val borderStrokeColor = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.12f) else Color.White.copy(alpha = 0.08f)
-    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer else Color(0xFF0A1B35)
-    val outputCardColor = if (isLight) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f) else Color(0xFF1E293B).copy(alpha = 0.8f)
-    val textFieldContainer = if (isLight) MaterialTheme.colorScheme.surfaceVariant else Color(0xFF1E293B)
+    val borderStrokeColor = if (isLight) MaterialTheme.colorScheme.outline.copy(alpha = 0.12f) else MaterialTheme.colorScheme.outline
+    val gradientStart = if (isLight) MaterialTheme.colorScheme.primaryContainer else Color(0xFF012B1E)
+    val outputCardColor = if (isLight) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f)
+    val textFieldContainer = if (isLight) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surfaceVariant
 
     Scaffold(
         containerColor = Color.Transparent,

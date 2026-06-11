@@ -29,6 +29,8 @@ class UserPreferences(
         val DEFAULT_CATEGORY = stringPreferencesKey("default_category")
         val SHOW_PREVIEW = booleanPreferencesKey("show_preview")
         val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
+        val USER_NAME = stringPreferencesKey("user_name")
+        val USER_EMAIL = stringPreferencesKey("user_email")
     }
     
     // ==================== DARK MODE ====================
@@ -118,6 +120,32 @@ class UserPreferences(
     suspend fun setOnboardingCompleted() {
         dataStore.edit { prefs ->
             prefs[Keys.ONBOARDING_COMPLETED] = true
+        }
+    }
+
+    // ==================== USER PROFILE ====================
+
+    /**
+     * Observe user profile name setting
+     */
+    val userName: Flow<String> = dataStore.data.map { prefs ->
+        prefs[Keys.USER_NAME] ?: "Martino Kelvin"
+    }
+
+    /**
+     * Observe user profile email setting
+     */
+    val userEmail: Flow<String> = dataStore.data.map { prefs ->
+        prefs[Keys.USER_EMAIL] ?: "martinokelvin06032005@gmail.com"
+    }
+
+    /**
+     * Save user profile changes
+     */
+    suspend fun saveProfile(name: String, email: String) {
+        dataStore.edit { prefs ->
+            prefs[Keys.USER_NAME] = name
+            prefs[Keys.USER_EMAIL] = email
         }
     }
 }

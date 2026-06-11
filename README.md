@@ -1,308 +1,151 @@
-# CakapAI - Sprint 4 Polish & Testing
+# CakapAI
 
-![CI](https://github.com/MartinoKelvin/Proyek-Pengembangan-Aplikasi-Mobile/actions/workflows/ci.yml/badge.svg)
+[![CI Build](https://github.com/MartinoKelvin/Proyek-Pengembangan-Aplikasi-Mobile/actions/workflows/ci.yml/badge.svg)](https://github.com/MartinoKelvin/Proyek-Pengembangan-Aplikasi-Mobile/actions/workflows/ci.yml)
+[![Kotlin Multiplatform](https://img.shields.io/badge/Kotlin-Multiplatform-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org/docs/multiplatform.html)
+[![Compose Multiplatform](https://img.shields.io/badge/Compose-Multiplatform-purple.svg?style=flat&logo=jetpackcompose)](https://github.com/JetBrains/compose-multiplatform)
 
-## Sprint 4 Features
-* Bug Fixes
-* UI Polish
-* Unit Testing
-* UI Testing
-* Coverage Report
+## Identitas Pengembang & Video Demo
 
-## Bug Fixes
-* Fixed navigation issue
-* Fixed crash when opening profile
-* Fixed state not updating
-* Fixed search filtering issue
+*   **Daftar Pengembang:**
+    *   **Martino Kelvin** (NIM: 123140165)
+    *   **Louis Hutabarat** (NIM: 123140052)
+*   **Link Video Demo Aplikasi (YouTube):** [Tonton Video Demo di YouTube](https://youtu.be/6lOIxRjGujM)
 
-## UI Improvements
-* Splash Screen refinement
-* Consistent spacing
-* Better typography
-* Improved card layout
-* Better dark mode support
-* Improved icon consistency
+---
 
-## Testing Strategy
+**CakapAI** adalah aplikasi pembelajaran bahasa asing interaktif berbasis kecerdasan buatan (AI) yang dibangun menggunakan **Kotlin Multiplatform (KMP)** dan **Compose Multiplatform**. Aplikasi ini dirancang dengan pendekatan *offline-first* menggunakan **SQLDelight** untuk menyimpan kemajuan belajar secara lokal dan memanfaatkan kekuatan **Gemini API** untuk menghadirkan asisten tutor bahasa Inggris personal serta sistem penerjemah real-time.
 
-### Repository Tests
-* Insert note
-* Update note
-* Delete note
-* Search note
-* Error handling
+---
 
-### ViewModel Tests
-* Initial state
-* Loading state
-* Success state
-* Empty state
-* Error state
+## Daftar Fitur & Layar Aplikasi
 
-### UI Tests
-* Home Screen
-* Add Note Flow
-* Vocabulary Search
+CakapAI menawarkan pengalaman belajar gamifikasi terstruktur dengan navigasi modern dan responsif:
 
-## Menjalankan Test & Coverage
+### 1. Splash Screen & Branding
+*   Layar sambutan pertama saat aplikasi dibuka yang memperkuat identitas visual **CakapAI**.
+*   Dilengkapi animasi logo, tagline, loading indicator, serta transisi otomatis ke halaman utama setelah inisialisasi selesai.
+*   Mendukung pergantian tema warna secara mulus (*light/dark mode*).
 
-Proyek ini telah dilengkapi dengan Unit Test dan UI Test untuk memenuhi rubrik Sprint 4. Kover dikonfigurasi untuk mengecualikan UI classes agar dapat berfokus pada Business Logic (ViewModel, Repository, Model, DTO).
+### 2. Peta Perjalanan Belajar (Interactive Learning Map)
+*   Peta interaktif dengan alur meliuk (S-curve) yang membagi pembelajaran ke dalam **4 Chapter (Total 20 Level)**:
+    *   **Chapter 1: Foundations of English** (Level 1-5): Pengenalan diri, sapaan dasar, dan tata bahasa esensial.
+    *   **Chapter 2: Daily Socialization & Work** (Level 6-10): Angka, waktu, aktivitas harian, dan komunikasi kerja.
+    *   **Chapter 3: Getting Around & Tenses** (Level 11-15): Arah jalan, belanja, tenses masa lalu, dan emosi.
+    *   **Chapter 4: Advanced Contexts & Expressions** (Level 16-20): Kesehatan, masa depan, cuaca, idiom, dan peribahasa.
+*   Desain antarmuka premium dengan tombol 3D taktil, riak ombak animasi (*ocean waves backdrop*), ornamen kompas klasik, dan indikator mengapung **"KAMU"** yang menunjukkan posisi level aktif pengguna saat ini.
+*   Dilengkapi progress bar dinamis di bagian header yang menunjukkan persentase level yang berhasil diselesaikan secara waktu nyata.
 
-Untuk menjalankan seluruh test dan melakukan *generate coverage report* di Windows, jalankan perintah berikut di terminal (PowerShell/CMD):
+### 3. Detail Level & Progres
+*   Setiap kali level yang tidak terkunci diklik, aplikasi akan menampilkan lembar detail latihan (*bottom sheet*) yang menunjukkan target pembelajaran, *high score* terbaik, dan akurasi pengerjaan Anda.
+*   Menyediakan tombol cepat untuk langsung memulai sesi latihan.
 
-```powershell
-.\gradlew test koverHtmlReport
+### 4. Latihan Interaktif (Practice Session Overlay)
+*   Sesi latihan tergamifikasi yang terdiri dari 5 soal acak dari bank soal per level dengan sistem **3 Nyawa (Hearts)**.
+*   Mendukung tiga format pertanyaan:
+    *   **Pilihan Ganda (Multiple Choice)**: Memilih opsi jawaban yang benar.
+    *   **Isian Rumpang (Fill in the Blank)**: Melengkapi bagian kalimat yang kosong.
+    *   **Latihan Pengucapan (Speaking Practice)**: Membaca teks bahasa Inggris keras-keras. Aplikasi mendengarkan dan mencocokkan ucapan Anda menggunakan teknologi *Speech Recognition*.
+*   Dilengkapi efek suara responsif (*correct/incorrect answer audio effects*) dan umpan balik getaran (*vibration feedback*).
+
+### 5. Hasil Akhir Latihan (Result Screen)
+*   Menampilkan skor akhir pengerjaan, jumlah jawaban benar, tingkat akurasi (%), dan status kelulusan (lulus jika menyelesaikan kuis tanpa kehabisan nyawa).
+*   Menyediakan tombol pintas untuk mengulang latihan (*retry*) atau kembali ke peta perjalanan.
+
+### 6. Kuis Latihan Umum (General Quiz)
+*   Tab khusus di bilah navigasi bawah untuk memulai sesi kuis acak dari topik kosa kata gabungan (*Listening, Speaking, Reading, Gaming*). Sangat berguna bagi pengguna untuk menantang diri sendiri dengan bank soal gabungan.
+
+### 7. AI Tutor (CakapAI Chatbot)
+*   Chatbot asisten personal interaktif yang ditenagai oleh **Gemini API**.
+*   Pengguna dapat menulis kalimat bahasa Inggris sesuka mereka. AI Tutor akan membalas obrolan layaknya sahabat pena sekaligus menganalisis, mengoreksi struktur tata bahasa (*grammar*), dan memberikan saran penulisan yang lebih alami (*native-like*).
+
+### 8. Kamus & Penerjemah (Dictionary Screen)
+*   Penerjemah multibahasa (Indonesia <-> Inggris) bertenaga AI yang membersihkan output terjemahan secara rapi tanpa format markdown yang mengganggu.
+*   Mendukung fitur **CRUD (Create, Read, Update, Delete)** Kosakata Tersimpan secara offline. Pengguna dapat menyimpan hasil terjemahan penting ke daftar kosakata lokal, memperbaruinya, atau menghapusnya.
+*   Dilengkapi bilah pencarian (*search bar*) yang responsif dan penyaringan kosakata secara real-time.
+
+### 9. Profil Pengguna (Profile Screen)
+*   Menampilkan nama pengguna, email, tingkat level saat ini, serta statistik persentase kelulusan materi belajar.
+*   Memiliki tata letak modern yang bersih dengan kartu level penuh (*full-width*) setelah pembersihan sistem EXP yang tidak digunakan.
+
+### 10. Pengaturan Aplikasi (Settings Screen)
+*   Memungkinkan pengguna mengaktifkan atau menonaktifkan Mode Gelap (Dark Mode) secara persisten untuk kenyamanan visual.
+
+---
+
+## Tumpukan Teknologi & Arsitektur
+
+Aplikasi ini menggunakan pola arsitektur **Clean Architecture** yang terbagi ke dalam empat modul logika utama di bawah subdirektori `composeApp/src/commonMain/kotlin/com/example/cakapAi/`:
+
+```text
+cakapAi/
+├── core/           # Konfigurasi DI, HttpClient, expect/actual platform-specific helpers
+├── data/           # Repositori konkret, database SQLDelight, remote API, preferences (DataStore)
+├── domain/         # Model data murni dan antarmuka (interface) repositori
+└── presentation/   # Komponen Jetpack Compose UI, Navigation, dan ViewModel (StateFlow)
 ```
 
-Atau jika menggunakan Git Bash / Mac / Linux:
+### Library & Framework Utama:
+1.  **Kotlin Multiplatform (KMP)**: Berbagi kode logika bisnis tunggal (Common) untuk dijalankan di berbagai platform.
+2.  **Compose Multiplatform**: Framework deklaratif modern untuk merancang antarmuka pengguna bersama.
+3.  **SQLDelight**: Driver basis data SQL type-safe untuk penyimpanan lokal (*offline support*).
+4.  **Ktor Client**: Library client HTTP untuk mengelola pemanggilan API Gemini secara asinkron.
+5.  **Koin**: Dependency Injection (DI) yang ringan dan dioptimalkan untuk Kotlin Multiplatform.
+6.  **Jetpack DataStore**: Pengganti SharedPreferences yang modern untuk penyimpanan konfigurasi persisten.
+7.  **Kotlinx Coroutines & Flow**: Mengelola penanganan background thread dan manajemen state reaktif (`StateFlow`).
+8.  **Navigation Compose**: Navigasi type-safe menggunakan Kotlin Serialization untuk mengarahkan pengguna antar layar.
+
+---
+
+## Fitur Lanjutan & Integrasi Platform (expect/actual)
+
+CakapAI memanfaatkan pola `expect/actual` dari Kotlin Multiplatform untuk mengakses fitur hardware asli pada perangkat target secara mulus:
+
+*   **Speech Recognition**: Mengakses mesin pengenal suara native platform (Android SpeechRecognizer API) untuk menganalisis akurasi pelafalan kata pengguna saat sesi *Speaking Practice*.
+*   **Text To Speech (TTS)**: Menggunakan mesin suara bawaan perangkat untuk melafalkan teks bahasa Inggris dengan logat alami agar didengar oleh pengguna.
+*   **Audio Feedback**: Menginisialisasi pemutar audio lokal untuk memutar sound effect kustom secara asinkron ketika jawaban pengguna terdeteksi benar atau salah.
+*   **Database Driver**: Menginisialisasi `AndroidSqliteDriver` untuk Android dan driver sqlite pendukung di platform lain saat runtime.
+
+---
+
+## Strategi Pengujian (Unit & Integration Testing)
+
+Aplikasi ini telah dilengkapi dengan cakupan pengujian yang kuat untuk memastikan keandalan logika bisnis. Semua pengujian lulus verifikasi kompilasi lokal:
+
+*   **Repository Tests**: Menguji kebenaran query database SQLDelight (Notes/Vocabulary CRUD), skenario kegagalan jaringan, dan pengalihan ke bank soal fallback ketika offline.
+*   **ViewModel Tests**: Menggunakan library **Turbine** untuk memantau emisi state perubahan data pada `StateFlow` di `AITutorViewModel`, `MapViewModel`, `QuizViewModel`, dan `DictionaryViewModel`.
+*   **Mocking API**: Pemanggilan API jarak jauh Gemini disimulasikan menggunakan **Ktor MockEngine** agar pengujian tetap dapat dijalankan secara konsisten tanpa koneksi internet dan tidak menghabiskan kuota token API asli.
+
+### Cara Menjalankan Pengujian Lokal:
+Jalankan perintah berikut pada terminal di root proyek Anda untuk menjalankan seluruh rangkaian pengujian dan melihat status kelulusannya:
+
 ```bash
-./gradlew test koverHtmlReport
-```
-
-## Coverage Report
-Setelah perintah di atas selesai, laporan coverage Kover dalam format HTML akan tersedia di path berikut:
-`composeApp/build/reports/kover/html/index.html`
-
-**Status Coverage Saat Ini (Kover Report):**
-- **Line Coverage:** 62.5%
-- **Instruction Coverage:** 52.7%
-- Target rubrik **50%+ Overall Coverage** telah tercapai! ✅
-
-### Screenshot Coverage
-*(Harap ambil screenshot halaman `index.html` yang terbuka di browser dan simpan di folder `docs/` dengan nama `coverage_screenshot.png` untuk memenuhi rubrik)*
-
-[Coverage Screenshot]
-![1780849311303](image/README/1780849311303.png)
-
-## Demo Video
-[Link Video Demo Sprint 4](https://drive.google.com/drive/folders/1mTc0_lbRY5vbsmN_lIlZmTb26M2lIydR)
-
-
----
-
-## Deskripsi Aplikasi
-
-CakapAI adalah aplikasi pembelajaran bahasa berbasis AI yang dirancang untuk membantu pengguna belajar bahasa melalui fitur dictionary, vocabulary, practice quiz, speaking practice, dan AI Tutor. Aplikasi ini menggunakan Gemini API untuk mendukung pembelajaran interaktif serta SQLDelight untuk penyimpanan lokal agar aplikasi tetap bisa digunakan secara offline.
-
----
-
-
-## Sprint 3 Overview
-
-Pada Sprint 3, aplikasi CakapAI difokuskan pada implementasi *advanced features* untuk melengkapi fungsionalitas utama, yaitu:
-- Search/filter functionality
-- API integration (Gemini API)
-- Offline support (SQLDelight)
-- Additional screen (Profile & Settings)
-- Bonus feature (Splash screen, dark mode, animasi, speaking practice)
-- UI polish & Splash screen branding
-
----
-
-## Checklist Rubrik Sprint 3
-
-| Komponen Rubrik | Bobot | Status | Implementasi |
-|---|---:|:---:|---|
-| Search / Filter | 25% | ✅ | Search vocabulary pada Dictionary Screen |
-| API / Enhanced Local | 25% | ✅ | Gemini API untuk AI Tutor, Dictionary, dan Practice |
-| Offline Support | 20% | ✅ | SQLDelight local database dan fallback questions |
-| Additional Screen | 15% | ✅ | Profile Screen dan Settings Screen |
-| Bonus Feature | 15% | ✅ | Dark mode, splash screen, animasi, speaking practice, dan text-to-speech |
-
----
-
-## Detail Implementasi Sprint 3
-
-### 1. Search / Filter
-
-Fitur search diterapkan pada Dictionary Screen. Pengguna dapat mencari vocabulary yang tersimpan berdasarkan teks asli maupun hasil terjemahan. Search berjalan secara responsif dan langsung saat pengguna mengetik, dilengkapi tombol clear, serta empty state ketika tidak ada hasil yang cocok.
-
-### 2. API Integration / Enhanced Local
-
-Aplikasi menggunakan Gemini API sebagai fitur advanced untuk mendukung pembelajaran berbasis AI. Integrasi API digunakan pada fitur AI Tutor, Practice, dan bantuan pembelajaran lainnya. HTTP request dikelola menggunakan Ktor Client melalui HttpClientFactory dan konfigurasi API dikelola secara aman. Jika request API gagal, aplikasi tetap memberikan fallback agar pengguna masih dapat melanjutkan latihan.
-
-### 3. Offline Support
-
-Aplikasi mendukung penggunaan offline melalui penyimpanan lokal menggunakan SQLDelight. Data seperti vocabulary, progress level, quiz history, dan saved vocabulary tetap dapat diakses tanpa koneksi internet. Pada fitur Practice, aplikasi juga menyediakan offline fallback questions sehingga pengguna tetap dapat mengerjakan latihan meskipun koneksi internet tidak tersedia atau API gagal dipanggil.
-
-### 4. Additional Screen
-
-Sprint 3 menambahkan dan menyempurnakan screen tambahan berupa Profile Screen dan Settings Screen. Profile Screen menampilkan informasi pengguna, level, progress, dan statistik pembelajaran. Settings Screen digunakan untuk pengaturan aplikasi seperti dark mode dan preferensi tampilan.
-
-### 5. Bonus Features
-
-Aplikasi memiliki beberapa bonus feature untuk meningkatkan pengalaman pengguna, yaitu:
-- Dark mode support
-- Splash screen branding menggunakan logo CakapAI
-- Animasi pada tampilan UI aplikasi
-- Speaking practice menggunakan microphone
-- Text-to-speech untuk mendukung latihan speaking
-- Sound dan vibration feedback
-
----
-
-## Sprint 3 Update — Splash Screen Branding
-
-Pada Sprint 3, aplikasi CakapAI ditambahkan screen awal berupa Splash Screen untuk memperkuat identitas aplikasi.
-
-### Fitur yang Ditambahkan
-- Splash Screen saat aplikasi pertama kali dibuka
-- Menampilkan logo CakapAI
-- Menampilkan nama aplikasi dan tagline
-- Animasi logo sederhana
-- Loading indicator
-- Transisi otomatis ke halaman utama
-- Support light mode dan dark mode
-
-### Asset Logo
-Logo yang digunakan berada di:
-```text
-composeApp/src/commonMain/composeResources/drawable/logo_cakapai.png
-```
-
-### Alur Aplikasi
-`App Open → Splash Screen → Main Screen`
-
-### Tujuan
-Fitur ini dibuat agar aplikasi terlihat lebih profesional, memiliki identitas visual yang jelas, dan memberikan pengalaman awal yang lebih baik kepada pengguna.
-
----
-
-## Core Features dari Sprint 2 yang Tetap Berjalan
-
-Fitur inti dari Sprint 2 tetap dipertahankan dan masih berjalan pada Sprint 3, yaitu:
-- Navigation antar screen
-- Bottom navigation
-- Dictionary / vocabulary management
-- CRUD vocabulary
-- Local database menggunakan SQLDelight
-- UI state seperti loading, success, empty, dan error
-- Quiz / Practice Screen
-- Map / Home Screen
-- Repository pattern
-
----
-
-## Teknologi yang Digunakan
-
-- Kotlin Multiplatform
-- Compose Multiplatform
-- Material 3
-- SQLDelight
-- DataStore
-- Ktor Client
-- Gemini API
-- Kotlinx Serialization
-- Coroutines
-- StateFlow
-- Navigation Compose
-
----
-
-## Struktur Project
-
-```text
-composeApp/
-├── src/
-│   ├── commonMain/
-│   │   ├── kotlin/
-│   │   │   └── com/example/cakapAi/
-│   │   │       ├── core/
-│   │   │       ├── data/
-│   │   │       ├── domain/
-│   │   │       └── presentation/
-│   │   ├── composeResources/
-│   │   │   └── drawable/
-│   │   │       └── logo_cakapai.png
-│   │   └── sqldelight/
-│   └── androidMain/
-│       ├── kotlin/
-│       └── res/
+./gradlew testDebugUnitTest
 ```
 
 ---
 
-## Cara Menjalankan Project
+## Penyiapan Awal & Cara Menjalankan Proyek
 
-Clone repository:
+### 1. Prasyarat
+*   Android Studio Jellyfish atau yang lebih baru.
+*   JDK 17 or JDK 21 terinstal di sistem Anda.
+
+### 2. Kloning Repositori
 ```bash
 git clone https://github.com/MartinoKelvin/Proyek-Pengembangan-Aplikasi-Mobile.git
 cd Proyek-Pengembangan-Aplikasi-Mobile
 ```
 
-Jalankan build untuk Windows:
-```powershell
-gradlew.bat :composeApp:assembleDebug
-```
+### 3. Konfigurasi Kunci API Gemini
+Fitur AI Tutor dan Terjemahan membutuhkan kunci API Gemini gratis. Anda perlu menambahkannya ke file `local.properties` di root direktori proyek Anda agar dibaca secara otomatis saat kompilasi:
 
-Untuk Mac/Linux:
-```bash
-./gradlew :composeApp:assembleDebug
-```
-
-Buka project di Android Studio, tunggu Gradle Sync selesai, lalu jalankan pada emulator atau perangkat Android (run `composeApp`).
-
----
-
-## Konfigurasi Gemini API Key
-
-Aplikasi menggunakan Gemini API untuk fitur AI Tutor dan Practice. Pastikan API key sudah dikonfigurasi melalui properti environment atau `local.properties`. 
-
-Contoh penambahan di `local.properties`:
 ```properties
-GEMINI_API_KEY=YOUR_API_KEY_HERE
-```
-Untuk keamanan, jangan commit API key asli ke repository publik. Aplikasi akan otomatis menarik API Key ini pada saat build.
-
----
-
-## Video Demo Sprint 3
-
-Link video demo:
-```text
-https://drive.google.com/drive/folders/1UU3RQus6D0go0HLjzZQivif-fUOKpKLf?usp=sharing
-```
-Demo Sprint 3 menampilkan:
-- Splash Screen logo
-- Search vocabulary
-- AI Tutor / Gemini API
-- Practice / Quiz
-- Offline fallback
-- Profile Screen
-- Settings Screen
-- Dark mode
-- Speaking practice
-
----
-
-## Status Build / CI
-
-Status build:
-```text
-✅ Build berhasil / menunggu pengecekan lokal
+# file: local.properties
+GEMINI_API_KEY=isi_dengan_kunci_api_gemini_anda
 ```
 
-Perintah build lokal:
-```bash
-gradlew.bat :composeApp:assembleDebug
-```
-Workflow CI di GitHub Actions (`ci.yml`) juga memastikan *code quality* dan integritas *build* secara berkala.
-
----
-
-## Catatan Pengembangan
-
-- Pada Sprint 3, arsitektur yang sudah ada disempurnakan dengan *error handling* untuk interaksi jaringan (Ktor) dan *graceful degradation* (fallback to local db) ketika offline.
-- Tampilan dan fungsionalitas tambahan dititikberatkan pada kualitas pengalaman pengguna, dibuktikan dengan hadirnya UI animasi, *dark mode*, dan navigasi splash.
-
----
-
-## Kesimpulan
-
-Project CakapAI sudah memenuhi rubrik penilaian **Sprint 3: Advanced Features** karena memiliki:
-- Search/filter functionality yang responsif
-- Gemini API integration yang berfungsi
-- Offline support dengan *fallback* yang aman
-- Profile dan Settings Screen yang matang
-- Bonus feature seperti dark mode, splash screen branding, animasi UI, speaking practice, dan text-to-speech
-- Core features Sprint 2 yang secara utuh dipertahankan dan tetap berjalan dengan baik.
+### 4. Build & Jalankan Aplikasi
+*   Buka proyek menggunakan **Android Studio**.
+*   Biarkan proses Gradle Sync berjalan hingga selesai.
+*   Pilih target perangkat (Emulator Android atau perangkat fisik).
+*   Klik tombol **Run** (Ikon Segitiga Hijau) untuk mengompilasi dan menginstal aplikasi ke perangkat Anda.

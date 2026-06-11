@@ -9,6 +9,8 @@ class AndroidTextToSpeechController(context: Context) : TextToSpeechController, 
     private var isInitialized = false
     private var pendingText: String? = null
 
+    private var pendingLanguage: String? = null
+
     init {
         tts = TextToSpeech(context, this)
     }
@@ -18,17 +20,50 @@ class AndroidTextToSpeechController(context: Context) : TextToSpeechController, 
             tts?.language = Locale.US
             isInitialized = true
             pendingText?.let {
-                speak(it)
+                speak(it, pendingLanguage)
                 pendingText = null
+                pendingLanguage = null
             }
         }
     }
 
-    override fun speak(text: String) {
+    override fun speak(text: String, language: String?) {
         if (isInitialized) {
+            val locale = when (language?.lowercase()) {
+                "id" -> Locale("id", "ID")
+                "en" -> Locale.US
+                else -> detectLocale(text)
+            }
+            tts?.language = locale
             tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
         } else {
             pendingText = text
+            pendingLanguage = language
+        }
+    }
+
+    private fun detectLocale(text: String): Locale {
+        val cleaned = text.lowercase().replace(Regex("[^a-z\\s]"), " ")
+        val words = cleaned.split(Regex("\\s+")).filter { it.isNotEmpty() }
+        if (words.isEmpty()) return Locale.US
+
+        val indonesianWords = setOf(
+            "yang", "dan", "di", "ke", "dari", "ini", "itu", "adalah", "untuk", "dengan",
+            "saya", "kamu", "dia", "mereka", "kita", "kami", "tidak", "bisa", "ada",
+            "apa", "siapa", "mengapa", "bagaimana", "kapan", "dimana", "selamat", "pagi",
+            "siang", "sore", "malam", "terima", "kasih", "arti", "terjemahkan", "pilih",
+            "kalimat", "ungkapan", "kata", "benda", "hewan", "buah", "tata", "bahasa",
+            "percakapan", "pengucapan", "arah", "toilet", "tolong", "bantu", "periksa",
+            "silakan", "paman", "bibi", "kakek", "nenek", "ayah", "ibu", "teman", "angka",
+            "merujuk", "perempuan", "laki", "sangat", "seperti", "sebelum", "sesaat", "benar",
+            "salah", "opsi", "pilihan", "soal", "kuis", "latihan", "kamus", "penerjemah"
+        )
+
+        val matchCount = words.count { it in indonesianWords }
+        return if (matchCount > 0) {
+            Locale("id", "ID")
+        } else {
+            Locale.US
         }
     }
 
